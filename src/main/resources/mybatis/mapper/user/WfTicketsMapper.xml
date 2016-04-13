@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.WfTicketsMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.WfTickets" >
+    <id column="WF_TICKETS_ID" property="wfTicketsId" jdbcType="BIGINT" />
+    <result column="WF_ID" property="wfId" jdbcType="VARCHAR" />
+    <result column="WF_NAME" property="wfName" jdbcType="VARCHAR" />
+    <result column="TICKET_TYPE" property="ticketType" jdbcType="VARCHAR" />
+    <result column="VAILD_FLAG" property="vaildFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    WF_TICKETS_ID, WF_ID, WF_NAME, TICKET_TYPE, VAILD_FLAG
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.WfTicketsCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from wf_tickets
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from wf_tickets
+    where WF_TICKETS_ID = #{wfTicketsId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from wf_tickets
+    where WF_TICKETS_ID = #{wfTicketsId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.WfTicketsCriteria" >
+    delete from wf_tickets
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.WfTickets" >
+    insert into wf_tickets (WF_TICKETS_ID, WF_ID, WF_NAME, 
+      TICKET_TYPE, VAILD_FLAG)
+    values (#{wfTicketsId,jdbcType=BIGINT}, #{wfId,jdbcType=VARCHAR}, #{wfName,jdbcType=VARCHAR}, 
+      #{ticketType,jdbcType=VARCHAR}, #{vaildFlag,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.WfTickets" >
+    insert into wf_tickets
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wfTicketsId != null" >
+        WF_TICKETS_ID,
+      </if>
+      <if test="wfId != null" >
+        WF_ID,
+      </if>
+      <if test="wfName != null" >
+        WF_NAME,
+      </if>
+      <if test="ticketType != null" >
+        TICKET_TYPE,
+      </if>
+      <if test="vaildFlag != null" >
+        VAILD_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wfTicketsId != null" >
+        #{wfTicketsId,jdbcType=BIGINT},
+      </if>
+      <if test="wfId != null" >
+        #{wfId,jdbcType=VARCHAR},
+      </if>
+      <if test="wfName != null" >
+        #{wfName,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketType != null" >
+        #{ticketType,jdbcType=VARCHAR},
+      </if>
+      <if test="vaildFlag != null" >
+        #{vaildFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.WfTicketsCriteria" resultType="java.lang.Integer" >
+    select count(*) from wf_tickets
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update wf_tickets
+    <set >
+      <if test="record.wfTicketsId != null" >
+        WF_TICKETS_ID = #{record.wfTicketsId,jdbcType=BIGINT},
+      </if>
+      <if test="record.wfId != null" >
+        WF_ID = #{record.wfId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wfName != null" >
+        WF_NAME = #{record.wfName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ticketType != null" >
+        TICKET_TYPE = #{record.ticketType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vaildFlag != null" >
+        VAILD_FLAG = #{record.vaildFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update wf_tickets
+    set WF_TICKETS_ID = #{record.wfTicketsId,jdbcType=BIGINT},
+      WF_ID = #{record.wfId,jdbcType=VARCHAR},
+      WF_NAME = #{record.wfName,jdbcType=VARCHAR},
+      TICKET_TYPE = #{record.ticketType,jdbcType=VARCHAR},
+      VAILD_FLAG = #{record.vaildFlag,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.WfTickets" >
+    update wf_tickets
+    <set >
+      <if test="wfId != null" >
+        WF_ID = #{wfId,jdbcType=VARCHAR},
+      </if>
+      <if test="wfName != null" >
+        WF_NAME = #{wfName,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketType != null" >
+        TICKET_TYPE = #{ticketType,jdbcType=VARCHAR},
+      </if>
+      <if test="vaildFlag != null" >
+        VAILD_FLAG = #{vaildFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where WF_TICKETS_ID = #{wfTicketsId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.WfTickets" >
+    update wf_tickets
+    set WF_ID = #{wfId,jdbcType=VARCHAR},
+      WF_NAME = #{wfName,jdbcType=VARCHAR},
+      TICKET_TYPE = #{ticketType,jdbcType=VARCHAR},
+      VAILD_FLAG = #{vaildFlag,jdbcType=VARCHAR}
+    where WF_TICKETS_ID = #{wfTicketsId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.OrderSchemeMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.OrderScheme" >
+    <id column="SCHEME_ID" property="schemeId" jdbcType="BIGINT" />
+    <result column="ORDER_DETAIL_ID" property="orderDetailId" jdbcType="BIGINT" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+    <result column="SCHEME_MAKE_TIME" property="schemeMakeTime" jdbcType="TIMESTAMP" />
+    <result column="SCHEME_MAKER" property="schemeMaker" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs" extends="BaseResultMap" >
+    <result column="PROD_PARAM_ZH" property="prodParamZh" jdbcType="LONGVARCHAR" />
+    <result column="PROD_PARAM" property="prodParam" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    SCHEME_ID, ORDER_DETAIL_ID, VALID_FLAG, SCHEME_MAKE_TIME, SCHEME_MAKER
+  </sql>
+  <sql id="Blob_Column_List" >
+    PROD_PARAM_ZH, PROD_PARAM
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from order_scheme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from order_scheme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from order_scheme
+    where SCHEME_ID = #{schemeId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from order_scheme
+    where SCHEME_ID = #{schemeId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeCriteria" >
+    delete from order_scheme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs" >
+    insert into order_scheme (SCHEME_ID, ORDER_DETAIL_ID, VALID_FLAG, 
+      SCHEME_MAKE_TIME, SCHEME_MAKER, PROD_PARAM_ZH, 
+      PROD_PARAM)
+    values (#{schemeId,jdbcType=BIGINT}, #{orderDetailId,jdbcType=BIGINT}, #{validFlag,jdbcType=VARCHAR}, 
+      #{schemeMakeTime,jdbcType=TIMESTAMP}, #{schemeMaker,jdbcType=VARCHAR}, #{prodParamZh,jdbcType=LONGVARCHAR}, 
+      #{prodParam,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs" >
+    insert into order_scheme
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="schemeId != null" >
+        SCHEME_ID,
+      </if>
+      <if test="orderDetailId != null" >
+        ORDER_DETAIL_ID,
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG,
+      </if>
+      <if test="schemeMakeTime != null" >
+        SCHEME_MAKE_TIME,
+      </if>
+      <if test="schemeMaker != null" >
+        SCHEME_MAKER,
+      </if>
+      <if test="prodParamZh != null" >
+        PROD_PARAM_ZH,
+      </if>
+      <if test="prodParam != null" >
+        PROD_PARAM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="schemeId != null" >
+        #{schemeId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDetailId != null" >
+        #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="validFlag != null" >
+        #{validFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="schemeMakeTime != null" >
+        #{schemeMakeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="schemeMaker != null" >
+        #{schemeMaker,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParamZh != null" >
+        #{prodParamZh,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="prodParam != null" >
+        #{prodParam,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeCriteria" resultType="java.lang.Integer" >
+    select count(*) from order_scheme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update order_scheme
+    <set >
+      <if test="record.schemeId != null" >
+        SCHEME_ID = #{record.schemeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderDetailId != null" >
+        ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.validFlag != null" >
+        VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.schemeMakeTime != null" >
+        SCHEME_MAKE_TIME = #{record.schemeMakeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.schemeMaker != null" >
+        SCHEME_MAKER = #{record.schemeMaker,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodParamZh != null" >
+        PROD_PARAM_ZH = #{record.prodParamZh,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.prodParam != null" >
+        PROD_PARAM = #{record.prodParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update order_scheme
+    set SCHEME_ID = #{record.schemeId,jdbcType=BIGINT},
+      ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR},
+      SCHEME_MAKE_TIME = #{record.schemeMakeTime,jdbcType=TIMESTAMP},
+      SCHEME_MAKER = #{record.schemeMaker,jdbcType=VARCHAR},
+      PROD_PARAM_ZH = #{record.prodParamZh,jdbcType=LONGVARCHAR},
+      PROD_PARAM = #{record.prodParam,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update order_scheme
+    set SCHEME_ID = #{record.schemeId,jdbcType=BIGINT},
+      ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR},
+      SCHEME_MAKE_TIME = #{record.schemeMakeTime,jdbcType=TIMESTAMP},
+      SCHEME_MAKER = #{record.schemeMaker,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs" >
+    update order_scheme
+    <set >
+      <if test="orderDetailId != null" >
+        ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="schemeMakeTime != null" >
+        SCHEME_MAKE_TIME = #{schemeMakeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="schemeMaker != null" >
+        SCHEME_MAKER = #{schemeMaker,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParamZh != null" >
+        PROD_PARAM_ZH = #{prodParamZh,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="prodParam != null" >
+        PROD_PARAM = #{prodParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where SCHEME_ID = #{schemeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs" >
+    update order_scheme
+    set ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT},
+      VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      SCHEME_MAKE_TIME = #{schemeMakeTime,jdbcType=TIMESTAMP},
+      SCHEME_MAKER = #{schemeMaker,jdbcType=VARCHAR},
+      PROD_PARAM_ZH = #{prodParamZh,jdbcType=LONGVARCHAR},
+      PROD_PARAM = #{prodParam,jdbcType=LONGVARCHAR}
+    where SCHEME_ID = #{schemeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.OrderScheme" >
+    update order_scheme
+    set ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT},
+      VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      SCHEME_MAKE_TIME = #{schemeMakeTime,jdbcType=TIMESTAMP},
+      SCHEME_MAKER = #{schemeMaker,jdbcType=VARCHAR}
+    where SCHEME_ID = #{schemeId,jdbcType=BIGINT}
+  </update>
+</mapper>

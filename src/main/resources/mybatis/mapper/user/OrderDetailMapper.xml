@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.OrderDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.OrderDetail" >
+    <id column="ORDER_DETAIL_ID" property="orderDetailId" jdbcType="BIGINT" />
+    <result column="OPERATE_TYPE" property="operateType" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="PROD_TYPE" property="prodType" jdbcType="VARCHAR" />
+    <result column="PROD_ID" property="prodId" jdbcType="VARCHAR" />
+    <result column="PROD_BYNAME" property="prodByname" jdbcType="VARCHAR" />
+    <result column="PROD_PARAM_ZH" property="prodParamZh" jdbcType="VARCHAR" />
+    <result column="vm_number" property="vmNumber" jdbcType="SMALLINT" />
+    <result column="ORDER_APP_DATE" property="orderAppDate" jdbcType="TIMESTAMP" />
+    <result column="PRE_OPEN_DATE" property="preOpenDate" jdbcType="TIMESTAMP" />
+    <result column="OPEN_STATUS" property="openStatus" jdbcType="VARCHAR" />
+    <result column="OPEN_PARAM" property="openParam" jdbcType="VARCHAR" />
+    <result column="OPEN_RESULT" property="openResult" jdbcType="VARCHAR" />
+    <result column="OPEN_DATE" property="openDate" jdbcType="TIMESTAMP" />
+    <result column="ORDER_CHECK_STATUS" property="orderCheckStatus" jdbcType="VARCHAR" />
+    <result column="ORDER_CHECK_RESULT" property="orderCheckResult" jdbcType="VARCHAR" />
+    <result column="ORDER_CHECK_DATE" property="orderCheckDate" jdbcType="TIMESTAMP" />
+    <result column="ORDER_CHECK_DESC" property="orderCheckDesc" jdbcType="VARCHAR" />
+    <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="USER_SERV_ID" property="userServId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_IPAAS_ID" property="userServIpaasId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_IPAAS_PWD" property="userServIpaasPwd" jdbcType="VARCHAR" />
+    <result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+    <result column="APPLICANT_DEPT" property="applicantDept" jdbcType="VARCHAR" />
+    <result column="APPLICANT_TEL" property="applicantTel" jdbcType="VARCHAR" />
+    <result column="APPLICANT_EMAIL" property="applicantEmail" jdbcType="VARCHAR" />
+    <result column="APPLICANT_REASON" property="applicantReason" jdbcType="VARCHAR" />
+    <result column="APPLICANT_DESC" property="applicantDesc" jdbcType="VARCHAR" />
+    <result column="EXPIRATION_DATE" property="expirationDate" jdbcType="TIMESTAMP" />
+    <result column="BELONG_CLOUD" property="belongCloud" jdbcType="VARCHAR" />
+    <result column="WF_INST_ID" property="wfInstId" jdbcType="VARCHAR" />
+    <result column="SOFTS_CONFIG" property="softsConfig" jdbcType="VARCHAR" />
+    <result column="SBUTRACT_FLAG" property="sbutractFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.ai.paas.ipaas.user.dto.OrderDetail" extends="BaseResultMap" >
+    <result column="PROD_PARAM" property="prodParam" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ORDER_DETAIL_ID, OPERATE_TYPE, USER_ID, PROD_TYPE, PROD_ID, PROD_BYNAME, PROD_PARAM_ZH, 
+    vm_number, ORDER_APP_DATE, PRE_OPEN_DATE, OPEN_STATUS, OPEN_PARAM, OPEN_RESULT, OPEN_DATE, 
+    ORDER_CHECK_STATUS, ORDER_CHECK_RESULT, ORDER_CHECK_DATE, ORDER_CHECK_DESC, ORDER_STATUS, 
+    USER_SERV_ID, USER_SERV_IPAAS_ID, USER_SERV_IPAAS_PWD, APPLICANT, APPLICANT_DEPT, 
+    APPLICANT_TEL, APPLICANT_EMAIL, APPLICANT_REASON, APPLICANT_DESC, EXPIRATION_DATE, 
+    BELONG_CLOUD, WF_INST_ID, SOFTS_CONFIG, SBUTRACT_FLAG
+  </sql>
+  <sql id="Blob_Column_List" >
+    PROD_PARAM
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.ai.paas.ipaas.user.dto.OrderDetailCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from order_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.OrderDetailCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from order_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from order_detail
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from order_detail
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderDetailCriteria" >
+    delete from order_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.OrderDetail" >
+   <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="orderDetailId">
+		SELECT LAST_INSERT_ID() AS orderDetailId
+	</selectKey>
+    insert into order_detail ( OPERATE_TYPE, USER_ID, 
+      PROD_TYPE, PROD_ID, PROD_BYNAME, 
+      PROD_PARAM_ZH, vm_number, ORDER_APP_DATE, 
+      PRE_OPEN_DATE, OPEN_STATUS, OPEN_PARAM, 
+      OPEN_RESULT, OPEN_DATE, ORDER_CHECK_STATUS, 
+      ORDER_CHECK_RESULT, ORDER_CHECK_DATE, ORDER_CHECK_DESC, 
+      ORDER_STATUS, USER_SERV_ID, USER_SERV_IPAAS_ID, 
+      USER_SERV_IPAAS_PWD, APPLICANT, APPLICANT_DEPT, 
+      APPLICANT_TEL, APPLICANT_EMAIL, APPLICANT_REASON, 
+      APPLICANT_DESC, EXPIRATION_DATE, BELONG_CLOUD, 
+      WF_INST_ID, SOFTS_CONFIG, SBUTRACT_FLAG, 
+      PROD_PARAM)
+    values (#{operateType,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{prodType,jdbcType=VARCHAR}, #{prodId,jdbcType=VARCHAR}, #{prodByname,jdbcType=VARCHAR}, 
+      #{prodParamZh,jdbcType=VARCHAR}, #{vmNumber,jdbcType=SMALLINT}, #{orderAppDate,jdbcType=TIMESTAMP}, 
+      #{preOpenDate,jdbcType=TIMESTAMP}, #{openStatus,jdbcType=VARCHAR}, #{openParam,jdbcType=VARCHAR}, 
+      #{openResult,jdbcType=VARCHAR}, #{openDate,jdbcType=TIMESTAMP}, #{orderCheckStatus,jdbcType=VARCHAR}, 
+      #{orderCheckResult,jdbcType=VARCHAR}, #{orderCheckDate,jdbcType=TIMESTAMP}, #{orderCheckDesc,jdbcType=VARCHAR}, 
+      #{orderStatus,jdbcType=VARCHAR}, #{userServId,jdbcType=VARCHAR}, #{userServIpaasId,jdbcType=VARCHAR}, 
+      #{userServIpaasPwd,jdbcType=VARCHAR}, #{applicant,jdbcType=VARCHAR}, #{applicantDept,jdbcType=VARCHAR}, 
+      #{applicantTel,jdbcType=VARCHAR}, #{applicantEmail,jdbcType=VARCHAR}, #{applicantReason,jdbcType=VARCHAR}, 
+      #{applicantDesc,jdbcType=VARCHAR}, #{expirationDate,jdbcType=TIMESTAMP}, #{belongCloud,jdbcType=VARCHAR}, 
+      #{wfInstId,jdbcType=VARCHAR}, #{softsConfig,jdbcType=VARCHAR}, #{sbutractFlag,jdbcType=VARCHAR}, 
+      #{prodParam,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.OrderDetail" >
+    insert into order_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderDetailId != null" >
+        ORDER_DETAIL_ID,
+      </if>
+      <if test="operateType != null" >
+        OPERATE_TYPE,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="prodType != null" >
+        PROD_TYPE,
+      </if>
+      <if test="prodId != null" >
+        PROD_ID,
+      </if>
+      <if test="prodByname != null" >
+        PROD_BYNAME,
+      </if>
+      <if test="prodParamZh != null" >
+        PROD_PARAM_ZH,
+      </if>
+      <if test="vmNumber != null" >
+        vm_number,
+      </if>
+      <if test="orderAppDate != null" >
+        ORDER_APP_DATE,
+      </if>
+      <if test="preOpenDate != null" >
+        PRE_OPEN_DATE,
+      </if>
+      <if test="openStatus != null" >
+        OPEN_STATUS,
+      </if>
+      <if test="openParam != null" >
+        OPEN_PARAM,
+      </if>
+      <if test="openResult != null" >
+        OPEN_RESULT,
+      </if>
+      <if test="openDate != null" >
+        OPEN_DATE,
+      </if>
+      <if test="orderCheckStatus != null" >
+        ORDER_CHECK_STATUS,
+      </if>
+      <if test="orderCheckResult != null" >
+        ORDER_CHECK_RESULT,
+      </if>
+      <if test="orderCheckDate != null" >
+        ORDER_CHECK_DATE,
+      </if>
+      <if test="orderCheckDesc != null" >
+        ORDER_CHECK_DESC,
+      </if>
+      <if test="orderStatus != null" >
+        ORDER_STATUS,
+      </if>
+      <if test="userServId != null" >
+        USER_SERV_ID,
+      </if>
+      <if test="userServIpaasId != null" >
+        USER_SERV_IPAAS_ID,
+      </if>
+      <if test="userServIpaasPwd != null" >
+        USER_SERV_IPAAS_PWD,
+      </if>
+      <if test="applicant != null" >
+        APPLICANT,
+      </if>
+      <if test="applicantDept != null" >
+        APPLICANT_DEPT,
+      </if>
+      <if test="applicantTel != null" >
+        APPLICANT_TEL,
+      </if>
+      <if test="applicantEmail != null" >
+        APPLICANT_EMAIL,
+      </if>
+      <if test="applicantReason != null" >
+        APPLICANT_REASON,
+      </if>
+      <if test="applicantDesc != null" >
+        APPLICANT_DESC,
+      </if>
+      <if test="expirationDate != null" >
+        EXPIRATION_DATE,
+      </if>
+      <if test="belongCloud != null" >
+        BELONG_CLOUD,
+      </if>
+      <if test="wfInstId != null" >
+        WF_INST_ID,
+      </if>
+      <if test="softsConfig != null" >
+        SOFTS_CONFIG,
+      </if>
+      <if test="sbutractFlag != null" >
+        SBUTRACT_FLAG,
+      </if>
+      <if test="prodParam != null" >
+        PROD_PARAM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderDetailId != null" >
+        #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="operateType != null" >
+        #{operateType,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodType != null" >
+        #{prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="prodId != null" >
+        #{prodId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodByname != null" >
+        #{prodByname,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParamZh != null" >
+        #{prodParamZh,jdbcType=VARCHAR},
+      </if>
+      <if test="vmNumber != null" >
+        #{vmNumber,jdbcType=SMALLINT},
+      </if>
+      <if test="orderAppDate != null" >
+        #{orderAppDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="preOpenDate != null" >
+        #{preOpenDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openStatus != null" >
+        #{openStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="openParam != null" >
+        #{openParam,jdbcType=VARCHAR},
+      </if>
+      <if test="openResult != null" >
+        #{openResult,jdbcType=VARCHAR},
+      </if>
+      <if test="openDate != null" >
+        #{openDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderCheckStatus != null" >
+        #{orderCheckStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCheckResult != null" >
+        #{orderCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCheckDate != null" >
+        #{orderCheckDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderCheckDesc != null" >
+        #{orderCheckDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="userServId != null" >
+        #{userServId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasId != null" >
+        #{userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasPwd != null" >
+        #{userServIpaasPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="applicant != null" >
+        #{applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantDept != null" >
+        #{applicantDept,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantTel != null" >
+        #{applicantTel,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantEmail != null" >
+        #{applicantEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantReason != null" >
+        #{applicantReason,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantDesc != null" >
+        #{applicantDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="expirationDate != null" >
+        #{expirationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="belongCloud != null" >
+        #{belongCloud,jdbcType=VARCHAR},
+      </if>
+      <if test="wfInstId != null" >
+        #{wfInstId,jdbcType=VARCHAR},
+      </if>
+      <if test="softsConfig != null" >
+        #{softsConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="sbutractFlag != null" >
+        #{sbutractFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParam != null" >
+        #{prodParam,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderDetailCriteria" resultType="java.lang.Integer" >
+    select count(*) from order_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update order_detail
+    <set >
+      <if test="record.orderDetailId != null" >
+        ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.operateType != null" >
+        OPERATE_TYPE = #{record.operateType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodType != null" >
+        PROD_TYPE = #{record.prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodId != null" >
+        PROD_ID = #{record.prodId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodByname != null" >
+        PROD_BYNAME = #{record.prodByname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodParamZh != null" >
+        PROD_PARAM_ZH = #{record.prodParamZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vmNumber != null" >
+        vm_number = #{record.vmNumber,jdbcType=SMALLINT},
+      </if>
+      <if test="record.orderAppDate != null" >
+        ORDER_APP_DATE = #{record.orderAppDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.preOpenDate != null" >
+        PRE_OPEN_DATE = #{record.preOpenDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.openStatus != null" >
+        OPEN_STATUS = #{record.openStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openParam != null" >
+        OPEN_PARAM = #{record.openParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openResult != null" >
+        OPEN_RESULT = #{record.openResult,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openDate != null" >
+        OPEN_DATE = #{record.openDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.orderCheckStatus != null" >
+        ORDER_CHECK_STATUS = #{record.orderCheckStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderCheckResult != null" >
+        ORDER_CHECK_RESULT = #{record.orderCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderCheckDate != null" >
+        ORDER_CHECK_DATE = #{record.orderCheckDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.orderCheckDesc != null" >
+        ORDER_CHECK_DESC = #{record.orderCheckDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderStatus != null" >
+        ORDER_STATUS = #{record.orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServId != null" >
+        USER_SERV_ID = #{record.userServId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServIpaasId != null" >
+        USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServIpaasPwd != null" >
+        USER_SERV_IPAAS_PWD = #{record.userServIpaasPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicant != null" >
+        APPLICANT = #{record.applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicantDept != null" >
+        APPLICANT_DEPT = #{record.applicantDept,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicantTel != null" >
+        APPLICANT_TEL = #{record.applicantTel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicantEmail != null" >
+        APPLICANT_EMAIL = #{record.applicantEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicantReason != null" >
+        APPLICANT_REASON = #{record.applicantReason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicantDesc != null" >
+        APPLICANT_DESC = #{record.applicantDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.expirationDate != null" >
+        EXPIRATION_DATE = #{record.expirationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.belongCloud != null" >
+        BELONG_CLOUD = #{record.belongCloud,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wfInstId != null" >
+        WF_INST_ID = #{record.wfInstId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.softsConfig != null" >
+        SOFTS_CONFIG = #{record.softsConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sbutractFlag != null" >
+        SBUTRACT_FLAG = #{record.sbutractFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodParam != null" >
+        PROD_PARAM = #{record.prodParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update order_detail
+    set ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      OPERATE_TYPE = #{record.operateType,jdbcType=VARCHAR},
+      USER_ID = #{record.userId,jdbcType=VARCHAR},
+      PROD_TYPE = #{record.prodType,jdbcType=VARCHAR},
+      PROD_ID = #{record.prodId,jdbcType=VARCHAR},
+      PROD_BYNAME = #{record.prodByname,jdbcType=VARCHAR},
+      PROD_PARAM_ZH = #{record.prodParamZh,jdbcType=VARCHAR},
+      vm_number = #{record.vmNumber,jdbcType=SMALLINT},
+      ORDER_APP_DATE = #{record.orderAppDate,jdbcType=TIMESTAMP},
+      PRE_OPEN_DATE = #{record.preOpenDate,jdbcType=TIMESTAMP},
+      OPEN_STATUS = #{record.openStatus,jdbcType=VARCHAR},
+      OPEN_PARAM = #{record.openParam,jdbcType=VARCHAR},
+      OPEN_RESULT = #{record.openResult,jdbcType=VARCHAR},
+      OPEN_DATE = #{record.openDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_STATUS = #{record.orderCheckStatus,jdbcType=VARCHAR},
+      ORDER_CHECK_RESULT = #{record.orderCheckResult,jdbcType=VARCHAR},
+      ORDER_CHECK_DATE = #{record.orderCheckDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_DESC = #{record.orderCheckDesc,jdbcType=VARCHAR},
+      ORDER_STATUS = #{record.orderStatus,jdbcType=VARCHAR},
+      USER_SERV_ID = #{record.userServId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_PWD = #{record.userServIpaasPwd,jdbcType=VARCHAR},
+      APPLICANT = #{record.applicant,jdbcType=VARCHAR},
+      APPLICANT_DEPT = #{record.applicantDept,jdbcType=VARCHAR},
+      APPLICANT_TEL = #{record.applicantTel,jdbcType=VARCHAR},
+      APPLICANT_EMAIL = #{record.applicantEmail,jdbcType=VARCHAR},
+      APPLICANT_REASON = #{record.applicantReason,jdbcType=VARCHAR},
+      APPLICANT_DESC = #{record.applicantDesc,jdbcType=VARCHAR},
+      EXPIRATION_DATE = #{record.expirationDate,jdbcType=TIMESTAMP},
+      BELONG_CLOUD = #{record.belongCloud,jdbcType=VARCHAR},
+      WF_INST_ID = #{record.wfInstId,jdbcType=VARCHAR},
+      SOFTS_CONFIG = #{record.softsConfig,jdbcType=VARCHAR},
+      SBUTRACT_FLAG = #{record.sbutractFlag,jdbcType=VARCHAR},
+      PROD_PARAM = #{record.prodParam,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update order_detail
+    set ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      OPERATE_TYPE = #{record.operateType,jdbcType=VARCHAR},
+      USER_ID = #{record.userId,jdbcType=VARCHAR},
+      PROD_TYPE = #{record.prodType,jdbcType=VARCHAR},
+      PROD_ID = #{record.prodId,jdbcType=VARCHAR},
+      PROD_BYNAME = #{record.prodByname,jdbcType=VARCHAR},
+      PROD_PARAM_ZH = #{record.prodParamZh,jdbcType=VARCHAR},
+      vm_number = #{record.vmNumber,jdbcType=SMALLINT},
+      ORDER_APP_DATE = #{record.orderAppDate,jdbcType=TIMESTAMP},
+      PRE_OPEN_DATE = #{record.preOpenDate,jdbcType=TIMESTAMP},
+      OPEN_STATUS = #{record.openStatus,jdbcType=VARCHAR},
+      OPEN_PARAM = #{record.openParam,jdbcType=VARCHAR},
+      OPEN_RESULT = #{record.openResult,jdbcType=VARCHAR},
+      OPEN_DATE = #{record.openDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_STATUS = #{record.orderCheckStatus,jdbcType=VARCHAR},
+      ORDER_CHECK_RESULT = #{record.orderCheckResult,jdbcType=VARCHAR},
+      ORDER_CHECK_DATE = #{record.orderCheckDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_DESC = #{record.orderCheckDesc,jdbcType=VARCHAR},
+      ORDER_STATUS = #{record.orderStatus,jdbcType=VARCHAR},
+      USER_SERV_ID = #{record.userServId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_PWD = #{record.userServIpaasPwd,jdbcType=VARCHAR},
+      APPLICANT = #{record.applicant,jdbcType=VARCHAR},
+      APPLICANT_DEPT = #{record.applicantDept,jdbcType=VARCHAR},
+      APPLICANT_TEL = #{record.applicantTel,jdbcType=VARCHAR},
+      APPLICANT_EMAIL = #{record.applicantEmail,jdbcType=VARCHAR},
+      APPLICANT_REASON = #{record.applicantReason,jdbcType=VARCHAR},
+      APPLICANT_DESC = #{record.applicantDesc,jdbcType=VARCHAR},
+      EXPIRATION_DATE = #{record.expirationDate,jdbcType=TIMESTAMP},
+      BELONG_CLOUD = #{record.belongCloud,jdbcType=VARCHAR},
+      WF_INST_ID = #{record.wfInstId,jdbcType=VARCHAR},
+      SOFTS_CONFIG = #{record.softsConfig,jdbcType=VARCHAR},
+      SBUTRACT_FLAG = #{record.sbutractFlag,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.OrderDetail" >
+    update order_detail
+    <set >
+      <if test="operateType != null" >
+        OPERATE_TYPE = #{operateType,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodType != null" >
+        PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="prodId != null" >
+        PROD_ID = #{prodId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodByname != null" >
+        PROD_BYNAME = #{prodByname,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParamZh != null" >
+        PROD_PARAM_ZH = #{prodParamZh,jdbcType=VARCHAR},
+      </if>
+      <if test="vmNumber != null" >
+        vm_number = #{vmNumber,jdbcType=SMALLINT},
+      </if>
+      <if test="orderAppDate != null" >
+        ORDER_APP_DATE = #{orderAppDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="preOpenDate != null" >
+        PRE_OPEN_DATE = #{preOpenDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openStatus != null" >
+        OPEN_STATUS = #{openStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="openParam != null" >
+        OPEN_PARAM = #{openParam,jdbcType=VARCHAR},
+      </if>
+      <if test="openResult != null" >
+        OPEN_RESULT = #{openResult,jdbcType=VARCHAR},
+      </if>
+      <if test="openDate != null" >
+        OPEN_DATE = #{openDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderCheckStatus != null" >
+        ORDER_CHECK_STATUS = #{orderCheckStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCheckResult != null" >
+        ORDER_CHECK_RESULT = #{orderCheckResult,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCheckDate != null" >
+        ORDER_CHECK_DATE = #{orderCheckDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderCheckDesc != null" >
+        ORDER_CHECK_DESC = #{orderCheckDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="userServId != null" >
+        USER_SERV_ID = #{userServId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasId != null" >
+        USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasPwd != null" >
+        USER_SERV_IPAAS_PWD = #{userServIpaasPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="applicant != null" >
+        APPLICANT = #{applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantDept != null" >
+        APPLICANT_DEPT = #{applicantDept,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantTel != null" >
+        APPLICANT_TEL = #{applicantTel,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantEmail != null" >
+        APPLICANT_EMAIL = #{applicantEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantReason != null" >
+        APPLICANT_REASON = #{applicantReason,jdbcType=VARCHAR},
+      </if>
+      <if test="applicantDesc != null" >
+        APPLICANT_DESC = #{applicantDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="expirationDate != null" >
+        EXPIRATION_DATE = #{expirationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="belongCloud != null" >
+        BELONG_CLOUD = #{belongCloud,jdbcType=VARCHAR},
+      </if>
+      <if test="wfInstId != null" >
+        WF_INST_ID = #{wfInstId,jdbcType=VARCHAR},
+      </if>
+      <if test="softsConfig != null" >
+        SOFTS_CONFIG = #{softsConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="sbutractFlag != null" >
+        SBUTRACT_FLAG = #{sbutractFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParam != null" >
+        PROD_PARAM = #{prodParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ai.paas.ipaas.user.dto.OrderDetail" >
+    update order_detail
+    set OPERATE_TYPE = #{operateType,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      PROD_ID = #{prodId,jdbcType=VARCHAR},
+      PROD_BYNAME = #{prodByname,jdbcType=VARCHAR},
+      PROD_PARAM_ZH = #{prodParamZh,jdbcType=VARCHAR},
+      vm_number = #{vmNumber,jdbcType=SMALLINT},
+      ORDER_APP_DATE = #{orderAppDate,jdbcType=TIMESTAMP},
+      PRE_OPEN_DATE = #{preOpenDate,jdbcType=TIMESTAMP},
+      OPEN_STATUS = #{openStatus,jdbcType=VARCHAR},
+      OPEN_PARAM = #{openParam,jdbcType=VARCHAR},
+      OPEN_RESULT = #{openResult,jdbcType=VARCHAR},
+      OPEN_DATE = #{openDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_STATUS = #{orderCheckStatus,jdbcType=VARCHAR},
+      ORDER_CHECK_RESULT = #{orderCheckResult,jdbcType=VARCHAR},
+      ORDER_CHECK_DATE = #{orderCheckDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_DESC = #{orderCheckDesc,jdbcType=VARCHAR},
+      ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      USER_SERV_ID = #{userServId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_PWD = #{userServIpaasPwd,jdbcType=VARCHAR},
+      APPLICANT = #{applicant,jdbcType=VARCHAR},
+      APPLICANT_DEPT = #{applicantDept,jdbcType=VARCHAR},
+      APPLICANT_TEL = #{applicantTel,jdbcType=VARCHAR},
+      APPLICANT_EMAIL = #{applicantEmail,jdbcType=VARCHAR},
+      APPLICANT_REASON = #{applicantReason,jdbcType=VARCHAR},
+      APPLICANT_DESC = #{applicantDesc,jdbcType=VARCHAR},
+      EXPIRATION_DATE = #{expirationDate,jdbcType=TIMESTAMP},
+      BELONG_CLOUD = #{belongCloud,jdbcType=VARCHAR},
+      WF_INST_ID = #{wfInstId,jdbcType=VARCHAR},
+      SOFTS_CONFIG = #{softsConfig,jdbcType=VARCHAR},
+      SBUTRACT_FLAG = #{sbutractFlag,jdbcType=VARCHAR},
+      PROD_PARAM = #{prodParam,jdbcType=LONGVARCHAR}
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.OrderDetail" >
+    update order_detail
+    set OPERATE_TYPE = #{operateType,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      PROD_ID = #{prodId,jdbcType=VARCHAR},
+      PROD_BYNAME = #{prodByname,jdbcType=VARCHAR},
+      PROD_PARAM_ZH = #{prodParamZh,jdbcType=VARCHAR},
+      vm_number = #{vmNumber,jdbcType=SMALLINT},
+      ORDER_APP_DATE = #{orderAppDate,jdbcType=TIMESTAMP},
+      PRE_OPEN_DATE = #{preOpenDate,jdbcType=TIMESTAMP},
+      OPEN_STATUS = #{openStatus,jdbcType=VARCHAR},
+      OPEN_PARAM = #{openParam,jdbcType=VARCHAR},
+      OPEN_RESULT = #{openResult,jdbcType=VARCHAR},
+      OPEN_DATE = #{openDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_STATUS = #{orderCheckStatus,jdbcType=VARCHAR},
+      ORDER_CHECK_RESULT = #{orderCheckResult,jdbcType=VARCHAR},
+      ORDER_CHECK_DATE = #{orderCheckDate,jdbcType=TIMESTAMP},
+      ORDER_CHECK_DESC = #{orderCheckDesc,jdbcType=VARCHAR},
+      ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      USER_SERV_ID = #{userServId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_PWD = #{userServIpaasPwd,jdbcType=VARCHAR},
+      APPLICANT = #{applicant,jdbcType=VARCHAR},
+      APPLICANT_DEPT = #{applicantDept,jdbcType=VARCHAR},
+      APPLICANT_TEL = #{applicantTel,jdbcType=VARCHAR},
+      APPLICANT_EMAIL = #{applicantEmail,jdbcType=VARCHAR},
+      APPLICANT_REASON = #{applicantReason,jdbcType=VARCHAR},
+      APPLICANT_DESC = #{applicantDesc,jdbcType=VARCHAR},
+      EXPIRATION_DATE = #{expirationDate,jdbcType=TIMESTAMP},
+      BELONG_CLOUD = #{belongCloud,jdbcType=VARCHAR},
+      WF_INST_ID = #{wfInstId,jdbcType=VARCHAR},
+      SOFTS_CONFIG = #{softsConfig,jdbcType=VARCHAR},
+      SBUTRACT_FLAG = #{sbutractFlag,jdbcType=VARCHAR}
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </update>
+</mapper>

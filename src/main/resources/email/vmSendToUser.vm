@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+    <!-- Site CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://static.bootcss.com/www/assets/css/site.min.css?v5" rel="stylesheet">
+<style>
+ul li{list-style: none}
+a:hover{text-decoration: none;}
+.agree{width: 100px;height: 38px;background:#179ADE;color: #fff;border: 0 none;display: inline-block;text-align: center;line-height: 38px;border-radius: 3px;margin-left: 440px;margin-right: 20px;}
+.disagree{width: 100px;height: 38px;background: #EFEFEF;border:1px solid #179ADE;color: #179ADE;display: inline-block;text-align: center;line-height: 38px;border-radius: 3px;}
+
+
+.activeBtn{margin-left:215px;width:162px; height:40px; background:rgb(37,156,220); text-align:center; line-height:40px; font-size:20px; color:#fff; float:left; border-radius:20px;}
+.dg_message{ width:860px; float:left;}
+.dg_message ul .move{ float:right;}
+.zk_mail{ width:811px; float:left; }
+.zk_mail_A{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_a.png) no-repeat; height:76px; text-align:center; font-size:24px; color:#fff; line-height:106px;}
+.zk_mail_B{ width:810px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_b.png) repeat-y;}
+.ul-head{ width:810px; float:left; border-bottom:none;margin-top: 20px;}
+/*.zk_mail_B ul li span{ color:#e72b4f; font-size:18px;}*/
+/*.zk_mail_B ul .activeLink{width:680px; float:left; }*/
+.zk_mail_C{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_c.png) no-repeat; height:51px;}
+.zk_mail_C ul{ width:810px; float:left;border-bottom:none; margin-top:0px;}
+.zk_mail_C ul li{ float:left; line-height:45px; font-size:14px; list-style-type:none;}
+.txt2,.txt4{color:#999}
+.welcome{margin-bottom:20px;}
+.txt1,.txt3{text-align: center;margin-bottom: 10px;}
+.txt2,.txt3,.txt4{text-align:center;font-size:14px;}
+.txt3 a:hover{color:#23527C;}
+
+
+.install{width: 123px;height: 37px;background: #179ADE;color: #fff;border-radius: 20px;border: 0 none;margin-left:510px;margin-bottom: 10px;font-size:15px;}
+
+.txt2,.txt4{margin-bottom: 10px;}
+.activeLink{text-align: center;font-size: 12px;color: rgb(139,202,241);margin-left: -26px;}
+.line{width: 90%;height: 1px;border-top:1px solid #DDDDDD;margin: 0 auto;margin-bottom: 10px;}
+.info-tittle{color: #179ADE;font-size: 17px;font-weight: bold;clear: both;margin-left: 36px;}
+.info-tittle1{color: #179ADE;font-size: 17px;font-weight: bold;clear: both;margin-left: 36px;}
+.gray{color: #9A9A9A;}
+.gray{color: #9A9A9A;}
+.info-content1 li,.info-content2 li{font-size: 15px;margin-bottom: 10px;position: relative;}
+.v-type{margin-left: 67px;}
+.cpu{margin-left: 110px;}
+.neicun{margin-left: 112px;}
+.dataNum{margin-left: 67px;}
+.vmNumber{margin-left: 67px;}
+.info-content2{margin-left: 135px;}
+.sys-title{position: absolute;left: 0px;}
+.system-data{width: 200px;display:inline-block;word-break:break-all;margin-left: 80px;}
+.info-line{width: 100%;overflow:hidden;font-size: 15px;position: relative;margin-bottom: 10px;}
+.info-line li div{float: left;font-size: 15px;}
+.report{margin-left: 99px;}
+.reporter-txt{width: 100px;margin-right: 172px;}
+.mobile{margin-left: 84px;}
+.mobile-txt{width: 200px;margin-right: 72px;}
+.mail-txt{width: 200px;}
+.reason-txt{width: 550px;word-break:break-all;margin-left: 200px;}
+.reason{position: absolute;left: 125px;}
+.name{margin-left: 53px;}
+.name-txt{width: 300px;}
+.user{margin-left: 102px;}
+.user-txt{width: 200px;margin-right: 54px;}
+.visit-txt{width: 200px;}
+.resource{margin-left: 58px;}
+.resource-txt{width: 200px;}
+.useE {margin-left: 68px;}
+.useE-txt{width: 200px;}
+.business-txt{width: 550px;word-break:break-all;margin-left: 203px;}
+.business{position: absolute;left: 127px;}
+.start-time{margin-left: 86px;}
+.start-time-txt{width: 200px;margin-right: 70px;}
+.end-time-txt{width: 200px;}
+.border-shadow{ width:810px;background: url(http://feiqimoda.com/resources/yun/xiao_b.png) repeat-y;}
+
+</style>
+</head>
+<body>
+<div class="dg_message">
+	<ul>
+		<div class="zk_mail">
+			<div class="zk_mail_A">$!{title}</div>
+			<div class="zk_mail_B">
+				<ul style="list-style:none;padding:0px;" class="ul-head">
+					<li class="welcome" style="font-size:16px;margin-left:36px;">$!{toAddress},您好!</li>
+                    <li class="nyr txt1" style="font-size: 16px;">$!{applyCant}$!{message}</li>
+                    
+                   	<li class="line"></li>
+                    <div > <a href="$!{url}"><button class="install">$!{button}</button></a></div>
+				</ul>
+				<div class="info-tittle">集成方案</div>
+				<ul class="info-content1" style="margin-top:10px;float:left">
+					<li>
+						<span class="gray v-type">虚拟机类型：</span>
+						<span>$!{virtualType}</span>
+					</li>
+					<li>
+						<span class="gray cpu">CPU：</span>
+						<span>$!{cpu}</span>
+					</li>
+					<li>
+						<span class="gray neicun">内存：</span>
+						<span>$!{virtualRam}</span>
+					</li>
+					<li>
+						<span class="gray dataNum">数据盘容量：</span>
+						<span>$!{virtualHard}</span>
+					</li>
+					<li style="color: #5599FF">
+						<span class="vmNumber">虚拟机数量：</span>
+						<span>$!{vmNumber}</span>
+					</li>
+				</ul>
+				<ul class="info-content2" style="margin-top:10px;float:left">
+					<li>
+						<span class="gray common-mar">链路类型：</span>
+						<span>$!{netType}</span>
+					</li>
+					<li>
+						<span class="gray common-mar">公网带宽：</span>
+						<span>$!{netBandW}</span>
+					</li>
+					<li>
+						<span class="gray common-mar">公网数量：</span>
+						<span>$!{netNum}</span>
+					</li>
+					<li>
+						<span class="gray sys-title">操作系统：</span>
+						<span class="system-data">$!{SysTem}</span>
+					</li>
+                    <li>
+						<span class="gray sys-title">系统版本：</span>
+						<span class="system-data">$!{SysTemChild}</span>
+					</li>
+				</ul>
+
+			</div>
+            <br>
+             <div class="border-shadow">
+            <!-- <ul><li class="txt3">请点击按钮查看相关信息</li></ul>-->
+               <!--
+                <ul>
+                 <li class="txt2">请把下面的链接复制到浏览器地址栏打开</li>				
+					<li class="txt4">如果这不是您的邮件，请忽略此邮件。这是亚信云系统邮件，请勿回复。</li>
+					<li class="activeLink">
+					$!{urlHtml}
+                    </li>
+                </ul>
+                -->
+             </div>
+             
+             
+			<div class="zk_mail_C">
+			
+			</div>
+		</div>
+</div>								
+</body>
+</html>

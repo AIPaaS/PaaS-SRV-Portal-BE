@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+    <!-- Site CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://static.bootcss.com/www/assets/css/site.min.css?v5" rel="stylesheet">
+<style>
+.activeBtn{margin-left:215px;width:162px; height:40px; background:rgb(37,156,220); text-align:center; line-height:40px; font-size:20px; color:#fff; float:left; border-radius:20px;}
+.dg_message{ width:860px; float:left;}
+.dg_message ul{ width:860px; float:left;margin-top:30px; padding-bottom:20px;}
+.dg_message ul .move{ float:right;}
+.zk_mail{ width:811px; float:left; }
+.zk_mail_A{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_a.png) no-repeat; height:76px; text-align:center; font-size:24px; color:#fff; line-height:106px;}
+.zk_mail_B{ width:810px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_b.png) repeat-y;}
+.zk_mail_B ul{ width:810px; float:left; border-bottom:none;}
+.zk_mail_B ul li span{ color:#e72b4f; font-size:18px;}
+/*.zk_mail_B ul .activeLink{width:680px; float:left; }*/
+.zk_mail_C{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_c.png) no-repeat; height:51px;}
+.zk_mail_C ul{ width:810px; float:left;border-bottom:none; margin-top:0px;}
+.zk_mail_C ul li{ float:left; line-height:45px; font-size:14px; list-style-type:none;}
+.txt2,.txt4{color:#999}
+.welcome{margin-bottom:20px;}
+.txt1,.txt3{text-align: center;margin-bottom: 10px;}
+.txt2,.txt3,.txt4{text-align:center;font-size:14px;}
+.txt3 a:hover{color:#23527C;}
+.install{width: 123px;height: 37px;background: #179ADE;color: #fff;border-radius: 20px;border: 0 none;margin-left: 343px;margin-bottom: 10px;font-size:15px;}
+.txt2,.txt4{margin-bottom: 10px;}
+.activeLink{text-align: center;font-size: 12px;color: rgb(139,202,241);margin-left: -26px;}
+</style>
+</head>
+<body>
+<div class="dg_message">
+	<ul>
+		<div class="zk_mail">
+			<div class="zk_mail_A">$!{title}</div>
+			<div class="zk_mail_B">
+				<ul style="list-style:none;padding:0px;">
+					<li class="welcome" style="font-size:16px;margin-left:36px;">$!{toAddress},您好!</li>
+                    <li class="nyr txt1" style="font-size: 16px;">$!{applyCant}$!{message}</li>
+                    <li class="txt3">请点击按钮查看相关信息</li>
+                    <li>
+                    	<a href="$!{url}"><button class="install">$!{button}</button></a>
+                    </li>
+                    <li class="txt2">请把下面的链接复制到浏览器地址栏打开</li>				
+					<li class="txt4">如果这不是您的邮件，请忽略此邮件。这是亚信云系统邮件，请勿回复。</li>
+					<li class="activeLink">
+					$!{urlHtml}
+					<!--
+					   <input type="text" readonly class="activeLink"  value="$!{url}" style="width:600px;  border:0px #FFFFFF solid;  border-top:0px #FFFFFF solid;   background-color:#FFF; text-align:center;" />
+					-->
+					</li>
+				</ul>
+			</div>
+			<div class="zk_mail_C">
+			
+			</div>
+		</div>
+</div>								
+</body>
+</html>

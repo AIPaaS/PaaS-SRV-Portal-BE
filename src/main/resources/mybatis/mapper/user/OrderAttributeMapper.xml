@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.OrderAttributeMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.OrderAttribute" >
+    <id column="ORDER_DETAIL_ID" property="orderDetailId" jdbcType="BIGINT" />
+    <result column="COST_CENTER_CODE" property="costCenterCode" jdbcType="VARCHAR" />
+    <result column="COST_CENTER_NAME" property="costCenterName" jdbcType="VARCHAR" />
+    <result column="USER_MAX_NUMBERS" property="userMaxNumbers" jdbcType="BIGINT" />
+    <result column="Concurrent_numbers" property="concurrentNumbers" jdbcType="BIGINT" />
+    <result column="apply_type" property="applyType" jdbcType="VARCHAR" />
+    <result column="use_type" property="useType" jdbcType="VARCHAR" />
+    <result column="apply_desc" property="applyDesc" jdbcType="VARCHAR" />
+    <result column="IS_PROJECT" property="isProject" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ORDER_DETAIL_ID, COST_CENTER_CODE, COST_CENTER_NAME, USER_MAX_NUMBERS, Concurrent_numbers, 
+    apply_type, use_type, apply_desc, IS_PROJECT
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.OrderAttributeCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from order_attribute
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_attribute
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from order_attribute
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderAttributeCriteria" >
+    delete from order_attribute
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.OrderAttribute" >
+    insert into order_attribute (ORDER_DETAIL_ID, COST_CENTER_CODE, COST_CENTER_NAME, 
+      USER_MAX_NUMBERS, Concurrent_numbers, apply_type, 
+      use_type, apply_desc, IS_PROJECT
+      )
+    values (#{orderDetailId,jdbcType=BIGINT}, #{costCenterCode,jdbcType=VARCHAR}, #{costCenterName,jdbcType=VARCHAR}, 
+      #{userMaxNumbers,jdbcType=BIGINT}, #{concurrentNumbers,jdbcType=BIGINT}, #{applyType,jdbcType=VARCHAR}, 
+      #{useType,jdbcType=VARCHAR}, #{applyDesc,jdbcType=VARCHAR}, #{isProject,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.OrderAttribute" >
+    insert into order_attribute
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderDetailId != null" >
+        ORDER_DETAIL_ID,
+      </if>
+      <if test="costCenterCode != null" >
+        COST_CENTER_CODE,
+      </if>
+      <if test="costCenterName != null" >
+        COST_CENTER_NAME,
+      </if>
+      <if test="userMaxNumbers != null" >
+        USER_MAX_NUMBERS,
+      </if>
+      <if test="concurrentNumbers != null" >
+        Concurrent_numbers,
+      </if>
+      <if test="applyType != null" >
+        apply_type,
+      </if>
+      <if test="useType != null" >
+        use_type,
+      </if>
+      <if test="applyDesc != null" >
+        apply_desc,
+      </if>
+      <if test="isProject != null" >
+        IS_PROJECT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderDetailId != null" >
+        #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="costCenterCode != null" >
+        #{costCenterCode,jdbcType=VARCHAR},
+      </if>
+      <if test="costCenterName != null" >
+        #{costCenterName,jdbcType=VARCHAR},
+      </if>
+      <if test="userMaxNumbers != null" >
+        #{userMaxNumbers,jdbcType=BIGINT},
+      </if>
+      <if test="concurrentNumbers != null" >
+        #{concurrentNumbers,jdbcType=BIGINT},
+      </if>
+      <if test="applyType != null" >
+        #{applyType,jdbcType=VARCHAR},
+      </if>
+      <if test="useType != null" >
+        #{useType,jdbcType=VARCHAR},
+      </if>
+      <if test="applyDesc != null" >
+        #{applyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isProject != null" >
+        #{isProject,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderAttributeCriteria" resultType="java.lang.Integer" >
+    select count(*) from order_attribute
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update order_attribute
+    <set >
+      <if test="record.orderDetailId != null" >
+        ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.costCenterCode != null" >
+        COST_CENTER_CODE = #{record.costCenterCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.costCenterName != null" >
+        COST_CENTER_NAME = #{record.costCenterName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userMaxNumbers != null" >
+        USER_MAX_NUMBERS = #{record.userMaxNumbers,jdbcType=BIGINT},
+      </if>
+      <if test="record.concurrentNumbers != null" >
+        Concurrent_numbers = #{record.concurrentNumbers,jdbcType=BIGINT},
+      </if>
+      <if test="record.applyType != null" >
+        apply_type = #{record.applyType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.useType != null" >
+        use_type = #{record.useType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyDesc != null" >
+        apply_desc = #{record.applyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isProject != null" >
+        IS_PROJECT = #{record.isProject,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update order_attribute
+    set ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      COST_CENTER_CODE = #{record.costCenterCode,jdbcType=VARCHAR},
+      COST_CENTER_NAME = #{record.costCenterName,jdbcType=VARCHAR},
+      USER_MAX_NUMBERS = #{record.userMaxNumbers,jdbcType=BIGINT},
+      Concurrent_numbers = #{record.concurrentNumbers,jdbcType=BIGINT},
+      apply_type = #{record.applyType,jdbcType=VARCHAR},
+      use_type = #{record.useType,jdbcType=VARCHAR},
+      apply_desc = #{record.applyDesc,jdbcType=VARCHAR},
+      IS_PROJECT = #{record.isProject,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.OrderAttribute" >
+    update order_attribute
+    <set >
+      <if test="costCenterCode != null" >
+        COST_CENTER_CODE = #{costCenterCode,jdbcType=VARCHAR},
+      </if>
+      <if test="costCenterName != null" >
+        COST_CENTER_NAME = #{costCenterName,jdbcType=VARCHAR},
+      </if>
+      <if test="userMaxNumbers != null" >
+        USER_MAX_NUMBERS = #{userMaxNumbers,jdbcType=BIGINT},
+      </if>
+      <if test="concurrentNumbers != null" >
+        Concurrent_numbers = #{concurrentNumbers,jdbcType=BIGINT},
+      </if>
+      <if test="applyType != null" >
+        apply_type = #{applyType,jdbcType=VARCHAR},
+      </if>
+      <if test="useType != null" >
+        use_type = #{useType,jdbcType=VARCHAR},
+      </if>
+      <if test="applyDesc != null" >
+        apply_desc = #{applyDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="isProject != null" >
+        IS_PROJECT = #{isProject,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.OrderAttribute" >
+    update order_attribute
+    set COST_CENTER_CODE = #{costCenterCode,jdbcType=VARCHAR},
+      COST_CENTER_NAME = #{costCenterName,jdbcType=VARCHAR},
+      USER_MAX_NUMBERS = #{userMaxNumbers,jdbcType=BIGINT},
+      Concurrent_numbers = #{concurrentNumbers,jdbcType=BIGINT},
+      apply_type = #{applyType,jdbcType=VARCHAR},
+      use_type = #{useType,jdbcType=VARCHAR},
+      apply_desc = #{applyDesc,jdbcType=VARCHAR},
+      IS_PROJECT = #{isProject,jdbcType=VARCHAR}
+    where ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT}
+  </update>
+</mapper>

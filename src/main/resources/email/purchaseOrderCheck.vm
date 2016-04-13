@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+    <!-- Site CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://static.bootcss.com/www/assets/css/site.min.css?v5" rel="stylesheet">
+<style>
+.activeBtn{margin-left:215px;width:162px; height:40px; background:rgb(37,156,220); text-align:center; line-height:40px; font-size:20px; color:#fff; float:left; border-radius:20px;}
+.dg_message{ width:860px; float:left;}
+.dg_message ul .move{ float:right;}
+.zk_mail{ width:811px; float:left; }
+.zk_mail_A{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_a.png) no-repeat; height:76px; text-align:center; font-size:24px; color:#fff; line-height:106px;}
+.zk_mail_B{ width:810px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_b.png) repeat-y;}
+.ul-head{ width:810px; float:left; border-bottom:none;margin-top: 20px;}
+/*.zk_mail_B ul li span{ color:#e72b4f; font-size:18px;}*/
+/*.zk_mail_B ul .activeLink{width:680px; float:left; }*/
+.zk_mail_C{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_c.png) no-repeat; height:51px;}
+.zk_mail_C ul{ width:810px; float:left;border-bottom:none; margin-top:0px;}
+.zk_mail_C ul li{ float:left; line-height:45px; font-size:14px; list-style-type:none;}
+.txt2,.txt4{color:#999}
+.welcome{margin-bottom:20px;}
+.txt1,.txt3{text-align: center;margin-bottom: 10px;}
+.txt2,.txt3,.txt4{text-align:center;font-size:14px;}
+.txt3 a:hover{color:#23527C;}
+.install{width: 123px;height: 37px;background: #179ADE;color: #fff;border-radius: 20px;border: 0 none;margin-left: 343px;margin-bottom: 10px;}
+.txt2,.txt4{margin-bottom: 10px;}
+.activeLink{text-align: center;font-size: 12px;color: rgb(139,202,241);margin-left: -26px;}
+.line{width: 90%;height: 1px;border-top:1px solid #DDDDDD;margin: 0 auto;margin-bottom: 10px;}
+.info-tittle{color: #179ADE;font-size: 17px;font-weight: bold;clear: both;margin-left: 36px;}
+.info-content1,.info-content2{width: 372px;margin-bottom: 20px;height: 300px;}
+.info-content1{position: absolute;left: 60px;}
+.info-content2{position: absolute;left: 370px;}
+
+.info-content1 li,.info-content2 li{list-style: none;margin-bottom: 15px;}
+.info-content1 li span,.info-content2 li span{font-size: 16px;}
+.gray{color: #9A9A9A;}
+.v-type{margin-left: 93px;}
+.cpu{margin-left: 140px;}
+.neicun{margin-left: 143px;}
+.dataNum{margin-left: 95px;}
+.common-mar{margin-left: 60px;}
+.look{width: 123px;height: 37px;background: #179ade;color: #fff;border-radius:20px;border: 0 none;margin-left: 344px;font-size: 15px;}
+.zk_mail_C li{line-height: 45px;list-style: none;float: left;margin-left: 100px;font-size: 15px;color: #777;}
+.message{text-align: center; font-size: 16px;margin-bottom:10px; width:722px; margin-left:65px;}
+.message span{ color:#e72b4f; font-size:18px;}
+</style>
+</head>
+<body>
+<div class="dg_message">
+	<ul>
+		<div class="zk_mail">
+			<div class="zk_mail_A">审核结果通知</div>
+			<div class="zk_mail_B">
+				<ul style="list-style:none;padding:0px;color: #707070;" class="ul-head">
+					<li class="welcome" style="font-weight:bold;font-size:16px;margin-left:36px;">亲爱的$!{email},您好：</li>
+                    <li class="message" style="font-weight:bold;font-size: 16px;" >$!{message}</li>
+                    
+                    <li style=" margin-left:95px; margin-bottom:10px;font-size:14px;">产品实例ID：<span>$!{ServerId}</li>
+                    <li style="margin-left:95px; margin-bottom:10px ;font-size:14px;">账户PID：<span>$!{pid}</li>
+                    <li style="margin-left:95px; margin-bottom:10px; font-size:14px;">SDK认证地址：<span>$!{SdkUrl}</li>
+                    <li style="margin-bottom:10px">
+                    	<a href="$!{url}"><button class="look">查看</button></a>
+                    </li>
+                    <li style="text-align:center;margin-bottom:10px; font-size:12px; color: #CCC;">$!{error}</li>
+                    <li style="text-align:center;margin-bottom:10px;color:rgb(139,202,241);font-size:12px;">$!{urlHtml}</li>
+				</ul>
+				
+			<ul class="zk_mail_C">
+				<li style="float:left; margin-left:10px; width:250px;">联系人:$!{CONTACTS_NAME}</li>
+				
+				<li  style=" float:left; margin-left:255px; width:250px">邮  箱:$!{CONTACTS_EMAIL}</li>
+			</ul>
+		</div>
+</div>								
+</body>
+</html>

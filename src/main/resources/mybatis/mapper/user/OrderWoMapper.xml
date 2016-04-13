@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.OrderWoMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.OrderWo" >
+    <id column="ORDER_WO_ID" property="orderWoId" jdbcType="BIGINT" />
+    <result column="ORDER_DETAIL_ID" property="orderDetailId" jdbcType="BIGINT" />
+    <result column="WF_TASK_ID" property="wfTaskId" jdbcType="VARCHAR" />
+    <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+    <result column="OPERATE_ID" property="operateId" jdbcType="VARCHAR" />
+    <result column="WO_CREATE_DATE" property="woCreateDate" jdbcType="TIMESTAMP" />
+    <result column="WO_STATUS" property="woStatus" jdbcType="VARCHAR" />
+    <result column="WO_DESC" property="woDesc" jdbcType="VARCHAR" />
+    <result column="WO_DATE" property="woDate" jdbcType="TIMESTAMP" />
+    <result column="DISPLAY_FLAG" property="displayFlag" jdbcType="VARCHAR" />
+    <result column="WO_RESULT" property="woResult" jdbcType="VARCHAR" />
+    <result column="RECEIPT_URL" property="receiptUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ORDER_WO_ID, ORDER_DETAIL_ID, WF_TASK_ID, ROLE_ID, OPERATE_ID, WO_CREATE_DATE, WO_STATUS, 
+    WO_DESC, WO_DATE, DISPLAY_FLAG, WO_RESULT, RECEIPT_URL
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.OrderWoCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from order_wo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_wo
+    where ORDER_WO_ID = #{orderWoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from order_wo
+    where ORDER_WO_ID = #{orderWoId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderWoCriteria" >
+    delete from order_wo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.OrderWo" >
+     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="orderWoId">
+		SELECT LAST_INSERT_ID() AS orderWoId
+	</selectKey>
+    insert into order_wo (ORDER_WO_ID, ORDER_DETAIL_ID, WF_TASK_ID, 
+      ROLE_ID, OPERATE_ID, WO_CREATE_DATE, 
+      WO_STATUS, WO_DESC, WO_DATE, 
+      DISPLAY_FLAG, WO_RESULT, RECEIPT_URL
+      )
+    values (#{orderWoId,jdbcType=BIGINT}, #{orderDetailId,jdbcType=BIGINT}, #{wfTaskId,jdbcType=VARCHAR}, 
+      #{roleId,jdbcType=VARCHAR}, #{operateId,jdbcType=VARCHAR}, #{woCreateDate,jdbcType=TIMESTAMP}, 
+      #{woStatus,jdbcType=VARCHAR}, #{woDesc,jdbcType=VARCHAR}, #{woDate,jdbcType=TIMESTAMP}, 
+      #{displayFlag,jdbcType=VARCHAR}, #{woResult,jdbcType=VARCHAR}, #{receiptUrl,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.OrderWo" >
+    insert into order_wo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderWoId != null" >
+        ORDER_WO_ID,
+      </if>
+      <if test="orderDetailId != null" >
+        ORDER_DETAIL_ID,
+      </if>
+      <if test="wfTaskId != null" >
+        WF_TASK_ID,
+      </if>
+      <if test="roleId != null" >
+        ROLE_ID,
+      </if>
+      <if test="operateId != null" >
+        OPERATE_ID,
+      </if>
+      <if test="woCreateDate != null" >
+        WO_CREATE_DATE,
+      </if>
+      <if test="woStatus != null" >
+        WO_STATUS,
+      </if>
+      <if test="woDesc != null" >
+        WO_DESC,
+      </if>
+      <if test="woDate != null" >
+        WO_DATE,
+      </if>
+      <if test="displayFlag != null" >
+        DISPLAY_FLAG,
+      </if>
+      <if test="woResult != null" >
+        WO_RESULT,
+      </if>
+      <if test="receiptUrl != null" >
+        RECEIPT_URL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderWoId != null" >
+        #{orderWoId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDetailId != null" >
+        #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="wfTaskId != null" >
+        #{wfTaskId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="operateId != null" >
+        #{operateId,jdbcType=VARCHAR},
+      </if>
+      <if test="woCreateDate != null" >
+        #{woCreateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="woStatus != null" >
+        #{woStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="woDesc != null" >
+        #{woDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="woDate != null" >
+        #{woDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="displayFlag != null" >
+        #{displayFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="woResult != null" >
+        #{woResult,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptUrl != null" >
+        #{receiptUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.OrderWoCriteria" resultType="java.lang.Integer" >
+    select count(*) from order_wo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update order_wo
+    <set >
+      <if test="record.orderWoId != null" >
+        ORDER_WO_ID = #{record.orderWoId,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderDetailId != null" >
+        ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.wfTaskId != null" >
+        WF_TASK_ID = #{record.wfTaskId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.roleId != null" >
+        ROLE_ID = #{record.roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operateId != null" >
+        OPERATE_ID = #{record.operateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.woCreateDate != null" >
+        WO_CREATE_DATE = #{record.woCreateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.woStatus != null" >
+        WO_STATUS = #{record.woStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.woDesc != null" >
+        WO_DESC = #{record.woDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.woDate != null" >
+        WO_DATE = #{record.woDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.displayFlag != null" >
+        DISPLAY_FLAG = #{record.displayFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.woResult != null" >
+        WO_RESULT = #{record.woResult,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receiptUrl != null" >
+        RECEIPT_URL = #{record.receiptUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update order_wo
+    set ORDER_WO_ID = #{record.orderWoId,jdbcType=BIGINT},
+      ORDER_DETAIL_ID = #{record.orderDetailId,jdbcType=BIGINT},
+      WF_TASK_ID = #{record.wfTaskId,jdbcType=VARCHAR},
+      ROLE_ID = #{record.roleId,jdbcType=VARCHAR},
+      OPERATE_ID = #{record.operateId,jdbcType=VARCHAR},
+      WO_CREATE_DATE = #{record.woCreateDate,jdbcType=TIMESTAMP},
+      WO_STATUS = #{record.woStatus,jdbcType=VARCHAR},
+      WO_DESC = #{record.woDesc,jdbcType=VARCHAR},
+      WO_DATE = #{record.woDate,jdbcType=TIMESTAMP},
+      DISPLAY_FLAG = #{record.displayFlag,jdbcType=VARCHAR},
+      WO_RESULT = #{record.woResult,jdbcType=VARCHAR},
+      RECEIPT_URL = #{record.receiptUrl,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.OrderWo" >
+    update order_wo
+    <set >
+      <if test="orderDetailId != null" >
+        ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="wfTaskId != null" >
+        WF_TASK_ID = #{wfTaskId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        ROLE_ID = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="operateId != null" >
+        OPERATE_ID = #{operateId,jdbcType=VARCHAR},
+      </if>
+      <if test="woCreateDate != null" >
+        WO_CREATE_DATE = #{woCreateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="woStatus != null" >
+        WO_STATUS = #{woStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="woDesc != null" >
+        WO_DESC = #{woDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="woDate != null" >
+        WO_DATE = #{woDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="displayFlag != null" >
+        DISPLAY_FLAG = #{displayFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="woResult != null" >
+        WO_RESULT = #{woResult,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptUrl != null" >
+        RECEIPT_URL = #{receiptUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ORDER_WO_ID = #{orderWoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.OrderWo" >
+    update order_wo
+    set ORDER_DETAIL_ID = #{orderDetailId,jdbcType=BIGINT},
+      WF_TASK_ID = #{wfTaskId,jdbcType=VARCHAR},
+      ROLE_ID = #{roleId,jdbcType=VARCHAR},
+      OPERATE_ID = #{operateId,jdbcType=VARCHAR},
+      WO_CREATE_DATE = #{woCreateDate,jdbcType=TIMESTAMP},
+      WO_STATUS = #{woStatus,jdbcType=VARCHAR},
+      WO_DESC = #{woDesc,jdbcType=VARCHAR},
+      WO_DATE = #{woDate,jdbcType=TIMESTAMP},
+      DISPLAY_FLAG = #{displayFlag,jdbcType=VARCHAR},
+      WO_RESULT = #{woResult,jdbcType=VARCHAR},
+      RECEIPT_URL = #{receiptUrl,jdbcType=VARCHAR}
+    where ORDER_WO_ID = #{orderWoId,jdbcType=BIGINT}
+  </update>
+</mapper>

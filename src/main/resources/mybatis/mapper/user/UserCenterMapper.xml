@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.UserCenterMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.UserCenter" >
+    <id column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="USER_ORG_NAME" property="userOrgName" jdbcType="VARCHAR" />
+    <result column="USER_EMAIL" property="userEmail" jdbcType="VARCHAR" />
+    <result column="USER_PHONE_NUM" property="userPhoneNum" jdbcType="VARCHAR" />
+    <result column="USER_STATE" property="userState" jdbcType="VARCHAR" />
+    <result column="USER_REGISTER_TIME" property="userRegisterTime" jdbcType="TIMESTAMP" />
+    <result column="USER_ACTIVE_TIME" property="userActiveTime" jdbcType="TIMESTAMP" />
+    <result column="USER_CANCEL_TIME" property="userCancelTime" jdbcType="TIMESTAMP" />
+    <result column="USER_INSIDE_TAG" property="userInsideTag" jdbcType="VARCHAR" />
+    <result column="PARTNER_TYPE" property="partnerType" jdbcType="VARCHAR" />
+    <result column="PARTNER_ACCOUNT" property="partnerAccount" jdbcType="VARCHAR" />
+    <result column="PID" property="pid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    USER_ID, USER_ORG_NAME, USER_EMAIL, USER_PHONE_NUM, USER_STATE, USER_REGISTER_TIME, 
+    USER_ACTIVE_TIME, USER_CANCEL_TIME, USER_INSIDE_TAG, PARTNER_TYPE, PARTNER_ACCOUNT, 
+    PID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.UserCenterCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_center
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_center
+    where USER_ID = #{userId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from user_center
+    where USER_ID = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.UserCenterCriteria" >
+    delete from user_center
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.UserCenter" >
+    insert into user_center (USER_ID, USER_ORG_NAME, USER_EMAIL, 
+      USER_PHONE_NUM, USER_STATE, USER_REGISTER_TIME, 
+      USER_ACTIVE_TIME, USER_CANCEL_TIME, USER_INSIDE_TAG, 
+      PARTNER_TYPE, PARTNER_ACCOUNT, PID
+      )
+    values (#{userId,jdbcType=VARCHAR}, #{userOrgName,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, 
+      #{userPhoneNum,jdbcType=VARCHAR}, #{userState,jdbcType=VARCHAR}, #{userRegisterTime,jdbcType=TIMESTAMP}, 
+      #{userActiveTime,jdbcType=TIMESTAMP}, #{userCancelTime,jdbcType=TIMESTAMP}, #{userInsideTag,jdbcType=VARCHAR}, 
+      #{partnerType,jdbcType=VARCHAR}, #{partnerAccount,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.UserCenter" >
+    insert into user_center
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="userOrgName != null" >
+        USER_ORG_NAME,
+      </if>
+      <if test="userEmail != null" >
+        USER_EMAIL,
+      </if>
+      <if test="userPhoneNum != null" >
+        USER_PHONE_NUM,
+      </if>
+      <if test="userState != null" >
+        USER_STATE,
+      </if>
+      <if test="userRegisterTime != null" >
+        USER_REGISTER_TIME,
+      </if>
+      <if test="userActiveTime != null" >
+        USER_ACTIVE_TIME,
+      </if>
+      <if test="userCancelTime != null" >
+        USER_CANCEL_TIME,
+      </if>
+      <if test="userInsideTag != null" >
+        USER_INSIDE_TAG,
+      </if>
+      <if test="partnerType != null" >
+        PARTNER_TYPE,
+      </if>
+      <if test="partnerAccount != null" >
+        PARTNER_ACCOUNT,
+      </if>
+      <if test="pid != null" >
+        PID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userOrgName != null" >
+        #{userOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userEmail != null" >
+        #{userEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhoneNum != null" >
+        #{userPhoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="userState != null" >
+        #{userState,jdbcType=VARCHAR},
+      </if>
+      <if test="userRegisterTime != null" >
+        #{userRegisterTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userActiveTime != null" >
+        #{userActiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userCancelTime != null" >
+        #{userCancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userInsideTag != null" >
+        #{userInsideTag,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerType != null" >
+        #{partnerType,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerAccount != null" >
+        #{partnerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.UserCenterCriteria" resultType="java.lang.Integer" >
+    select count(*) from user_center
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_center
+    <set >
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userOrgName != null" >
+        USER_ORG_NAME = #{record.userOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userEmail != null" >
+        USER_EMAIL = #{record.userEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userPhoneNum != null" >
+        USER_PHONE_NUM = #{record.userPhoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userState != null" >
+        USER_STATE = #{record.userState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userRegisterTime != null" >
+        USER_REGISTER_TIME = #{record.userRegisterTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userActiveTime != null" >
+        USER_ACTIVE_TIME = #{record.userActiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userCancelTime != null" >
+        USER_CANCEL_TIME = #{record.userCancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userInsideTag != null" >
+        USER_INSIDE_TAG = #{record.userInsideTag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.partnerType != null" >
+        PARTNER_TYPE = #{record.partnerType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.partnerAccount != null" >
+        PARTNER_ACCOUNT = #{record.partnerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pid != null" >
+        PID = #{record.pid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_center
+    set USER_ID = #{record.userId,jdbcType=VARCHAR},
+      USER_ORG_NAME = #{record.userOrgName,jdbcType=VARCHAR},
+      USER_EMAIL = #{record.userEmail,jdbcType=VARCHAR},
+      USER_PHONE_NUM = #{record.userPhoneNum,jdbcType=VARCHAR},
+      USER_STATE = #{record.userState,jdbcType=VARCHAR},
+      USER_REGISTER_TIME = #{record.userRegisterTime,jdbcType=TIMESTAMP},
+      USER_ACTIVE_TIME = #{record.userActiveTime,jdbcType=TIMESTAMP},
+      USER_CANCEL_TIME = #{record.userCancelTime,jdbcType=TIMESTAMP},
+      USER_INSIDE_TAG = #{record.userInsideTag,jdbcType=VARCHAR},
+      PARTNER_TYPE = #{record.partnerType,jdbcType=VARCHAR},
+      PARTNER_ACCOUNT = #{record.partnerAccount,jdbcType=VARCHAR},
+      PID = #{record.pid,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.UserCenter" >
+    update user_center
+    <set >
+      <if test="userOrgName != null" >
+        USER_ORG_NAME = #{userOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userEmail != null" >
+        USER_EMAIL = #{userEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhoneNum != null" >
+        USER_PHONE_NUM = #{userPhoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="userState != null" >
+        USER_STATE = #{userState,jdbcType=VARCHAR},
+      </if>
+      <if test="userRegisterTime != null" >
+        USER_REGISTER_TIME = #{userRegisterTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userActiveTime != null" >
+        USER_ACTIVE_TIME = #{userActiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userCancelTime != null" >
+        USER_CANCEL_TIME = #{userCancelTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userInsideTag != null" >
+        USER_INSIDE_TAG = #{userInsideTag,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerType != null" >
+        PARTNER_TYPE = #{partnerType,jdbcType=VARCHAR},
+      </if>
+      <if test="partnerAccount != null" >
+        PARTNER_ACCOUNT = #{partnerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        PID = #{pid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where USER_ID = #{userId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.UserCenter" >
+    update user_center
+    set USER_ORG_NAME = #{userOrgName,jdbcType=VARCHAR},
+      USER_EMAIL = #{userEmail,jdbcType=VARCHAR},
+      USER_PHONE_NUM = #{userPhoneNum,jdbcType=VARCHAR},
+      USER_STATE = #{userState,jdbcType=VARCHAR},
+      USER_REGISTER_TIME = #{userRegisterTime,jdbcType=TIMESTAMP},
+      USER_ACTIVE_TIME = #{userActiveTime,jdbcType=TIMESTAMP},
+      USER_CANCEL_TIME = #{userCancelTime,jdbcType=TIMESTAMP},
+      USER_INSIDE_TAG = #{userInsideTag,jdbcType=VARCHAR},
+      PARTNER_TYPE = #{partnerType,jdbcType=VARCHAR},
+      PARTNER_ACCOUNT = #{partnerAccount,jdbcType=VARCHAR},
+      PID = #{pid,jdbcType=VARCHAR}
+    where USER_ID = #{userId,jdbcType=VARCHAR}
+  </update>
+</mapper>

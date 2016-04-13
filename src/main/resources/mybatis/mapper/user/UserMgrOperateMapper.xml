@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.UserMgrOperateMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.UserMgrOperate" >
+    <id column="USER_OPERATE_ID" property="userOperateId" jdbcType="BIGINT" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="USER_PROD_TYPE" property="userProdType" jdbcType="VARCHAR" />
+    <result column="USER_PROD_ID" property="userProdId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_ID" property="userServId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_IPAAS_ID" property="userServIpaasId" jdbcType="VARCHAR" />
+    <result column="USER_PROD_PARAM" property="userProdParam" jdbcType="VARCHAR" />
+    <result column="USER_PROD_BYNAME" property="userProdByname" jdbcType="VARCHAR" />
+    <result column="USER_OPERATE_ACTION" property="userOperateAction" jdbcType="VARCHAR" />
+    <result column="USER_OPERATE_DATE" property="userOperateDate" jdbcType="TIMESTAMP" />
+    <result column="USER_UPDATE_BEFORE" property="userUpdateBefore" jdbcType="VARCHAR" />
+    <result column="USER_UPDATE_AFTER" property="userUpdateAfter" jdbcType="VARCHAR" />
+    <result column="USER_OPERATE_RESULT" property="userOperateResult" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    USER_OPERATE_ID, USER_ID, USER_PROD_TYPE, USER_PROD_ID, USER_SERV_ID, USER_SERV_IPAAS_ID, 
+    USER_PROD_PARAM, USER_PROD_BYNAME, USER_OPERATE_ACTION, USER_OPERATE_DATE, USER_UPDATE_BEFORE, 
+    USER_UPDATE_AFTER, USER_OPERATE_RESULT
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperateCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_mgr_operate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_mgr_operate
+    where USER_OPERATE_ID = #{userOperateId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from user_mgr_operate
+    where USER_OPERATE_ID = #{userOperateId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperateCriteria" >
+    delete from user_mgr_operate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperate" >
+    insert into user_mgr_operate (USER_OPERATE_ID, USER_ID, USER_PROD_TYPE, 
+      USER_PROD_ID, USER_SERV_ID, USER_SERV_IPAAS_ID, 
+      USER_PROD_PARAM, USER_PROD_BYNAME, USER_OPERATE_ACTION, 
+      USER_OPERATE_DATE, USER_UPDATE_BEFORE, USER_UPDATE_AFTER, 
+      USER_OPERATE_RESULT)
+    values (#{userOperateId,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{userProdType,jdbcType=VARCHAR}, 
+      #{userProdId,jdbcType=VARCHAR}, #{userServId,jdbcType=VARCHAR}, #{userServIpaasId,jdbcType=VARCHAR}, 
+      #{userProdParam,jdbcType=VARCHAR}, #{userProdByname,jdbcType=VARCHAR}, #{userOperateAction,jdbcType=VARCHAR}, 
+      #{userOperateDate,jdbcType=TIMESTAMP}, #{userUpdateBefore,jdbcType=VARCHAR}, #{userUpdateAfter,jdbcType=VARCHAR}, 
+      #{userOperateResult,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperate" >
+    insert into user_mgr_operate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userOperateId != null" >
+        USER_OPERATE_ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="userProdType != null" >
+        USER_PROD_TYPE,
+      </if>
+      <if test="userProdId != null" >
+        USER_PROD_ID,
+      </if>
+      <if test="userServId != null" >
+        USER_SERV_ID,
+      </if>
+      <if test="userServIpaasId != null" >
+        USER_SERV_IPAAS_ID,
+      </if>
+      <if test="userProdParam != null" >
+        USER_PROD_PARAM,
+      </if>
+      <if test="userProdByname != null" >
+        USER_PROD_BYNAME,
+      </if>
+      <if test="userOperateAction != null" >
+        USER_OPERATE_ACTION,
+      </if>
+      <if test="userOperateDate != null" >
+        USER_OPERATE_DATE,
+      </if>
+      <if test="userUpdateBefore != null" >
+        USER_UPDATE_BEFORE,
+      </if>
+      <if test="userUpdateAfter != null" >
+        USER_UPDATE_AFTER,
+      </if>
+      <if test="userOperateResult != null" >
+        USER_OPERATE_RESULT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userOperateId != null" >
+        #{userOperateId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdType != null" >
+        #{userProdType,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdId != null" >
+        #{userProdId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServId != null" >
+        #{userServId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasId != null" >
+        #{userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdParam != null" >
+        #{userProdParam,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdByname != null" >
+        #{userProdByname,jdbcType=VARCHAR},
+      </if>
+      <if test="userOperateAction != null" >
+        #{userOperateAction,jdbcType=VARCHAR},
+      </if>
+      <if test="userOperateDate != null" >
+        #{userOperateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userUpdateBefore != null" >
+        #{userUpdateBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="userUpdateAfter != null" >
+        #{userUpdateAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="userOperateResult != null" >
+        #{userOperateResult,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperateCriteria" resultType="java.lang.Integer" >
+    select count(*) from user_mgr_operate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_mgr_operate
+    <set >
+      <if test="record.userOperateId != null" >
+        USER_OPERATE_ID = #{record.userOperateId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userProdType != null" >
+        USER_PROD_TYPE = #{record.userProdType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userProdId != null" >
+        USER_PROD_ID = #{record.userProdId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServId != null" >
+        USER_SERV_ID = #{record.userServId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServIpaasId != null" >
+        USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userProdParam != null" >
+        USER_PROD_PARAM = #{record.userProdParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userProdByname != null" >
+        USER_PROD_BYNAME = #{record.userProdByname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userOperateAction != null" >
+        USER_OPERATE_ACTION = #{record.userOperateAction,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userOperateDate != null" >
+        USER_OPERATE_DATE = #{record.userOperateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userUpdateBefore != null" >
+        USER_UPDATE_BEFORE = #{record.userUpdateBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userUpdateAfter != null" >
+        USER_UPDATE_AFTER = #{record.userUpdateAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userOperateResult != null" >
+        USER_OPERATE_RESULT = #{record.userOperateResult,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_mgr_operate
+    set USER_OPERATE_ID = #{record.userOperateId,jdbcType=BIGINT},
+      USER_ID = #{record.userId,jdbcType=VARCHAR},
+      USER_PROD_TYPE = #{record.userProdType,jdbcType=VARCHAR},
+      USER_PROD_ID = #{record.userProdId,jdbcType=VARCHAR},
+      USER_SERV_ID = #{record.userServId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      USER_PROD_PARAM = #{record.userProdParam,jdbcType=VARCHAR},
+      USER_PROD_BYNAME = #{record.userProdByname,jdbcType=VARCHAR},
+      USER_OPERATE_ACTION = #{record.userOperateAction,jdbcType=VARCHAR},
+      USER_OPERATE_DATE = #{record.userOperateDate,jdbcType=TIMESTAMP},
+      USER_UPDATE_BEFORE = #{record.userUpdateBefore,jdbcType=VARCHAR},
+      USER_UPDATE_AFTER = #{record.userUpdateAfter,jdbcType=VARCHAR},
+      USER_OPERATE_RESULT = #{record.userOperateResult,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperate" >
+    update user_mgr_operate
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdType != null" >
+        USER_PROD_TYPE = #{userProdType,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdId != null" >
+        USER_PROD_ID = #{userProdId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServId != null" >
+        USER_SERV_ID = #{userServId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasId != null" >
+        USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdParam != null" >
+        USER_PROD_PARAM = #{userProdParam,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdByname != null" >
+        USER_PROD_BYNAME = #{userProdByname,jdbcType=VARCHAR},
+      </if>
+      <if test="userOperateAction != null" >
+        USER_OPERATE_ACTION = #{userOperateAction,jdbcType=VARCHAR},
+      </if>
+      <if test="userOperateDate != null" >
+        USER_OPERATE_DATE = #{userOperateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userUpdateBefore != null" >
+        USER_UPDATE_BEFORE = #{userUpdateBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="userUpdateAfter != null" >
+        USER_UPDATE_AFTER = #{userUpdateAfter,jdbcType=VARCHAR},
+      </if>
+      <if test="userOperateResult != null" >
+        USER_OPERATE_RESULT = #{userOperateResult,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where USER_OPERATE_ID = #{userOperateId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.UserMgrOperate" >
+    update user_mgr_operate
+    set USER_ID = #{userId,jdbcType=VARCHAR},
+      USER_PROD_TYPE = #{userProdType,jdbcType=VARCHAR},
+      USER_PROD_ID = #{userProdId,jdbcType=VARCHAR},
+      USER_SERV_ID = #{userServId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      USER_PROD_PARAM = #{userProdParam,jdbcType=VARCHAR},
+      USER_PROD_BYNAME = #{userProdByname,jdbcType=VARCHAR},
+      USER_OPERATE_ACTION = #{userOperateAction,jdbcType=VARCHAR},
+      USER_OPERATE_DATE = #{userOperateDate,jdbcType=TIMESTAMP},
+      USER_UPDATE_BEFORE = #{userUpdateBefore,jdbcType=VARCHAR},
+      USER_UPDATE_AFTER = #{userUpdateAfter,jdbcType=VARCHAR},
+      USER_OPERATE_RESULT = #{userOperateResult,jdbcType=VARCHAR}
+    where USER_OPERATE_ID = #{userOperateId,jdbcType=BIGINT}
+  </update>
+</mapper>

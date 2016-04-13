@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+    <!-- Site CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://static.bootcss.com/www/assets/css/site.min.css?v5" rel="stylesheet">
+<style>
+.activeBtn{margin-left:215px;width:162px; height:40px; background:rgb(37,156,220); text-align:center; line-height:40px; font-size:20px; color:#fff; float:left; border-radius:20px;}
+.dg_message{ width:860px; float:left;}
+.dg_message ul .move{ float:right;}
+.zk_mail{ width:811px; float:left; }
+.zk_mail_A{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_a.png) no-repeat; height:76px; text-align:center; font-size:24px; color:#fff; line-height:106px;}
+.zk_mail_B{ width:810px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_b.png) repeat-y;height: 300px;}
+.ul-head{ width:810px; float:left; border-bottom:none;margin-top: 20px;}
+/*.zk_mail_B ul li span{ color:#e72b4f; font-size:18px;}*/
+/*.zk_mail_B ul .activeLink{width:680px; float:left; }*/
+.zk_mail_C{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_c.png) no-repeat; height:51px;}
+.zk_mail_C ul{ width:810px; float:left;border-bottom:none; margin-top:0px;}
+.zk_mail_C ul li{ float:left; line-height:45px; font-size:14px; list-style-type:none;}
+.txt2,.txt4{color:#999}
+.welcome{margin-bottom:20px;}
+.txt1,.txt3{text-align: center;margin-bottom: 10px;}
+.txt2,.txt3,.txt4{text-align:center;font-size:14px;}
+.txt3 a:hover{color:#23527C;}
+.install{width: 123px;height: 37px;background: #179ADE;color: #fff;border-radius: 20px;border: 0 none;margin-left: 343px;margin-bottom: 10px;}
+.txt2,.txt4{margin-bottom: 10px;}
+.activeLink{text-align: center;font-size: 12px;color: rgb(139,202,241);margin-left: -26px;}
+.line{width: 90%;height: 1px;border-top:1px solid #DDDDDD;margin: 0 auto;margin-bottom: 10px;}
+.info-tittle{color: #179ADE;font-size: 17px;font-weight: bold;clear: both;margin-left: 36px;}
+.info-content1,.info-content2{width: 372px;margin-bottom: 20px;height: 300px;}
+.info-content1{position: absolute;left: 60px;}
+.info-content2{position: absolute;left: 370px;}
+
+.info-content1 li,.info-content2 li{list-style: none;margin-bottom: 15px;}
+.info-content1 li span,.info-content2 li span{font-size: 16px;}
+.gray{color: #9A9A9A;}
+.v-type{margin-left: 93px;}
+.cpu{margin-left: 140px;}
+.neicun{margin-left: 143px;}
+.dataNum{margin-left: 95px;}
+.common-mar{margin-left: 60px;}
+</style>
+</head>
+<body>
+<div class="dg_message">
+	<ul>
+		<div class="zk_mail">
+			<div class="zk_mail_A">$!{title}</div>
+			<div class="zk_mail_B" style="height: 250px;">
+				<ul style="list-style:none;padding:0px;" class="ul-head">
+					<li class="welcome" style="font-size:16px;margin-left:36px;">亲$!{toAddress},您好!</li>
+                    <li class="nyr txt1" style="font-size: 16px;">$!{applyCant}$!{message}</li>
+                   	<li class="line"></li>
+				</ul>
+				<div class="info-tittle">集成方案</div>
+				<ul class="info-content1" style="margin-top:10px;height: 120px;">
+					<li>
+						<span class="gray common-mar">虚拟机类型：</span>
+						<span>$!{virtualType}</span>
+					</li>
+					<li>
+						<span class="gray common-mar">CPU：</span>
+						<span>$!{cpu}</span>
+					</li>					
+					<li>
+						<span class="gray common-mar">数据盘容量：</span>
+						<span>$!{virtualHard}G</span>
+					</li>
+				</ul>
+				<ul class="info-content2" style="margin-top:10px;height: 120px;">
+					<li>
+						<span class="gray common-mar">虚拟机数量：</span>
+						<span>$!{vmNumber}个</span>
+					</li>
+					<li>
+						<span class="gray common-mar">内存：</span>
+						<span>$!{virtualRam}</span>
+					</li>									
+				</ul>
+			</div>
+			<div class="zk_mail_B" style="height: 150px;">
+				<ul style="list-style:none;padding:0px;" class="ul-head">					
+                   	<li class="line"></li>
+				</ul>
+			<div class="info-tittle">网络资源</div>
+				<ul class="info-content1" style="margin-top:10px;height: 120px;">	
+					<li>
+						<span class="gray common-mar">链路类型：</span>
+						<span>$!{netType}</span>
+					</li>
+					<li>
+						<span class="gray common-mar">公网带宽：</span>
+						<span>$!{netBandW}M</span>
+					</li>				
+				</ul>
+				<ul class="info-content2" style="margin-top:10px;height: 120px;">	
+					<li>
+						<span class="gray common-mar">公网数量：</span>
+						<span>$!{netNum}</span>
+					</li>					
+				</ul>
+			</div>
+			</div>
+			<div class="zk_mail_C">
+			
+			</div>
+		</div>
+</div>								
+</body>
+</html>

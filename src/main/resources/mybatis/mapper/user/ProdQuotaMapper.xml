@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.ProdQuotaMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.ProdQuota" >
+    <result column="PROD_ID" property="prodId" jdbcType="INTEGER" />
+    <result column="USER_ORG_NAME" property="userOrgName" jdbcType="VARCHAR" />
+    <result column="CPU_QUOTA" property="cpuQuota" jdbcType="INTEGER" />
+    <result column="MEMORY_QUOTA" property="memoryQuota" jdbcType="INTEGER" />
+    <result column="DISK_SPACE_QUOTA" property="diskSpaceQuota" jdbcType="INTEGER" />
+    <result column="REMAIN_CPU_QUOTA" property="remainCpuQuota" jdbcType="INTEGER" />
+    <result column="REMAIN_MEMORY_QUOTA" property="remainMemoryQuota" jdbcType="INTEGER" />
+    <result column="REMAIN_DISK_SPACE_QUOTA" property="remainDiskSpaceQuota" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    PROD_ID, USER_ORG_NAME, CPU_QUOTA, MEMORY_QUOTA, DISK_SPACE_QUOTA, REMAIN_CPU_QUOTA, 
+    REMAIN_MEMORY_QUOTA, REMAIN_DISK_SPACE_QUOTA
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.ProdQuotaCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from prod_quota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.ProdQuotaCriteria" >
+    delete from prod_quota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.ProdQuota" >
+    insert into prod_quota (PROD_ID, USER_ORG_NAME, CPU_QUOTA, 
+      MEMORY_QUOTA, DISK_SPACE_QUOTA, REMAIN_CPU_QUOTA, 
+      REMAIN_MEMORY_QUOTA, REMAIN_DISK_SPACE_QUOTA
+      )
+    values (#{prodId,jdbcType=INTEGER}, #{userOrgName,jdbcType=VARCHAR}, #{cpuQuota,jdbcType=INTEGER}, 
+      #{memoryQuota,jdbcType=INTEGER}, #{diskSpaceQuota,jdbcType=INTEGER}, #{remainCpuQuota,jdbcType=INTEGER}, 
+      #{remainMemoryQuota,jdbcType=INTEGER}, #{remainDiskSpaceQuota,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.ProdQuota" >
+    insert into prod_quota
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="prodId != null" >
+        PROD_ID,
+      </if>
+      <if test="userOrgName != null" >
+        USER_ORG_NAME,
+      </if>
+      <if test="cpuQuota != null" >
+        CPU_QUOTA,
+      </if>
+      <if test="memoryQuota != null" >
+        MEMORY_QUOTA,
+      </if>
+      <if test="diskSpaceQuota != null" >
+        DISK_SPACE_QUOTA,
+      </if>
+      <if test="remainCpuQuota != null" >
+        REMAIN_CPU_QUOTA,
+      </if>
+      <if test="remainMemoryQuota != null" >
+        REMAIN_MEMORY_QUOTA,
+      </if>
+      <if test="remainDiskSpaceQuota != null" >
+        REMAIN_DISK_SPACE_QUOTA,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="prodId != null" >
+        #{prodId,jdbcType=INTEGER},
+      </if>
+      <if test="userOrgName != null" >
+        #{userOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuQuota != null" >
+        #{cpuQuota,jdbcType=INTEGER},
+      </if>
+      <if test="memoryQuota != null" >
+        #{memoryQuota,jdbcType=INTEGER},
+      </if>
+      <if test="diskSpaceQuota != null" >
+        #{diskSpaceQuota,jdbcType=INTEGER},
+      </if>
+      <if test="remainCpuQuota != null" >
+        #{remainCpuQuota,jdbcType=INTEGER},
+      </if>
+      <if test="remainMemoryQuota != null" >
+        #{remainMemoryQuota,jdbcType=INTEGER},
+      </if>
+      <if test="remainDiskSpaceQuota != null" >
+        #{remainDiskSpaceQuota,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.ProdQuotaCriteria" resultType="java.lang.Integer" >
+    select count(*) from prod_quota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update prod_quota
+    <set >
+      <if test="record.prodId != null" >
+        PROD_ID = #{record.prodId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userOrgName != null" >
+        USER_ORG_NAME = #{record.userOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cpuQuota != null" >
+        CPU_QUOTA = #{record.cpuQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.memoryQuota != null" >
+        MEMORY_QUOTA = #{record.memoryQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.diskSpaceQuota != null" >
+        DISK_SPACE_QUOTA = #{record.diskSpaceQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.remainCpuQuota != null" >
+        REMAIN_CPU_QUOTA = #{record.remainCpuQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.remainMemoryQuota != null" >
+        REMAIN_MEMORY_QUOTA = #{record.remainMemoryQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.remainDiskSpaceQuota != null" >
+        REMAIN_DISK_SPACE_QUOTA = #{record.remainDiskSpaceQuota,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update prod_quota
+    set PROD_ID = #{record.prodId,jdbcType=INTEGER},
+      USER_ORG_NAME = #{record.userOrgName,jdbcType=VARCHAR},
+      CPU_QUOTA = #{record.cpuQuota,jdbcType=INTEGER},
+      MEMORY_QUOTA = #{record.memoryQuota,jdbcType=INTEGER},
+      DISK_SPACE_QUOTA = #{record.diskSpaceQuota,jdbcType=INTEGER},
+      REMAIN_CPU_QUOTA = #{record.remainCpuQuota,jdbcType=INTEGER},
+      REMAIN_MEMORY_QUOTA = #{record.remainMemoryQuota,jdbcType=INTEGER},
+      REMAIN_DISK_SPACE_QUOTA = #{record.remainDiskSpaceQuota,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

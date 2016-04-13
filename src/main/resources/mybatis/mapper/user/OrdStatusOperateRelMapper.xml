@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.OrdStatusOperateRelMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.OrdStatusOperateRel" >
+    <id column="OPERATE_REL_ID" property="operateRelId" jdbcType="SMALLINT" />
+    <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="NT_ACCOUNT" property="ntAccount" jdbcType="VARCHAR" />
+    <result column="MAIL_GROUP" property="mailGroup" jdbcType="VARCHAR" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    OPERATE_REL_ID, ORDER_STATUS, NT_ACCOUNT, MAIL_GROUP, VALID_FLAG
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ord_status_operate_rel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_status_operate_rel
+    where OPERATE_REL_ID = #{operateRelId,jdbcType=SMALLINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from ord_status_operate_rel
+    where OPERATE_REL_ID = #{operateRelId,jdbcType=SMALLINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria" >
+    delete from ord_status_operate_rel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRel" >
+    insert into ord_status_operate_rel (OPERATE_REL_ID, ORDER_STATUS, NT_ACCOUNT, 
+      MAIL_GROUP, VALID_FLAG)
+    values (#{operateRelId,jdbcType=SMALLINT}, #{orderStatus,jdbcType=VARCHAR}, #{ntAccount,jdbcType=VARCHAR}, 
+      #{mailGroup,jdbcType=VARCHAR}, #{validFlag,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRel" >
+    insert into ord_status_operate_rel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operateRelId != null" >
+        OPERATE_REL_ID,
+      </if>
+      <if test="orderStatus != null" >
+        ORDER_STATUS,
+      </if>
+      <if test="ntAccount != null" >
+        NT_ACCOUNT,
+      </if>
+      <if test="mailGroup != null" >
+        MAIL_GROUP,
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operateRelId != null" >
+        #{operateRelId,jdbcType=SMALLINT},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="ntAccount != null" >
+        #{ntAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="mailGroup != null" >
+        #{mailGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="validFlag != null" >
+        #{validFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria" resultType="java.lang.Integer" >
+    select count(*) from ord_status_operate_rel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ord_status_operate_rel
+    <set >
+      <if test="record.operateRelId != null" >
+        OPERATE_REL_ID = #{record.operateRelId,jdbcType=SMALLINT},
+      </if>
+      <if test="record.orderStatus != null" >
+        ORDER_STATUS = #{record.orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ntAccount != null" >
+        NT_ACCOUNT = #{record.ntAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mailGroup != null" >
+        MAIL_GROUP = #{record.mailGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="record.validFlag != null" >
+        VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ord_status_operate_rel
+    set OPERATE_REL_ID = #{record.operateRelId,jdbcType=SMALLINT},
+      ORDER_STATUS = #{record.orderStatus,jdbcType=VARCHAR},
+      NT_ACCOUNT = #{record.ntAccount,jdbcType=VARCHAR},
+      MAIL_GROUP = #{record.mailGroup,jdbcType=VARCHAR},
+      VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRel" >
+    update ord_status_operate_rel
+    <set >
+      <if test="orderStatus != null" >
+        ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="ntAccount != null" >
+        NT_ACCOUNT = #{ntAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="mailGroup != null" >
+        MAIL_GROUP = #{mailGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where OPERATE_REL_ID = #{operateRelId,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.OrdStatusOperateRel" >
+    update ord_status_operate_rel
+    set ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      NT_ACCOUNT = #{ntAccount,jdbcType=VARCHAR},
+      MAIL_GROUP = #{mailGroup,jdbcType=VARCHAR},
+      VALID_FLAG = #{validFlag,jdbcType=VARCHAR}
+    where OPERATE_REL_ID = #{operateRelId,jdbcType=SMALLINT}
+  </update>
+</mapper>

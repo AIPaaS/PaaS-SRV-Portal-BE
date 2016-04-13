@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.ProdProductMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.ProdProduct" >
+    <id column="PROD_ID" property="prodId" jdbcType="SMALLINT" />
+    <result column="PROD_EN_SIMP" property="prodEnSimp" jdbcType="VARCHAR" />
+    <result column="PROD_TYPE" property="prodType" jdbcType="VARCHAR" />
+    <result column="PROD_CATEGORY" property="prodCategory" jdbcType="VARCHAR" />
+    <result column="PROD_NAME" property="prodName" jdbcType="VARCHAR" />
+    <result column="PROD_LOGOPIC_ID" property="prodLogopicId" jdbcType="VARCHAR" />
+    <result column="PROD_DESC" property="prodDesc" jdbcType="VARCHAR" />
+    <result column="PROD_VALID_FLAG" property="prodValidFlag" jdbcType="VARCHAR" />
+    <result column="PROD_SALE_FLAG" property="prodSaleFlag" jdbcType="VARCHAR" />
+    <result column="PROD_PARAM" property="prodParam" jdbcType="VARCHAR" />
+    <result column="PROD_OPEN_RESTFULL" property="prodOpenRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_START_RESTFULL" property="prodStartRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_STOP_RESTFULL" property="prodStopRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_MDYPWD_RESTFULL" property="prodMdypwdRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_FULLCLEAR_RESTFULL" property="prodFullclearRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_KEYCLEAR_RESTFULL" property="prodKeyclearRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_SELTEDKEY_RESTFULL" property="prodSeltedkeyRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_CANCLE_RESTFULL" property="prodCancleRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_USED_AMOUNT_RESTFULL" property="prodUsedAmountRestfull" jdbcType="VARCHAR" />
+    <result column="PROD_BIND_RESTFUL" property="prodBindRestful" jdbcType="VARCHAR" />
+    <result column="PROD_GETBOUND_RESTFUL" property="prodGetboundRestful" jdbcType="VARCHAR" />
+    <result column="PROD_GetBoundTableInfo_RESTFUL" property="prodGetboundtableinfoRestful" jdbcType="VARCHAR" />
+    <result column="PROD_UNBIND_RESTFUL" property="prodUnbindRestful" jdbcType="VARCHAR" />
+    <result column="PROD_FilterTable_RESTFUL" property="prodFiltertableRestful" jdbcType="VARCHAR" />
+    <result column="EXPANSE_CAPACITY_RESTFUL" property="expanseCapacityRestful" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    PROD_ID, PROD_EN_SIMP, PROD_TYPE, PROD_CATEGORY, PROD_NAME, PROD_LOGOPIC_ID, PROD_DESC, 
+    PROD_VALID_FLAG, PROD_SALE_FLAG, PROD_PARAM, PROD_OPEN_RESTFULL, PROD_START_RESTFULL, 
+    PROD_STOP_RESTFULL, PROD_MDYPWD_RESTFULL, PROD_FULLCLEAR_RESTFULL, PROD_KEYCLEAR_RESTFULL, 
+    PROD_SELTEDKEY_RESTFULL, PROD_CANCLE_RESTFULL, PROD_USED_AMOUNT_RESTFULL, PROD_BIND_RESTFUL, 
+    PROD_GETBOUND_RESTFUL, PROD_GetBoundTableInfo_RESTFUL, PROD_UNBIND_RESTFUL, PROD_FilterTable_RESTFUL, 
+    EXPANSE_CAPACITY_RESTFUL
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.ProdProductCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from prod_product
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from prod_product
+    where PROD_ID = #{prodId,jdbcType=SMALLINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from prod_product
+    where PROD_ID = #{prodId,jdbcType=SMALLINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.ProdProductCriteria" >
+    delete from prod_product
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.ProdProduct" >
+    insert into prod_product (PROD_ID, PROD_EN_SIMP, PROD_TYPE, 
+      PROD_CATEGORY, PROD_NAME, PROD_LOGOPIC_ID, 
+      PROD_DESC, PROD_VALID_FLAG, PROD_SALE_FLAG, 
+      PROD_PARAM, PROD_OPEN_RESTFULL, PROD_START_RESTFULL, 
+      PROD_STOP_RESTFULL, PROD_MDYPWD_RESTFULL, PROD_FULLCLEAR_RESTFULL, 
+      PROD_KEYCLEAR_RESTFULL, PROD_SELTEDKEY_RESTFULL, 
+      PROD_CANCLE_RESTFULL, PROD_USED_AMOUNT_RESTFULL, 
+      PROD_BIND_RESTFUL, PROD_GETBOUND_RESTFUL, PROD_GetBoundTableInfo_RESTFUL, 
+      PROD_UNBIND_RESTFUL, PROD_FilterTable_RESTFUL, 
+      EXPANSE_CAPACITY_RESTFUL)
+    values (#{prodId,jdbcType=SMALLINT}, #{prodEnSimp,jdbcType=VARCHAR}, #{prodType,jdbcType=VARCHAR}, 
+      #{prodCategory,jdbcType=VARCHAR}, #{prodName,jdbcType=VARCHAR}, #{prodLogopicId,jdbcType=VARCHAR}, 
+      #{prodDesc,jdbcType=VARCHAR}, #{prodValidFlag,jdbcType=VARCHAR}, #{prodSaleFlag,jdbcType=VARCHAR}, 
+      #{prodParam,jdbcType=VARCHAR}, #{prodOpenRestfull,jdbcType=VARCHAR}, #{prodStartRestfull,jdbcType=VARCHAR}, 
+      #{prodStopRestfull,jdbcType=VARCHAR}, #{prodMdypwdRestfull,jdbcType=VARCHAR}, #{prodFullclearRestfull,jdbcType=VARCHAR}, 
+      #{prodKeyclearRestfull,jdbcType=VARCHAR}, #{prodSeltedkeyRestfull,jdbcType=VARCHAR}, 
+      #{prodCancleRestfull,jdbcType=VARCHAR}, #{prodUsedAmountRestfull,jdbcType=VARCHAR}, 
+      #{prodBindRestful,jdbcType=VARCHAR}, #{prodGetboundRestful,jdbcType=VARCHAR}, #{prodGetboundtableinfoRestful,jdbcType=VARCHAR}, 
+      #{prodUnbindRestful,jdbcType=VARCHAR}, #{prodFiltertableRestful,jdbcType=VARCHAR}, 
+      #{expanseCapacityRestful,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.ProdProduct" >
+    insert into prod_product
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="prodId != null" >
+        PROD_ID,
+      </if>
+      <if test="prodEnSimp != null" >
+        PROD_EN_SIMP,
+      </if>
+      <if test="prodType != null" >
+        PROD_TYPE,
+      </if>
+      <if test="prodCategory != null" >
+        PROD_CATEGORY,
+      </if>
+      <if test="prodName != null" >
+        PROD_NAME,
+      </if>
+      <if test="prodLogopicId != null" >
+        PROD_LOGOPIC_ID,
+      </if>
+      <if test="prodDesc != null" >
+        PROD_DESC,
+      </if>
+      <if test="prodValidFlag != null" >
+        PROD_VALID_FLAG,
+      </if>
+      <if test="prodSaleFlag != null" >
+        PROD_SALE_FLAG,
+      </if>
+      <if test="prodParam != null" >
+        PROD_PARAM,
+      </if>
+      <if test="prodOpenRestfull != null" >
+        PROD_OPEN_RESTFULL,
+      </if>
+      <if test="prodStartRestfull != null" >
+        PROD_START_RESTFULL,
+      </if>
+      <if test="prodStopRestfull != null" >
+        PROD_STOP_RESTFULL,
+      </if>
+      <if test="prodMdypwdRestfull != null" >
+        PROD_MDYPWD_RESTFULL,
+      </if>
+      <if test="prodFullclearRestfull != null" >
+        PROD_FULLCLEAR_RESTFULL,
+      </if>
+      <if test="prodKeyclearRestfull != null" >
+        PROD_KEYCLEAR_RESTFULL,
+      </if>
+      <if test="prodSeltedkeyRestfull != null" >
+        PROD_SELTEDKEY_RESTFULL,
+      </if>
+      <if test="prodCancleRestfull != null" >
+        PROD_CANCLE_RESTFULL,
+      </if>
+      <if test="prodUsedAmountRestfull != null" >
+        PROD_USED_AMOUNT_RESTFULL,
+      </if>
+      <if test="prodBindRestful != null" >
+        PROD_BIND_RESTFUL,
+      </if>
+      <if test="prodGetboundRestful != null" >
+        PROD_GETBOUND_RESTFUL,
+      </if>
+      <if test="prodGetboundtableinfoRestful != null" >
+        PROD_GetBoundTableInfo_RESTFUL,
+      </if>
+      <if test="prodUnbindRestful != null" >
+        PROD_UNBIND_RESTFUL,
+      </if>
+      <if test="prodFiltertableRestful != null" >
+        PROD_FilterTable_RESTFUL,
+      </if>
+      <if test="expanseCapacityRestful != null" >
+        EXPANSE_CAPACITY_RESTFUL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="prodId != null" >
+        #{prodId,jdbcType=SMALLINT},
+      </if>
+      <if test="prodEnSimp != null" >
+        #{prodEnSimp,jdbcType=VARCHAR},
+      </if>
+      <if test="prodType != null" >
+        #{prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="prodCategory != null" >
+        #{prodCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="prodName != null" >
+        #{prodName,jdbcType=VARCHAR},
+      </if>
+      <if test="prodLogopicId != null" >
+        #{prodLogopicId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodDesc != null" >
+        #{prodDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="prodValidFlag != null" >
+        #{prodValidFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="prodSaleFlag != null" >
+        #{prodSaleFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParam != null" >
+        #{prodParam,jdbcType=VARCHAR},
+      </if>
+      <if test="prodOpenRestfull != null" >
+        #{prodOpenRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodStartRestfull != null" >
+        #{prodStartRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodStopRestfull != null" >
+        #{prodStopRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodMdypwdRestfull != null" >
+        #{prodMdypwdRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodFullclearRestfull != null" >
+        #{prodFullclearRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodKeyclearRestfull != null" >
+        #{prodKeyclearRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodSeltedkeyRestfull != null" >
+        #{prodSeltedkeyRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodCancleRestfull != null" >
+        #{prodCancleRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodUsedAmountRestfull != null" >
+        #{prodUsedAmountRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodBindRestful != null" >
+        #{prodBindRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodGetboundRestful != null" >
+        #{prodGetboundRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodGetboundtableinfoRestful != null" >
+        #{prodGetboundtableinfoRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodUnbindRestful != null" >
+        #{prodUnbindRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodFiltertableRestful != null" >
+        #{prodFiltertableRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="expanseCapacityRestful != null" >
+        #{expanseCapacityRestful,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.ProdProductCriteria" resultType="java.lang.Integer" >
+    select count(*) from prod_product
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update prod_product
+    <set >
+      <if test="record.prodId != null" >
+        PROD_ID = #{record.prodId,jdbcType=SMALLINT},
+      </if>
+      <if test="record.prodEnSimp != null" >
+        PROD_EN_SIMP = #{record.prodEnSimp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodType != null" >
+        PROD_TYPE = #{record.prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodCategory != null" >
+        PROD_CATEGORY = #{record.prodCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodName != null" >
+        PROD_NAME = #{record.prodName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodLogopicId != null" >
+        PROD_LOGOPIC_ID = #{record.prodLogopicId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodDesc != null" >
+        PROD_DESC = #{record.prodDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodValidFlag != null" >
+        PROD_VALID_FLAG = #{record.prodValidFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodSaleFlag != null" >
+        PROD_SALE_FLAG = #{record.prodSaleFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodParam != null" >
+        PROD_PARAM = #{record.prodParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodOpenRestfull != null" >
+        PROD_OPEN_RESTFULL = #{record.prodOpenRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodStartRestfull != null" >
+        PROD_START_RESTFULL = #{record.prodStartRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodStopRestfull != null" >
+        PROD_STOP_RESTFULL = #{record.prodStopRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodMdypwdRestfull != null" >
+        PROD_MDYPWD_RESTFULL = #{record.prodMdypwdRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodFullclearRestfull != null" >
+        PROD_FULLCLEAR_RESTFULL = #{record.prodFullclearRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodKeyclearRestfull != null" >
+        PROD_KEYCLEAR_RESTFULL = #{record.prodKeyclearRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodSeltedkeyRestfull != null" >
+        PROD_SELTEDKEY_RESTFULL = #{record.prodSeltedkeyRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodCancleRestfull != null" >
+        PROD_CANCLE_RESTFULL = #{record.prodCancleRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodUsedAmountRestfull != null" >
+        PROD_USED_AMOUNT_RESTFULL = #{record.prodUsedAmountRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodBindRestful != null" >
+        PROD_BIND_RESTFUL = #{record.prodBindRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodGetboundRestful != null" >
+        PROD_GETBOUND_RESTFUL = #{record.prodGetboundRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodGetboundtableinfoRestful != null" >
+        PROD_GetBoundTableInfo_RESTFUL = #{record.prodGetboundtableinfoRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodUnbindRestful != null" >
+        PROD_UNBIND_RESTFUL = #{record.prodUnbindRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodFiltertableRestful != null" >
+        PROD_FilterTable_RESTFUL = #{record.prodFiltertableRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="record.expanseCapacityRestful != null" >
+        EXPANSE_CAPACITY_RESTFUL = #{record.expanseCapacityRestful,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update prod_product
+    set PROD_ID = #{record.prodId,jdbcType=SMALLINT},
+      PROD_EN_SIMP = #{record.prodEnSimp,jdbcType=VARCHAR},
+      PROD_TYPE = #{record.prodType,jdbcType=VARCHAR},
+      PROD_CATEGORY = #{record.prodCategory,jdbcType=VARCHAR},
+      PROD_NAME = #{record.prodName,jdbcType=VARCHAR},
+      PROD_LOGOPIC_ID = #{record.prodLogopicId,jdbcType=VARCHAR},
+      PROD_DESC = #{record.prodDesc,jdbcType=VARCHAR},
+      PROD_VALID_FLAG = #{record.prodValidFlag,jdbcType=VARCHAR},
+      PROD_SALE_FLAG = #{record.prodSaleFlag,jdbcType=VARCHAR},
+      PROD_PARAM = #{record.prodParam,jdbcType=VARCHAR},
+      PROD_OPEN_RESTFULL = #{record.prodOpenRestfull,jdbcType=VARCHAR},
+      PROD_START_RESTFULL = #{record.prodStartRestfull,jdbcType=VARCHAR},
+      PROD_STOP_RESTFULL = #{record.prodStopRestfull,jdbcType=VARCHAR},
+      PROD_MDYPWD_RESTFULL = #{record.prodMdypwdRestfull,jdbcType=VARCHAR},
+      PROD_FULLCLEAR_RESTFULL = #{record.prodFullclearRestfull,jdbcType=VARCHAR},
+      PROD_KEYCLEAR_RESTFULL = #{record.prodKeyclearRestfull,jdbcType=VARCHAR},
+      PROD_SELTEDKEY_RESTFULL = #{record.prodSeltedkeyRestfull,jdbcType=VARCHAR},
+      PROD_CANCLE_RESTFULL = #{record.prodCancleRestfull,jdbcType=VARCHAR},
+      PROD_USED_AMOUNT_RESTFULL = #{record.prodUsedAmountRestfull,jdbcType=VARCHAR},
+      PROD_BIND_RESTFUL = #{record.prodBindRestful,jdbcType=VARCHAR},
+      PROD_GETBOUND_RESTFUL = #{record.prodGetboundRestful,jdbcType=VARCHAR},
+      PROD_GetBoundTableInfo_RESTFUL = #{record.prodGetboundtableinfoRestful,jdbcType=VARCHAR},
+      PROD_UNBIND_RESTFUL = #{record.prodUnbindRestful,jdbcType=VARCHAR},
+      PROD_FilterTable_RESTFUL = #{record.prodFiltertableRestful,jdbcType=VARCHAR},
+      EXPANSE_CAPACITY_RESTFUL = #{record.expanseCapacityRestful,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.ProdProduct" >
+    update prod_product
+    <set >
+      <if test="prodEnSimp != null" >
+        PROD_EN_SIMP = #{prodEnSimp,jdbcType=VARCHAR},
+      </if>
+      <if test="prodType != null" >
+        PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="prodCategory != null" >
+        PROD_CATEGORY = #{prodCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="prodName != null" >
+        PROD_NAME = #{prodName,jdbcType=VARCHAR},
+      </if>
+      <if test="prodLogopicId != null" >
+        PROD_LOGOPIC_ID = #{prodLogopicId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodDesc != null" >
+        PROD_DESC = #{prodDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="prodValidFlag != null" >
+        PROD_VALID_FLAG = #{prodValidFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="prodSaleFlag != null" >
+        PROD_SALE_FLAG = #{prodSaleFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="prodParam != null" >
+        PROD_PARAM = #{prodParam,jdbcType=VARCHAR},
+      </if>
+      <if test="prodOpenRestfull != null" >
+        PROD_OPEN_RESTFULL = #{prodOpenRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodStartRestfull != null" >
+        PROD_START_RESTFULL = #{prodStartRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodStopRestfull != null" >
+        PROD_STOP_RESTFULL = #{prodStopRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodMdypwdRestfull != null" >
+        PROD_MDYPWD_RESTFULL = #{prodMdypwdRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodFullclearRestfull != null" >
+        PROD_FULLCLEAR_RESTFULL = #{prodFullclearRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodKeyclearRestfull != null" >
+        PROD_KEYCLEAR_RESTFULL = #{prodKeyclearRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodSeltedkeyRestfull != null" >
+        PROD_SELTEDKEY_RESTFULL = #{prodSeltedkeyRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodCancleRestfull != null" >
+        PROD_CANCLE_RESTFULL = #{prodCancleRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodUsedAmountRestfull != null" >
+        PROD_USED_AMOUNT_RESTFULL = #{prodUsedAmountRestfull,jdbcType=VARCHAR},
+      </if>
+      <if test="prodBindRestful != null" >
+        PROD_BIND_RESTFUL = #{prodBindRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodGetboundRestful != null" >
+        PROD_GETBOUND_RESTFUL = #{prodGetboundRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodGetboundtableinfoRestful != null" >
+        PROD_GetBoundTableInfo_RESTFUL = #{prodGetboundtableinfoRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodUnbindRestful != null" >
+        PROD_UNBIND_RESTFUL = #{prodUnbindRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodFiltertableRestful != null" >
+        PROD_FilterTable_RESTFUL = #{prodFiltertableRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="expanseCapacityRestful != null" >
+        EXPANSE_CAPACITY_RESTFUL = #{expanseCapacityRestful,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PROD_ID = #{prodId,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.ProdProduct" >
+    update prod_product
+    set PROD_EN_SIMP = #{prodEnSimp,jdbcType=VARCHAR},
+      PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      PROD_CATEGORY = #{prodCategory,jdbcType=VARCHAR},
+      PROD_NAME = #{prodName,jdbcType=VARCHAR},
+      PROD_LOGOPIC_ID = #{prodLogopicId,jdbcType=VARCHAR},
+      PROD_DESC = #{prodDesc,jdbcType=VARCHAR},
+      PROD_VALID_FLAG = #{prodValidFlag,jdbcType=VARCHAR},
+      PROD_SALE_FLAG = #{prodSaleFlag,jdbcType=VARCHAR},
+      PROD_PARAM = #{prodParam,jdbcType=VARCHAR},
+      PROD_OPEN_RESTFULL = #{prodOpenRestfull,jdbcType=VARCHAR},
+      PROD_START_RESTFULL = #{prodStartRestfull,jdbcType=VARCHAR},
+      PROD_STOP_RESTFULL = #{prodStopRestfull,jdbcType=VARCHAR},
+      PROD_MDYPWD_RESTFULL = #{prodMdypwdRestfull,jdbcType=VARCHAR},
+      PROD_FULLCLEAR_RESTFULL = #{prodFullclearRestfull,jdbcType=VARCHAR},
+      PROD_KEYCLEAR_RESTFULL = #{prodKeyclearRestfull,jdbcType=VARCHAR},
+      PROD_SELTEDKEY_RESTFULL = #{prodSeltedkeyRestfull,jdbcType=VARCHAR},
+      PROD_CANCLE_RESTFULL = #{prodCancleRestfull,jdbcType=VARCHAR},
+      PROD_USED_AMOUNT_RESTFULL = #{prodUsedAmountRestfull,jdbcType=VARCHAR},
+      PROD_BIND_RESTFUL = #{prodBindRestful,jdbcType=VARCHAR},
+      PROD_GETBOUND_RESTFUL = #{prodGetboundRestful,jdbcType=VARCHAR},
+      PROD_GetBoundTableInfo_RESTFUL = #{prodGetboundtableinfoRestful,jdbcType=VARCHAR},
+      PROD_UNBIND_RESTFUL = #{prodUnbindRestful,jdbcType=VARCHAR},
+      PROD_FilterTable_RESTFUL = #{prodFiltertableRestful,jdbcType=VARCHAR},
+      EXPANSE_CAPACITY_RESTFUL = #{expanseCapacityRestful,jdbcType=VARCHAR}
+    where PROD_ID = #{prodId,jdbcType=SMALLINT}
+  </update>
+</mapper>

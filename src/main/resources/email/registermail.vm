@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+    <!-- Site CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://static.bootcss.com/www/assets/css/site.min.css?v5" rel="stylesheet">
+<style>
+.activeBtn{margin-left:215px;width:162px; height:40px; background:rgb(37,156,220); text-align:center; line-height:40px; font-size:20px; color:#fff; float:left; border-radius:20px;}
+.dg_message{ width:860px; float:left; margin-top:30px;}
+.dg_message ul{ width:860px; float:left;margin-top:30px; padding-bottom:20px;}
+.dg_message ul li{ float: left; font-size:16px; margin-left:30px; color:#707070;list-style-type:none;}
+.dg_message ul .move{ float:right;}
+.zk_mail{ width:811px; float:left; margin-left:40px; margin-top:15px;}
+.zk_mail_A{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_a.png) no-repeat; height:76px; text-align:center; font-size:24px; color:#fff; line-height:106px;}
+.zk_mail_B{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_b.png) repeat-y; padding-bottom:20px; }
+.zk_mail_B ul{ width:720px; float:left; margin-left:40px; margin-top:30px; border-bottom:none;}
+.zk_mail_B ul li{ line-height:30px; font-size:16px; color:#707070;list-style-type:none;}
+.zk_mail_B ul li span{ color:#e72b4f; font-size:18px;}
+.zk_mail_B ul .nyr{ width:580px; float:left; margin:10px 0 0 40px;}
+.zk_mail_B ul .welcome{ width:580px; float:left; margin:30px 0 0 40px;font-weight:bold;font-size: 24px;}
+.zk_mail_B ul .nyra{width:600px; float:left; margin:30px 0 0 40px;font-size: 14px;}
+.zk_mail_B ul .activeLink{width:680px; float:left; font-size: 12px;color: rgb(139,202,241)}
+.zk_mail_C{ width:811px; float:left; background: url(http://feiqimoda.com/resources/yun/xiao_c.png) no-repeat; height:51px;}
+.zk_mail_C ul{ width:810px; float:left;border-bottom:none; margin-top:0px;}
+.zk_mail_C ul li{ float:left; line-height:45px; font-size:14px; margin-left:82px;list-style-type:none;}
+</style>
+</head>
+<body>
+<div class="dg_message">
+	<ul>
+		<div class="zk_mail">
+			<div class="zk_mail_A">账号激活</div>
+			<div class="zk_mail_B">
+				<ul style="list-style:none;text-align: center;">
+					<li class="welcome">亲爱的$!{email},欢迎加入亚信云!</li>
+					<li class="nyr" style="font-weight:bold;font-size: 16px;">
+						为保障您正常使用亚信云服务，请点击激活账号
+					</li>
+					<li style="margin-top:30px;"><a href="$!{activeLink}" class="activeBtn">激活账号</a></li>
+					<li class="nyra">如果以上按钮无法打开，请把下面的链接复制到浏览器地址栏中打开：</li>
+					<li class="activeLink">$!{activeLink}</li>
+				</ul>
+			</div>
+			<div class="zk_mail_C">
+			</div>
+		</div>
+	</ul>
+</div>								
+</body>
+</html>

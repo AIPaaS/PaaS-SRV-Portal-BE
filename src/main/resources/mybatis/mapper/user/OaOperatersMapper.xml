@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.OaOperatersMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.OaOperaters" >
+    <id column="OA_ID" property="oaId" jdbcType="SMALLINT" />
+    <result column="BUI_CODE" property="buiCode" jdbcType="VARCHAR" />
+    <result column="nt_account" property="ntAccount" jdbcType="VARCHAR" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    OA_ID, BUI_CODE, nt_account, VALID_FLAG
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.OaOperatersCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from oa_operaters
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from oa_operaters
+    where OA_ID = #{oaId,jdbcType=SMALLINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from oa_operaters
+    where OA_ID = #{oaId,jdbcType=SMALLINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.OaOperatersCriteria" >
+    delete from oa_operaters
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.OaOperaters" >
+    insert into oa_operaters (OA_ID, BUI_CODE, nt_account, 
+      VALID_FLAG)
+    values (#{oaId,jdbcType=SMALLINT}, #{buiCode,jdbcType=VARCHAR}, #{ntAccount,jdbcType=VARCHAR}, 
+      #{validFlag,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.OaOperaters" >
+    insert into oa_operaters
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="oaId != null" >
+        OA_ID,
+      </if>
+      <if test="buiCode != null" >
+        BUI_CODE,
+      </if>
+      <if test="ntAccount != null" >
+        nt_account,
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="oaId != null" >
+        #{oaId,jdbcType=SMALLINT},
+      </if>
+      <if test="buiCode != null" >
+        #{buiCode,jdbcType=VARCHAR},
+      </if>
+      <if test="ntAccount != null" >
+        #{ntAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="validFlag != null" >
+        #{validFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.OaOperatersCriteria" resultType="java.lang.Integer" >
+    select count(*) from oa_operaters
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update oa_operaters
+    <set >
+      <if test="record.oaId != null" >
+        OA_ID = #{record.oaId,jdbcType=SMALLINT},
+      </if>
+      <if test="record.buiCode != null" >
+        BUI_CODE = #{record.buiCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ntAccount != null" >
+        nt_account = #{record.ntAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.validFlag != null" >
+        VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update oa_operaters
+    set OA_ID = #{record.oaId,jdbcType=SMALLINT},
+      BUI_CODE = #{record.buiCode,jdbcType=VARCHAR},
+      nt_account = #{record.ntAccount,jdbcType=VARCHAR},
+      VALID_FLAG = #{record.validFlag,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.OaOperaters" >
+    update oa_operaters
+    <set >
+      <if test="buiCode != null" >
+        BUI_CODE = #{buiCode,jdbcType=VARCHAR},
+      </if>
+      <if test="ntAccount != null" >
+        nt_account = #{ntAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where OA_ID = #{oaId,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.OaOperaters" >
+    update oa_operaters
+    set BUI_CODE = #{buiCode,jdbcType=VARCHAR},
+      nt_account = #{ntAccount,jdbcType=VARCHAR},
+      VALID_FLAG = #{validFlag,jdbcType=VARCHAR}
+    where OA_ID = #{oaId,jdbcType=SMALLINT}
+  </update>
+</mapper>

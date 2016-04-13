@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.paas.ipaas.user.service.dao.UserProdInstMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.paas.ipaas.user.dto.UserProdInst" >
+    <id column="USER_SERV_ID" property="userServId" jdbcType="BIGINT" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_TYPE" property="userServType" jdbcType="VARCHAR" />
+    <result column="USER_SERVICE_ID" property="userServiceId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_IPAAS_ID" property="userServIpaasId" jdbcType="VARCHAR" />
+    <result column="USER_SERV_PARAM" property="userServParam" jdbcType="VARCHAR" />
+    <result column="USER_SERV_PARAM_ZH" property="userServParamZh" jdbcType="VARCHAR" />
+    <result column="USER_PROD_BYNAME" property="userProdByname" jdbcType="VARCHAR" />
+    <result column="USER_SERV_STATE" property="userServState" jdbcType="VARCHAR" />
+    <result column="USER_SERV_OPEN_TIME" property="userServOpenTime" jdbcType="TIMESTAMP" />
+    <result column="USER_SERV_BACK_PARAM" property="userServBackParam" jdbcType="VARCHAR" />
+    <result column="USER_SERV_CLOSE_TIME" property="userServCloseTime" jdbcType="TIMESTAMP" />
+    <result column="USER_SERV_RUN_STATE" property="userServRunState" jdbcType="VARCHAR" />
+    <result column="USER_SERV_START_TIME" property="userServStartTime" jdbcType="TIMESTAMP" />
+    <result column="USER_SERV_STOP_TIME" property="userServStopTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    USER_SERV_ID, USER_ID, USER_SERV_TYPE, USER_SERVICE_ID, USER_SERV_IPAAS_ID, USER_SERV_PARAM, 
+    USER_SERV_PARAM_ZH, USER_PROD_BYNAME, USER_SERV_STATE, USER_SERV_OPEN_TIME, USER_SERV_BACK_PARAM, 
+    USER_SERV_CLOSE_TIME, USER_SERV_RUN_STATE, USER_SERV_START_TIME, USER_SERV_STOP_TIME
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.UserProdInstCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_prod_inst
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_prod_inst
+    where USER_SERV_ID = #{userServId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from user_prod_inst
+    where USER_SERV_ID = #{userServId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.paas.ipaas.user.dto.UserProdInstCriteria" >
+    delete from user_prod_inst
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.paas.ipaas.user.dto.UserProdInst" >
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="userServId">
+		SELECT LAST_INSERT_ID() AS userServId
+	</selectKey> 
+    insert into user_prod_inst ( USER_ID, USER_SERV_TYPE, 
+      USER_SERVICE_ID, USER_SERV_IPAAS_ID, USER_SERV_PARAM, 
+      USER_SERV_PARAM_ZH, USER_PROD_BYNAME, USER_SERV_STATE, 
+      USER_SERV_OPEN_TIME, USER_SERV_BACK_PARAM, 
+      USER_SERV_CLOSE_TIME, USER_SERV_RUN_STATE, 
+      USER_SERV_START_TIME, USER_SERV_STOP_TIME
+      )
+    values ( #{userId,jdbcType=VARCHAR}, #{userServType,jdbcType=VARCHAR}, 
+      #{userServiceId,jdbcType=VARCHAR}, #{userServIpaasId,jdbcType=VARCHAR}, #{userServParam,jdbcType=VARCHAR}, 
+      #{userServParamZh,jdbcType=VARCHAR}, #{userProdByname,jdbcType=VARCHAR}, #{userServState,jdbcType=VARCHAR}, 
+      #{userServOpenTime,jdbcType=TIMESTAMP}, #{userServBackParam,jdbcType=VARCHAR}, 
+      #{userServCloseTime,jdbcType=TIMESTAMP}, #{userServRunState,jdbcType=VARCHAR}, 
+      #{userServStartTime,jdbcType=TIMESTAMP}, #{userServStopTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.UserProdInst" >
+    insert into user_prod_inst
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userServId != null" >
+        USER_SERV_ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="userServType != null" >
+        USER_SERV_TYPE,
+      </if>
+      <if test="userServiceId != null" >
+        USER_SERVICE_ID,
+      </if>
+      <if test="userServIpaasId != null" >
+        USER_SERV_IPAAS_ID,
+      </if>
+      <if test="userServParam != null" >
+        USER_SERV_PARAM,
+      </if>
+      <if test="userServParamZh != null" >
+        USER_SERV_PARAM_ZH,
+      </if>
+      <if test="userProdByname != null" >
+        USER_PROD_BYNAME,
+      </if>
+      <if test="userServState != null" >
+        USER_SERV_STATE,
+      </if>
+      <if test="userServOpenTime != null" >
+        USER_SERV_OPEN_TIME,
+      </if>
+      <if test="userServBackParam != null" >
+        USER_SERV_BACK_PARAM,
+      </if>
+      <if test="userServCloseTime != null" >
+        USER_SERV_CLOSE_TIME,
+      </if>
+      <if test="userServRunState != null" >
+        USER_SERV_RUN_STATE,
+      </if>
+      <if test="userServStartTime != null" >
+        USER_SERV_START_TIME,
+      </if>
+      <if test="userServStopTime != null" >
+        USER_SERV_STOP_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userServId != null" >
+        #{userServId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServType != null" >
+        #{userServType,jdbcType=VARCHAR},
+      </if>
+      <if test="userServiceId != null" >
+        #{userServiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasId != null" >
+        #{userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServParam != null" >
+        #{userServParam,jdbcType=VARCHAR},
+      </if>
+      <if test="userServParamZh != null" >
+        #{userServParamZh,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdByname != null" >
+        #{userProdByname,jdbcType=VARCHAR},
+      </if>
+      <if test="userServState != null" >
+        #{userServState,jdbcType=VARCHAR},
+      </if>
+      <if test="userServOpenTime != null" >
+        #{userServOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userServBackParam != null" >
+        #{userServBackParam,jdbcType=VARCHAR},
+      </if>
+      <if test="userServCloseTime != null" >
+        #{userServCloseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userServRunState != null" >
+        #{userServRunState,jdbcType=VARCHAR},
+      </if>
+      <if test="userServStartTime != null" >
+        #{userServStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userServStopTime != null" >
+        #{userServStopTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.paas.ipaas.user.dto.UserProdInstCriteria" resultType="java.lang.Integer" >
+    select count(*) from user_prod_inst
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_prod_inst
+    <set >
+      <if test="record.userServId != null" >
+        USER_SERV_ID = #{record.userServId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServType != null" >
+        USER_SERV_TYPE = #{record.userServType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServiceId != null" >
+        USER_SERVICE_ID = #{record.userServiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServIpaasId != null" >
+        USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServParam != null" >
+        USER_SERV_PARAM = #{record.userServParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServParamZh != null" >
+        USER_SERV_PARAM_ZH = #{record.userServParamZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userProdByname != null" >
+        USER_PROD_BYNAME = #{record.userProdByname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServState != null" >
+        USER_SERV_STATE = #{record.userServState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServOpenTime != null" >
+        USER_SERV_OPEN_TIME = #{record.userServOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userServBackParam != null" >
+        USER_SERV_BACK_PARAM = #{record.userServBackParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServCloseTime != null" >
+        USER_SERV_CLOSE_TIME = #{record.userServCloseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userServRunState != null" >
+        USER_SERV_RUN_STATE = #{record.userServRunState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userServStartTime != null" >
+        USER_SERV_START_TIME = #{record.userServStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userServStopTime != null" >
+        USER_SERV_STOP_TIME = #{record.userServStopTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_prod_inst
+    set USER_SERV_ID = #{record.userServId,jdbcType=BIGINT},
+      USER_ID = #{record.userId,jdbcType=VARCHAR},
+      USER_SERV_TYPE = #{record.userServType,jdbcType=VARCHAR},
+      USER_SERVICE_ID = #{record.userServiceId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{record.userServIpaasId,jdbcType=VARCHAR},
+      USER_SERV_PARAM = #{record.userServParam,jdbcType=VARCHAR},
+      USER_SERV_PARAM_ZH = #{record.userServParamZh,jdbcType=VARCHAR},
+      USER_PROD_BYNAME = #{record.userProdByname,jdbcType=VARCHAR},
+      USER_SERV_STATE = #{record.userServState,jdbcType=VARCHAR},
+      USER_SERV_OPEN_TIME = #{record.userServOpenTime,jdbcType=TIMESTAMP},
+      USER_SERV_BACK_PARAM = #{record.userServBackParam,jdbcType=VARCHAR},
+      USER_SERV_CLOSE_TIME = #{record.userServCloseTime,jdbcType=TIMESTAMP},
+      USER_SERV_RUN_STATE = #{record.userServRunState,jdbcType=VARCHAR},
+      USER_SERV_START_TIME = #{record.userServStartTime,jdbcType=TIMESTAMP},
+      USER_SERV_STOP_TIME = #{record.userServStopTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.paas.ipaas.user.dto.UserProdInst" >
+    update user_prod_inst
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServType != null" >
+        USER_SERV_TYPE = #{userServType,jdbcType=VARCHAR},
+      </if>
+      <if test="userServiceId != null" >
+        USER_SERVICE_ID = #{userServiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServIpaasId != null" >
+        USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      </if>
+      <if test="userServParam != null" >
+        USER_SERV_PARAM = #{userServParam,jdbcType=VARCHAR},
+      </if>
+      <if test="userServParamZh != null" >
+        USER_SERV_PARAM_ZH = #{userServParamZh,jdbcType=VARCHAR},
+      </if>
+      <if test="userProdByname != null" >
+        USER_PROD_BYNAME = #{userProdByname,jdbcType=VARCHAR},
+      </if>
+      <if test="userServState != null" >
+        USER_SERV_STATE = #{userServState,jdbcType=VARCHAR},
+      </if>
+      <if test="userServOpenTime != null" >
+        USER_SERV_OPEN_TIME = #{userServOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userServBackParam != null" >
+        USER_SERV_BACK_PARAM = #{userServBackParam,jdbcType=VARCHAR},
+      </if>
+      <if test="userServCloseTime != null" >
+        USER_SERV_CLOSE_TIME = #{userServCloseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userServRunState != null" >
+        USER_SERV_RUN_STATE = #{userServRunState,jdbcType=VARCHAR},
+      </if>
+      <if test="userServStartTime != null" >
+        USER_SERV_START_TIME = #{userServStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userServStopTime != null" >
+        USER_SERV_STOP_TIME = #{userServStopTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where USER_SERV_ID = #{userServId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.paas.ipaas.user.dto.UserProdInst" >
+    update user_prod_inst
+    set USER_ID = #{userId,jdbcType=VARCHAR},
+      USER_SERV_TYPE = #{userServType,jdbcType=VARCHAR},
+      USER_SERVICE_ID = #{userServiceId,jdbcType=VARCHAR},
+      USER_SERV_IPAAS_ID = #{userServIpaasId,jdbcType=VARCHAR},
+      USER_SERV_PARAM = #{userServParam,jdbcType=VARCHAR},
+      USER_SERV_PARAM_ZH = #{userServParamZh,jdbcType=VARCHAR},
+      USER_PROD_BYNAME = #{userProdByname,jdbcType=VARCHAR},
+      USER_SERV_STATE = #{userServState,jdbcType=VARCHAR},
+      USER_SERV_OPEN_TIME = #{userServOpenTime,jdbcType=TIMESTAMP},
+      USER_SERV_BACK_PARAM = #{userServBackParam,jdbcType=VARCHAR},
+      USER_SERV_CLOSE_TIME = #{userServCloseTime,jdbcType=TIMESTAMP},
+      USER_SERV_RUN_STATE = #{userServRunState,jdbcType=VARCHAR},
+      USER_SERV_START_TIME = #{userServStartTime,jdbcType=TIMESTAMP},
+      USER_SERV_STOP_TIME = #{userServStopTime,jdbcType=TIMESTAMP}
+    where USER_SERV_ID = #{userServId,jdbcType=BIGINT}
+  </update>
+</mapper>

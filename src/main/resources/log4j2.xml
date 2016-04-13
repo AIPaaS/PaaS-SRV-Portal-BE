@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%-d{yyyy-MM-dd HH:mm:ss.SSS} %c %n[%p] %n%m%n%l" />
+		</Console>
+
+		<File name="MyFile"
+			fileName="/aifs01/users/tstusr12/logs/iPaas-IPAAS-USER-SERV-10990.log">
+			<PatternLayout>
+				<Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+			</PatternLayout>
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="DEBUG">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="MyFile" />
+		</Root>
+	</Loggers>
+</Configuration>
