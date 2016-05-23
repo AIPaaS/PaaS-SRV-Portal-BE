@@ -5,3 +5,6 @@ target
 .settings/
 reports/
 .log
+/dubbo-registry.dat
+/dubbo-registry.dat.lock
+/velocity.log
