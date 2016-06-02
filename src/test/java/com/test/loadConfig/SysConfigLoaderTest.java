@@ -28,7 +28,10 @@ public class SysConfigLoaderTest {
 
     @Test
     public void testGetSysConfig() throws Exception {
-    	configStore.processConfig();
+//    	configStore.storeConfig();
+    	String json = configStore.getConfig();
+    	System.out.println("====return:"+json);
+    	configStore.getConfigMap(json);
     }
 
 }

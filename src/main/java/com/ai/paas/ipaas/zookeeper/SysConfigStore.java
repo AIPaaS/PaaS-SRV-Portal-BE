@@ -5,9 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.sql.DataSource;
+
+import net.sf.json.JSONArray;
 
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -62,6 +67,7 @@ public class SysConfigStore {
 	        }
         } catch(Exception ex) {
         	logger.error("==== getSysConfig error:" + ex.getMessage());
+        	throw ex;
         } finally {
         	if (rs != null) {
     			rs.close();
@@ -81,7 +87,47 @@ public class SysConfigStore {
     	return gson.toJson(configList);
     }
     
-    public void processConfig() {
+    public String getConfig() {
+    	String confJson = "";
+		try{
+			ZKClient client = getZKClient();
+			confJson = client.getNodeData(storePath);
+		} catch(Exception ex) {
+			logger.error("get config from zookeeper error." + ex.getMessage());
+		}
+		return confJson;
+	}
+    
+    public static HashMap<String, String> getConfigMap(String config) {
+    	HashMap<String, String> map = new HashMap<String, String>();
+		try{
+			if(!StringUtil.isBlank(config)){
+				JSONArray jsonArray = JSONArray.fromObject(config);  
+				List<Map<String,String>> mapListJson = (List)jsonArray;
+		        for (int i = 0; i < mapListJson.size(); i++) { 
+		            Map<String,String> obj = mapListJson.get(i);  
+		            
+		            String mapKey = "", mapValue = "";
+		            for(Entry<String,String> entry : obj.entrySet()){
+		                if("key".equals(entry.getKey())){
+		                	mapKey = entry.getValue();
+		                }
+		                if("value".equals(entry.getKey())){
+		                	mapValue = entry.getValue();
+		                }
+		            }
+		            System.out.println("KEY:"+mapKey+"  -->  Value:"+mapValue+"\n");
+		            map.put(mapKey, mapValue);
+		        }
+			}
+		} catch(Exception ex) {
+			logger.error("convert config to HashMap error." + ex.getMessage());
+		}
+		
+		return map;
+	}
+    
+    public void storeConfig() {
 		try{
 			ZKClient client = getZKClient();
 			String configJson = getSysConfig();
