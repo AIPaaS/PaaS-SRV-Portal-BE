@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.ai.paas.ipaas.user.utils.SysConfigStore;
+import com.ai.paas.ipaas.zookeeper.SysConfigStore;
 
 /**
  * Created by yuanman on 2016/6/1.
@@ -16,7 +16,7 @@ import com.ai.paas.ipaas.user.utils.SysConfigStore;
 public class SysConfigLoaderTest {
 	
 	@Autowired
-	private SysConfigStore configLoader;
+	private SysConfigStore configStore;
 	
 //    @Before
 //    public void setUp() throws Exception {
@@ -28,7 +28,7 @@ public class SysConfigLoaderTest {
 
     @Test
     public void testGetSysConfig() throws Exception {
-    	configLoader.processConfig();
+    	configStore.processConfig();
     }
 
 }

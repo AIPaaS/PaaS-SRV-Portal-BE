@@ -34,13 +34,13 @@
 		<property name="defaultAutoCommit" value="${jdbc.defaultAutoCommit}" />
 	</bean>
  
-    <bean id="configLoader" class="com.ai.paas.ipaas.user.utils.SysConfigStore" >
+    <bean id="configStore" class="com.ai.paas.ipaas.zookeeper.SysConfigStore" >
     	<property name="dataSource" ref="ds" />
     	<property name="zkAddress" value="${zookeeper.address}" />
 		<property name="zkUser" value="${zookeeper.user}" />
 		<property name="zkPasswd" value="${zookeeper.passwd}" />
 		<property name="timeOut" value="${zookeeper.timeout}" />
-		<property name="configPath" value="${zookeeper.configPath}" />
+		<property name="storePath" value="${zookeeper.storePath}" />
     </bean>
     
 </beans>

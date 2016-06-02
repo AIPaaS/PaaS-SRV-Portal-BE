@@ -1,4 +1,4 @@
-package com.ai.paas.ipaas.user.utils;
+package com.ai.paas.ipaas.zookeeper;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -40,7 +40,7 @@ public class SysConfigStore {
 	private String zkUser;
 	private String zkPasswd;
 	private int timeOut;
-	private String configPath;
+	private String storePath;
 	
 	public SysConfigStore() throws Exception{
 	}
@@ -85,7 +85,7 @@ public class SysConfigStore {
 		try{
 			ZKClient client = getZKClient();
 			String configJson = getSysConfig();
-			add(client, configPath, configJson);
+			add(client, storePath, configJson);
 		} catch(Exception ex) {
 			logger.error("store config into zookeeper error." + ex.getMessage());
 		}
@@ -172,7 +172,7 @@ public class SysConfigStore {
 		this.timeOut = timeOut;
 	}
 
-	public void setConfigPath(String configPath) {
-		this.configPath = configPath;
+	public void setStorePath(String storePath) {
+		this.storePath = storePath;
 	}
 }

@@ -1,4 +1,4 @@
-package com.ai.paas.ipaas.user.utils;
+package com.ai.paas.ipaas.zookeeper;
 
 public class SysConfig {
 	String key;
