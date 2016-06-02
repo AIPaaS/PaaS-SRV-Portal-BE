@@ -149,7 +149,7 @@ public class RedisClient {
 //        System.out.println(RedisClient.get4Json(key));
     	String valueByKey=null;
     	
-    	valueByKey = CacheUtils.getValueByKey(Constants.CacheKeys.WORKFLOW_URL_PREFIX);
+//    	valueByKey = CacheUtils.getValueByKey(Constants.CacheKeys.WORKFLOW_URL_PREFIX);
     	
     	System.out.println(valueByKey);
     }

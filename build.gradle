@@ -127,6 +127,7 @@ dependencies{
     compile 'net.sf.json-lib:json-lib:2.4:jdk15'
 	compile 'oracle.ojdbc:ojdbc:6'
 	
+	compile 'com.ai:ipaas-zookeeper-utility:0.2.1-SNAPSHOT'
 }
 
 
