@@ -23,7 +23,6 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.constants.Constants.IaasApplyWoResult;
 import com.ai.paas.ipaas.user.constants.ExceptionConstants;
@@ -79,6 +78,7 @@ import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.ai.paas.ipaas.user.vo.OrderDataVo;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.paas.ipaas.util.UUIDTool;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 @Service
 @Transactional 
@@ -274,7 +274,8 @@ public class OrderSvImpl implements IOrderSv {
 			String prodId = orderDetail.getProdId();
 			short priKey = Short.parseShort(prodId);
 			ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
-			String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getExpanseCapacityRestful();
+//			String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getExpanseCapacityRestful();
+			String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getExpanseCapacityRestful();
 
 			String prodParam = orderDetail.getProdParam();
 			Map<String, String> map = GsonUtil.fromJSon(prodParam, Map.class);
@@ -392,7 +393,8 @@ public class OrderSvImpl implements IOrderSv {
 		
 		//调用配置中心获取zk信息
 		logger.info("调用配置中心获取zk信息");				
-		String address = CacheUtils.getOptionByKey("PASS.SERVICE","IP_PORT_SERVICE")+CacheUtils.getValueByKey("AUTH.CCS_GETCONFIGINFO");		
+//		String address = CacheUtils.getOptionByKey("PASS.SERVICE","IP_PORT_SERVICE")+CacheUtils.getValueByKey("AUTH.CCS_GETCONFIGINFO");		
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + SystemConfigHandler.configMap.get("AUTH.CCS_GETCONFIGINFO.url");
 		String ccsResult ="";
 		JSONObject ccsReqJson = new JSONObject();
 		ccsReqJson.put("userId", orderDetail.getUserId());
@@ -430,7 +432,9 @@ public class OrderSvImpl implements IOrderSv {
 		//调用认证中心沉淀数据
 		logger.info("调用认证中心沉淀数据");		
 		
-		String createAddress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE") + CacheUtils.getValueByKey("AUTH.SERAUTH_SVSDK");
+//		String createAddress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE") + CacheUtils.getValueByKey("AUTH.SERAUTH_SVSDK");
+		String createAddress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
+				SystemConfigHandler.configMap.get("AUTH.SERAUTH_SVSDK.url");
 		String createResult ="";	
 		String createParam = "authUserId="+orderDetail.getUserId()+"&authUserName="+orderDetail.getUserServIpaasId()
 				            +"&authPassword="+orderDetail.getUserServIpaasPwd()+"&authParam="+authParam+"&authPid="+userCenter.getPid();
@@ -454,7 +458,8 @@ public class OrderSvImpl implements IOrderSv {
 		String prodId = orderDetail.getProdId();
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdOpenRestfull();
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdOpenRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdOpenRestfull();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}	
@@ -602,8 +607,12 @@ public class OrderSvImpl implements IOrderSv {
 		json.put("senderEmail", checker.getUserEmail());//审批
 		
 		/************************************************************/
-		String SdkUrl = CacheUtils.getOptionByKey("iPaas-Auth.SERVICE","IP_PORT_SERVICE") + CacheUtils.getValueByKey("AUTH.SDKUrl");
-		String iPaasWebConsoleUrl = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")  ;
+//		String SdkUrl = CacheUtils.getOptionByKey("iPaas-Auth.SERVICE","IP_PORT_SERVICE") + CacheUtils.getValueByKey("AUTH.SDKUrl");
+		String SdkUrl = SystemConfigHandler.configMap.get("iPaas-Auth.SERVICE.IP_PORT_SERVICE") +
+				SystemConfigHandler.configMap.get("AUTH.SDKUrl.1");
+		
+//		String iPaasWebConsoleUrl = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")  ;
+		String iPaasWebConsoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE");
 		logger.info(">>>>>>>pass资源审核通过邮件通知部分参数>>>pid:"+orderUser.getPid()+"|SdkUrl:"+SdkUrl+"|ServIpaasId"+orderDetailtmp.getUserServIpaasId());
 		json.put("pid", orderUser.getPid());//
 		json.put("SdkUrl", SdkUrl);//
@@ -643,7 +652,8 @@ public class OrderSvImpl implements IOrderSv {
 			json.put("toAddress", toEmail);
 			json.put("emailTitle", subject);
 			json.put("emailContent", content);
-			String service = CacheUtils.getValueByKey("Email.SendEmail");
+//			String service = CacheUtils.getValueByKey("Email.SendEmail");
+			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 			HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail",json.toString());
 		} catch (Exception e) {         
            throw new PaasException("发送邮件失败");
@@ -761,7 +771,8 @@ public class OrderSvImpl implements IOrderSv {
 		String time = df.format(calendar.getTime());
 		json.put("limitdate",time);
 		
-		String auditUrl =  CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE") + CacheUtils.getOptionByKey("AUDIT.AUDIT", "URL");
+//		String auditUrl =  CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE") + CacheUtils.getOptionByKey("AUDIT.AUDIT", "URL");
+		String auditUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") + SystemConfigHandler.configMap.get("AUDIT.AUDIT.URL");
 		json.put("auditUrl", auditUrl);
 				
 		SysParmRequest request1 = new SysParmRequest();
@@ -795,7 +806,8 @@ public class OrderSvImpl implements IOrderSv {
 			json.put("toAddress", toEmail);
 			json.put("emailTitle", subject);
 			json.put("emailContent", content);
-			String service = CacheUtils.getValueByKey("Email.SendEmail");
+//			String service = CacheUtils.getValueByKey("Email.SendEmail");
+			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 			HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail",json.toString());
 		} catch (Exception e) {         
            throw new PaasException("发送邮件失败");
@@ -934,8 +946,9 @@ public class OrderSvImpl implements IOrderSv {
 			
 			String fromAddress = properties.getProperty("fromaddress");
 			String fromPwd = properties.getProperty("frompwd");
-			String url= CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.SCHEMECONFIRM","URL");
-			
+//			String url= CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.SCHEMECONFIRM","URL");
+			String url= SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") 
+					+ SystemConfigHandler.configMap.get("IPAAS-WEB.SCHEMECONFIRM.URL");
 			String title="云虚拟机确认通知";
 			String button="确认";
 			String message="申请的亚信云虚拟机服务，需要您确认。";
@@ -979,7 +992,8 @@ public class OrderSvImpl implements IOrderSv {
 			json.put("toAddress", toAddress);
 			json.put("emailTitle", title);
 			json.put("emailContent", content);
-			String service =CacheUtils.getValueByKey("Email.SendEmail");  //"http://10.1.228.198:20184/sendemail"
+//			String service =CacheUtils.getValueByKey("Email.SendEmail");  //"http://10.1.228.198:20184/sendemail"
+			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 			String result = null;
 			result = HttpClientUtil.sendPostRequest(service+"/sendEmail/sendEmail",json.toString());
 			logger.info("++++++++++++++++申请人确认邮件发送结果----->"+result);
@@ -1064,7 +1078,9 @@ public class OrderSvImpl implements IOrderSv {
 			 Properties properties=ReadPropertiesUtil.getProperties("/context/email.properties");
 			 String fromaddress=properties.getProperty("fromaddress");
 			 String frompwd=properties.getProperty("frompwd");
-			 String url=CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
+//			 String url=CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
+			 String url= SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.SERVICE.IP_PORT_SERVICE") 
+						+ SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.LOGIN.URL");
 			 Map<String, Object> model=new HashMap<String, Object>();
 			 model.put("toAddress", toaddress); 
 			 model.put("applyCant", detail.getApplicant());
@@ -1080,7 +1096,8 @@ public class OrderSvImpl implements IOrderSv {
 			 json.put("toAddress", toaddress+"@asiainfo.com");
 			 json.put("emailTitle", title);
 			 json.put("emailContent", content);
-			 String service=CacheUtils.getValueByKey("Email.SendEmail");
+//			 String service=CacheUtils.getValueByKey("Email.SendEmail");
+			 String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 			 String result=HttpClientUtil.sendPostRequest(service+"/sendEmail/sendEmail", json.toString());
 			 System.out.println(result);
 			 logger.info("方案确认邮件发送结果----->"+result);
@@ -1191,8 +1208,13 @@ public class OrderSvImpl implements IOrderSv {
 		json.put("senderEmail", checker.getUserEmail());//审批
 		
 		/************************************************************/
-		String SdkUrl = CacheUtils.getOptionByKey("iPaas-Auth.SERVICE","IP_PORT_SERVICE") + CacheUtils.getValueByKey("AUTH.SDKUrl");
-		String iPaasWebConsoleUrl = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")  ;
+//		String SdkUrl = CacheUtils.getOptionByKey("iPaas-Auth.SERVICE","IP_PORT_SERVICE") +
+//				CacheUtils.getValueByKey("AUTH.SDKUrl");
+		String SdkUrl = SystemConfigHandler.configMap.get("iPaas-Auth.SERVICE.IP_PORT_SERVICE") +
+        		SystemConfigHandler.configMap.get("AUTH.SDKUrl.1");
+		
+//		String iPaasWebConsoleUrl = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")  ;
+		String iPaasWebConsoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") ;
 		logger.info(">>>>>>>pass资源审核通过邮件通知部分参数>>>pid:"+orderUser.getPid()+"|SdkUrl:"+SdkUrl+"|ServIpaasId"+orderDetailtmp.getUserServIpaasId());
 		json.put("pid", orderUser.getPid());//
 		json.put("SdkUrl", SdkUrl);//
@@ -1232,7 +1254,8 @@ public class OrderSvImpl implements IOrderSv {
 			json.put("toAddress", toEmail);
 			json.put("emailTitle", subject);
 			json.put("emailContent", content);
-			String service = CacheUtils.getValueByKey("Email.SendEmail");
+//			String service = CacheUtils.getValueByKey("Email.SendEmail");
+			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 			HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail",json.toString());
 		} catch (Exception e) {         
            throw new PaasException("发送邮件失败");

@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.RestfullReturn;
@@ -26,8 +25,6 @@ import com.ai.paas.ipaas.user.dto.UserMgrOperate;
 import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dto.UserProdInstCriteria;
 import com.ai.paas.ipaas.user.dubbo.vo.ResponseHeader;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParamVo;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParmRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.UserProdInstVo;
 import com.ai.paas.ipaas.user.service.IMcsConsoleSv;
 import com.ai.paas.ipaas.user.service.IProdProductSv;
@@ -39,6 +36,7 @@ import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 @Service
 @Transactional
@@ -118,7 +116,8 @@ public class McsConsoleSvImpl implements IMcsConsoleSv {
         UserProdInst userProdInst = userProdInstMapper.selectByPrimaryKey(userServId);
        
         String applyType = vo.getApplyType();
-        String address = CacheUtils.getValueByKey("PASS.SERVICE") + applyType;
+//        String address = CacheUtils.getValueByKey("PASS.SERVICE") + applyType;
+        String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + applyType;
         if (StringUtil.isBlank(address)) {
             throw new PaasException("产品的已使用量查询地址为空");
         }
@@ -266,7 +265,9 @@ public class McsConsoleSvImpl implements IMcsConsoleSv {
         short priKey = Short.parseShort(prodId);
         ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);     
       
-        String address = CacheUtils.getValueByKey("IPAAS-UAC.SERVICE") + prodProduct.getProdMdypwdRestfull();
+//        String address = CacheUtils.getValueByKey("IPAAS-UAC.SERVICE") + prodProduct.getProdMdypwdRestfull();
+		String address = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdMdypwdRestfull();
+
         if (StringUtil.isBlank(address)) {
             throw new PaasException("产品的的服务地址为空");
         }

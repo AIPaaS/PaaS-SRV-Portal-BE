@@ -10,13 +10,13 @@ import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.cache.RedisClient;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
 import com.ai.paas.ipaas.user.dubbo.vo.WorkflowRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.WorkflowResponse;
 import com.ai.paas.ipaas.util.JSonUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 /**
  * 
@@ -150,8 +150,8 @@ public class WorkflowClientUtils {
     public static WorkflowResponse reqWorkflow(String params, String variables, String url)
             throws Exception {
     	logger.info("===========统一访问工作流接口方法开始==========");
-        url = CacheUtils.getValueByKey(Constants.CacheKeys.WORKFLOW_URL_PREFIX) + url + "?"
-                + params;
+    	String workflow = SystemConfigHandler.configMap.get("WORKFLOW.URL_PREFIX.PARAMS");
+        url =  workflow + url + "?" + params;
         logger.info("任务完成url：====================》"+url);
         return reqWorkflowLimit(url, variables, 1, 0);
     }
@@ -225,8 +225,8 @@ public class WorkflowClientUtils {
         InputStream in = WorkflowClientUtils.class
                 .getResourceAsStream("/context/workflow_params.properties");
         properties.load(in);
-        String url = CacheUtils.getValueByKey(Constants.CacheKeys.WORKFLOW_URL_PREFIX)
-                + "/service/authorization/login?";
+        String workflow = SystemConfigHandler.configMap.get("WORKFLOW.URL_PREFIX.PARAMS");
+        String url = workflow + "/service/authorization/login?";
         url += "userName=" + properties.getProperty("userName");
         // url += "&password="
         // + CiperUtil.encrypt("7331c9b6b1a1d521363f7bca8acb095f",

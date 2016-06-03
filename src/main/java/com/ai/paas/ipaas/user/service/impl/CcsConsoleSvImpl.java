@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.RestfullReq;
@@ -26,6 +25,7 @@ import com.ai.paas.ipaas.user.service.dao.UserProdInstMapper;
 import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 
 @Service
@@ -83,7 +83,9 @@ public class CcsConsoleSvImpl implements ICcsConsoleSv {
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);		
 		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getProdCancleRestfull(); // 获取注销restful
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getProdCancleRestfull(); // 获取注销restful
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdCancleRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}

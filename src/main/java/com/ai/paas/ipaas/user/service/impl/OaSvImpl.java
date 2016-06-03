@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.constants.Constants.IaasApplyWoResult;
 import com.ai.paas.ipaas.user.constants.ExceptionConstants;
@@ -34,8 +33,6 @@ import com.ai.paas.ipaas.user.dto.ProdQuotaCriteria;
 import com.ai.paas.ipaas.user.dto.UserCenter;
 import com.ai.paas.ipaas.user.dto.UserMessage;
 import com.ai.paas.ipaas.user.dubbo.vo.PageResult;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParamVo;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParmRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
 import com.ai.paas.ipaas.user.dubbo.vo.WorkflowRequest;
 import com.ai.paas.ipaas.user.exception.BusinessException;
@@ -61,6 +58,7 @@ import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
 import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.ai.paas.ipaas.user.utils.oamd5.OaMd5Util;
 import com.ai.paas.ipaas.user.vo.ErpProjectVo;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -147,8 +145,14 @@ public class OaSvImpl implements IOaSv {
 				.getProperties("/context/email.properties");
 		String fromAddress = properties.getProperty("fromaddress");
 		String fromPwd = properties.getProperty("frompwd");
-		String url = CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
-		String url2 = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.PURCHASERECORDS","URL");
+//		String url = CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
+//		String url2 = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.PURCHASERECORDS","URL");
+		
+		String url = SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.SERVICE.IP_PORT_SERVICE") +
+				SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.LOGIN.URL");
+		String url2 = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") +
+				SystemConfigHandler.configMap.get("IPAAS-WEB.PURCHASERECORDS.URL");
+
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		if ("AGREE".equals(operType)) {
@@ -218,7 +222,8 @@ public class OaSvImpl implements IOaSv {
 			json.put("toAddress", toAddress);
 			json.put("emailTitle", title);
 			json.put("emailContent", content);
-			String service = CacheUtils.getValueByKey("Email.SendEmail"); // "http://10.1.228.198:20184/sendemail"
+//			String service = CacheUtils.getValueByKey("Email.SendEmail"); // "http://10.1.228.198:20184/sendemail"
+			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 			String result = null;
 			result = HttpClientUtil.sendPostRequest(service
 					+ "/sendEmail/sendEmail", json.toString());
@@ -284,7 +289,8 @@ public class OaSvImpl implements IOaSv {
 	public String getBuiCodeByNt(String Nt) {
 		JSONObject param=new JSONObject();
 		param.put("ntAccount", Nt); //String json = "{\"ntAccount\":\""+Nt+"\"}";
-		String service = CacheUtils.getOptionByKey("CONTROLLER.CONTROLLER","url");//http://10.1.228.200:10990/ipaas
+//		String service = CacheUtils.getOptionByKey("CONTROLLER.CONTROLLER","url");//http://10.1.228.200:10990/ipaas
+		String service = SystemConfigHandler.configMap.get("CONTROLLER.CONTROLLER.url");
 		String url = "/user/iUserApi/getAiEmployeeInfo";
 		
 		try {
@@ -412,7 +418,8 @@ public class OaSvImpl implements IOaSv {
 		PageResult<ErpProjectVo> pageResult = new PageResult<ErpProjectVo>();
 				
 		try {
-			String address = CacheUtils.getOptionByKey("OA.OA","getAIServerTime");
+//			String address = CacheUtils.getOptionByKey("OA.OA","getAIServerTime");
+			String address = SystemConfigHandler.configMap.get("OA.OA.getAIServerTime");
 			String key;
 			key = OaMd5Util.encryptToMD5(HttpRequestUtil.sendGet(address, "")
 					+ "XXAI_PROJECT_ALL_V1djk*3k@-3_31");
@@ -423,7 +430,8 @@ public class OaSvImpl implements IOaSv {
 			reqMap.put("pageIndex", pageIndex);
 			reqMap.put("pageSize", pageSize);
 
-			String getProjectListAddress = CacheUtils.getOptionByKey("OA.OA","getProjectList");			
+//			String getProjectListAddress = CacheUtils.getOptionByKey("OA.OA","getProjectList");		
+			String getProjectListAddress = SystemConfigHandler.configMap.get("OA.OA.getProjectList");
 			String object = null;
 			object = HttpClientUtil.sendGet(getProjectListAddress,reqMap);
 

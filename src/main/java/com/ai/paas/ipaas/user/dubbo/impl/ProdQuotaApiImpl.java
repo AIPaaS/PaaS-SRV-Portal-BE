@@ -1,10 +1,6 @@
 package com.ai.paas.ipaas.user.dubbo.impl;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.dto.OrderDetail;
 import com.ai.paas.ipaas.user.dto.ProdQuota;
 import com.ai.paas.ipaas.user.dto.UserCenter;
@@ -22,11 +17,7 @@ import com.ai.paas.ipaas.user.service.IOaSv;
 import com.ai.paas.ipaas.user.service.IOrderSv;
 import com.ai.paas.ipaas.user.service.IUserSv;
 import com.ai.paas.ipaas.user.service.ProdQuotaSv;
-import com.ai.paas.ipaas.user.utils.HttpClientUtil;
-import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 @Service
 @Transactional
 public class ProdQuotaApiImpl implements ProdQuotaApi {

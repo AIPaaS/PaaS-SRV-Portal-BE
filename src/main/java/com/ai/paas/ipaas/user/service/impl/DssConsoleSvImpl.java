@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.RestfullReq;
@@ -29,8 +28,6 @@ import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dto.UserProdInstCriteria;
 import com.ai.paas.ipaas.user.dubbo.vo.DocumentVo;
 import com.ai.paas.ipaas.user.dubbo.vo.ProdMenuVo;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParamVo;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParmRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.UserProdInstVo;
 import com.ai.paas.ipaas.user.service.IDssConsoleSv;
 import com.ai.paas.ipaas.user.service.IProdProductSv;
@@ -45,8 +42,8 @@ import com.ai.paas.ipaas.user.utils.HttpRequestUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 @Service
 @Transactional 
 public class DssConsoleSvImpl implements IDssConsoleSv {
@@ -107,7 +104,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 
 	
 		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUsedAmountRestfull();
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUsedAmountRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdUsedAmountRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的已使用量查询地址为空");
 		}
@@ -185,7 +184,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
-		String address =  CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdCancleRestfull(); // 获取注销restful
+//		String address =  CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdCancleRestfull(); // 获取注销restful
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdCancleRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -270,7 +271,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
 		
-		String address = CacheUtils.getValueByKey("IPAAS-UAC.SERVICE") +prodProduct.getProdMdypwdRestfull();
+//		String address = CacheUtils.getValueByKey("IPAAS-UAC.SERVICE") +prodProduct.getProdMdypwdRestfull();
+		String address = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE")+prodProduct.getProdMdypwdRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}	
@@ -314,7 +317,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
 	
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdFullclearRestfull();
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdFullclearRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdFullclearRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -355,7 +360,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
 		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdSeltedkeyRestfull();
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdSeltedkeyRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdSeltedkeyRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -396,7 +403,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdKeyclearRestfull();
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdKeyclearRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdKeyclearRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}		
@@ -515,7 +524,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 	
 	public void getConsoleUrl(ProdMenuVo prodMenuVo)
 			throws PaasException {					
-		String consoleUrl = CacheUtils.getOptionByKey("IPAAS-WEB.CONSOLE_URL",prodMenuVo.getProdId());		
+//		String consoleUrl = CacheUtils.getOptionByKey("IPAAS-WEB.CONSOLE_URL",prodMenuVo.getProdId());
+		String consoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.CONSOLE_URL."+prodMenuVo.getProdId());
+
 		prodMenuVo.setConsoleUrl(consoleUrl);
 	}
 
@@ -523,7 +534,9 @@ public class DssConsoleSvImpl implements IDssConsoleSv {
 	public String modifyConfiguration(String params) throws NumberFormatException, PaasException, IOException, URISyntaxException {
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort(Constants.ProdProduct.ProdId.DSS));
 		
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdBindRestful();//修改DSS配置
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdBindRestful();//修改DSS配置
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdBindRestful();
+
 		if(StringUtil.isBlank(address)){
 			throw new PaasException("产品的的服务地址为空");
 		}

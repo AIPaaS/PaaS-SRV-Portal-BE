@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
-import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.OrderDetail;
 import com.ai.paas.ipaas.user.dto.OrderDetailCriteria;
 import com.ai.paas.ipaas.user.dto.OrderWo;
@@ -40,6 +38,7 @@ import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
 import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 /**
  * 软件安装提交后场服务
  * @author renfeng
@@ -122,7 +121,9 @@ public class SoftwareInstallSvImpl implements ISoftwareInstallSv {
 			        Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
         			String fromAddress = properties.getProperty("fromaddress");
         			String fromPwd = properties.getProperty("frompwd");
-        			String url= CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.IAASCONSOLE","URL");
+        			String url = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") +
+    		        		SystemConfigHandler.configMap.get("IPAAS-WEB.IAASCONSOLE.URL");
+//        			String url= CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.IAASCONSOLE","URL");
                     Map<String,Object> model = new HashMap<String,Object>(); 
                     model.put("toAddress", toAddress);//收件人
                     //model.put("applyCant", orderDetailList.get(0).getApplicant());//申请人
@@ -142,7 +143,8 @@ public class SoftwareInstallSvImpl implements ISoftwareInstallSv {
 					json.put("toAddress", toAddress);
 					json.put("emailTitle", title);
 					json.put("emailContent", content);
-					String service =CacheUtils.getValueByKey("Email.SendEmail");  //"http://10.1.228.198:20184/sendemail"
+//					String service =CacheUtils.getValueByKey("Email.SendEmail");  //"http://10.1.228.198:20184/sendemail"
+					String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 					String result = null;
 					result = HttpClientUtil.sendPostRequest(service+"/sendEmail/sendEmail",json.toString());
 					System.out.println(result);

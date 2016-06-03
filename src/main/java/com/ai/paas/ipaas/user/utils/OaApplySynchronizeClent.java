@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.sf.json.JSONObject;
-
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.dto.OrderWo;
 import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
 import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 /**
  * OA审批申请单同步类
@@ -26,11 +26,15 @@ public class OaApplySynchronizeClent {
             .getName());
 	public static String oaApplySynchronize(VariablesVo variablesVo,OrderWo orderWo){
 		logger.info("=================OA审批开始============");
-        String oaApplySynchronizeUrl = CacheUtils.getValueByKey("OA.URL_PREFIX")
-                + CacheUtils.getValueByKey("OA.APPLY_SYNCHRONIZE");
+//        String oaApplySynchronizeUrl = CacheUtils.getValueByKey("OA.URL_PREFIX")
+//                + CacheUtils.getValueByKey("OA.APPLY_SYNCHRONIZE");
+		String oaApplySynchronizeUrl = SystemConfigHandler.configMap.get("OA.URL_PREFIX.0") +
+		SystemConfigHandler.configMap.get("OA.APPLY_SYNCHRONIZE.url");
+		
         StringBuffer oaReqUrl = new StringBuffer(oaApplySynchronizeUrl);
         StringBuffer oaReqUrl2 = new StringBuffer();
-        String tenandId = CacheUtils.getValueByKey("OA.TENAND_ID");
+//        String tenandId = CacheUtils.getValueByKey("OA.TENAND_ID");
+        String tenandId = SystemConfigHandler.configMap.get("OA.TENAND_ID.0") ;
         JSONObject matchParamJson = new JSONObject();
         matchParamJson.put("applyType", "0");
         oaReqUrl2.append("tenandId=").append(tenandId);

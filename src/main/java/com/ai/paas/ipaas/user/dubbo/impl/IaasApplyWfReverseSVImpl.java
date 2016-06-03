@@ -1,26 +1,16 @@
 package com.ai.paas.ipaas.user.dubbo.impl;
 
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
-import com.ai.paas.ipaas.user.dto.OrderWo;
-import com.ai.paas.ipaas.user.dto.OrderWoCriteria;
 import com.ai.paas.ipaas.user.dubbo.interfaces.IIaasApplyWfReverseSV;
 import com.ai.paas.ipaas.user.dubbo.vo.ReverseVariablesVo;
 import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
 import com.ai.paas.ipaas.user.service.IIaasApplyWfReverseServiceSV;
-import com.ai.paas.ipaas.user.service.dao.OrderWoMapper;
-import com.ai.paas.ipaas.user.utils.HttpRequestUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 

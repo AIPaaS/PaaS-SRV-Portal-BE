@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.UserProdInst;
@@ -33,6 +32,7 @@ import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
 @Service
 @Transactional 
@@ -113,7 +113,9 @@ public class DesConsoleSv implements IDesConsoleSv{
 		Map<String, String> result=new HashMap<String, String>();		
 		
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort("14"));
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdBindRestful();
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdBindRestful();
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdBindRestful();
+
 		String params=JSonUtil.toJSon(desBindRequest);
 		logger.info("des绑定地址："+address);
 		logger.info("des绑定入参："+params);
@@ -146,8 +148,9 @@ public class DesConsoleSv implements IDesConsoleSv{
 	public String toGetBound(String userId) throws PaasException {
 		
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort("14"));
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdGetboundRestful();
-	 
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdGetboundRestful();
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdGetboundRestful();
+
 		JSONObject parameter=new JSONObject();
 		parameter.put("userId", userId);
 		String result="";
@@ -179,7 +182,9 @@ public class DesConsoleSv implements IDesConsoleSv{
 	public String toDesUnbind(Map<String, String> unBinRequest) throws PaasException {
 		
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort("14"));
-		String address= CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUnbindRestful();
+//		String address= CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUnbindRestful();
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdUnbindRestful();
+
 		String params=JSonUtil.toJSon(unBinRequest);
 		String result="";
 		try {
@@ -209,7 +214,9 @@ public class DesConsoleSv implements IDesConsoleSv{
 			throws PaasException {
 		
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort("14"));
-		String address= CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdFiltertableRestful();
+//		String address= CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdFiltertableRestful();
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdFiltertableRestful();
+
 		String params=JSonUtil.toJSon(filterRequest);
 		String result="";
 		try {
@@ -239,7 +246,8 @@ public class DesConsoleSv implements IDesConsoleSv{
 			throws PaasException {
 		
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort("14"));
-		String address=CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdGetboundtableinfoRestful();
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdGetboundtableinfoRestful();
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdGetboundtableinfoRestful();
 		String parameter=JSonUtil.toJSon(request);
 		String result="";
 		try {

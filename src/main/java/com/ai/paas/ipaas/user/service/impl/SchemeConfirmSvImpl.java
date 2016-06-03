@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.OrdStatusOperateRel;
 import com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria;
@@ -50,6 +49,7 @@ import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
 import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 @Service
 public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
 	private static final Logger logger = LogManager.getLogger(SchemeConfirmSvImpl.class
@@ -71,7 +71,8 @@ public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
 		String orderDetailId = jsonObject.getString("orderDetailId");//订单编码
 		
 		String result2 = null;
-		String service2 =CacheUtils.getOptionByKey("CONTROLLER.CONTROLLER","url");
+		String service2 = SystemConfigHandler.configMap.get("CONTROLLER.CONTROLLER.url");
+//		String service2 =CacheUtils.getOptionByKey("CONTROLLER.CONTROLLER","url");
 //		String service2 = "http://127.0.0.1:20881/ipaas";
 		String url2 = "/user/prodQuotaApi/prodQuotaByOrderId";
 		result2 = HttpClientUtil.sendPostRequest(service2 + url2, orderDetailId);
@@ -250,7 +251,10 @@ public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
 			        Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
         			String fromAddress = properties.getProperty("fromaddress");
         			String fromPwd = properties.getProperty("frompwd");
-        			String url=CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
+//        			String url=CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+
+//        					CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
+        			String url = SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.SERVICE.IP-PORT-SERVICE") +
+        					SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.LOGIN.URL");
                     Map<String,Object> model = new HashMap<String,Object>(); 
                     model.put("toAddress", toAddress);//收件人
                     model.put("applyCant", orderDetailList.get(0).getApplicant());//申请人
@@ -269,7 +273,8 @@ public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
 					json.put("toAddress", toAddress+"@asiainfo.com");
 					json.put("emailTitle", title);
 					json.put("emailContent", content);
-					String service =CacheUtils.getValueByKey("Email.SendEmail");  //"http://10.1.228.198:20184/sendemail"
+//					String service =CacheUtils.getValueByKey("Email.SendEmail");  //"http://10.1.228.198:20184/sendemail"
+					String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 					//String service = "http://10.1.228.198:20184/sendemail";
 					String result = null;
 					result = HttpClientUtil.sendPostRequest(

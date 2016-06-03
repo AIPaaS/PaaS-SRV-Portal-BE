@@ -18,7 +18,6 @@ import org.springframework.util.Assert;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.UserCenter;
 import com.ai.paas.ipaas.user.dto.UserCenterCriteria;
@@ -37,6 +36,7 @@ import com.ai.paas.ipaas.user.utils.HttpRequestUtil;
 import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
 import com.ai.paas.ipaas.user.utils.oamd5.OaMd5Util;
 import com.ai.paas.ipaas.util.CiperUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -76,7 +76,9 @@ public class UserSvImpl implements IUserSv {
 				registerResult.setRegisterSuccess(true);
 				return registerResult;
 			}
-			String adress = CacheUtils.getOptionByKey("PASS.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("CCS_CUST.INIT","URL");
+			String adress = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +
+					SystemConfigHandler.configMap.get("CCS_CUST.INIT.URL");
+//			String adress = CacheUtils.getOptionByKey("PASS.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("CCS_CUST.INIT","URL");
 			logger.info("##### begin to createConfigInfo ##### userId:"+userId);
 			String createConfigResult = HttpClientUtil.sendPostRequest(adress,  "{\"userId\":"+userId+"}");
 			logger.info("##### finish to to createConfigInfo   spend time："+(System.currentTimeMillis()-beginTime));
@@ -100,7 +102,9 @@ public class UserSvImpl implements IUserSv {
 				
 				if(ucInsertResult > 0){
 					logger.info("##### begin to white to auth_center#######");/////auth_center
-					adress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.SVWEB","URL");
+					adress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
+							SystemConfigHandler.configMap.get("IPAAS-UAC.SVWEB.URL");
+//					adress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.SVWEB","URL");
 					String svWebResult = HttpRequestUtil.sendPost(adress,  "authUserId="+userId+"&authUserName="+userEmail+"|"+uservo.getUserPhoneNum()+"&authPassword="+uservo.getUserPwd()+"&authPid="+pId);	//  pId				
 					JsonObject svWebJson = gson.fromJson(svWebResult, JsonObject.class);
 					String svWebCode = svWebJson.get(Constants.Restful.OpenServKey.CODE).getAsString();
@@ -205,7 +209,9 @@ public class UserSvImpl implements IUserSv {
 		try {
 			UserCenter userCenter = new UserCenter();
 			BeanUtils.copyProperties(uv, userCenter);
-			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYACCOUNT","URL");
+			String modAdress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
+					SystemConfigHandler.configMap.get("IPAAS-UAC.MODIFYACCOUNT.URL");
+//			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYACCOUNT","URL");
 			String svWebResult = HttpRequestUtil.sendPost(modAdress, "mail="+uv.getUserEmail()+"&userId="+uv.getUserId());
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>svWebResult:"+svWebResult);
 			
@@ -241,7 +247,9 @@ public class UserSvImpl implements IUserSv {
 	public String updateUserPsById(UserVo uv) throws PaasException {
 		logger.info("begin to updateUserbyKey by UserId ====:"+uv.getUserId());
 		try {
-			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYSERVPWD","URL");
+			String modAdress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
+					SystemConfigHandler.configMap.get("IPAAS-UAC.MODIFYSERVPWD.URL");
+//			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYSERVPWD","URL");
 			String svWebResult = HttpRequestUtil.sendPost(modAdress, "newPwd="+uv.getNewPwd()+"&oldPwd="+uv.getUserPwd()+"&serviceId="+uv.getUserEmail()+"&userId="+uv.getUserId());
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>svWebResult:"+svWebResult);
 			
@@ -294,8 +302,9 @@ public class UserSvImpl implements IUserSv {
 
 		Object object = null;
 		String key;
-		try {					
-            String	addressTime = CacheUtils.getOptionByKey("OA.OA", "getAIServerTime");		
+		try {	
+			String addressTime = SystemConfigHandler.configMap.get("OA.OA.getAIServerTime");
+//            String	addressTime = CacheUtils.getOptionByKey("OA.OA", "getAIServerTime");		
 			key = OaMd5Util.encryptToMD5(HttpRequestUtil.sendGet(addressTime, "")
 					+ "AIHRA_EMPLOYEE_INFO_FOR_HR_Vdjk*3k@-3_31");
 
@@ -303,7 +312,8 @@ public class UserSvImpl implements IUserSv {
 			Map reqMap = new HashMap();
 			reqMap.put("key", key);
 			reqMap.put("sw=nt_account", ntAccount);			
-			String	addressEmp = CacheUtils.getOptionByKey("OA.OA", "getAIHRA_EMPLOYEE");			
+			String addressEmp = SystemConfigHandler.configMap.get("OA.OA.getAIHRA_EMPLOYEE");
+//			String	addressEmp = CacheUtils.getOptionByKey("OA.OA", "getAIHRA_EMPLOYEE");			
 			object = HttpClientUtil.sendGet(addressEmp,reqMap);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -347,7 +357,9 @@ public class UserSvImpl implements IUserSv {
 				Map<String,Object> model = new HashMap<String,Object>();  
 		        model.put("email", toSenders);  
 		        //获取邮件激活链接地址			
-				String address = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE") + CacheUtils.getOptionByKey("AUTH.VERIFY","url");
+		        String address = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") +
+		        		SystemConfigHandler.configMap.get("AUTH.VERIFY.url");
+//				String address = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE") + CacheUtils.getOptionByKey("AUTH.VERIFY","url");
 				String token   = CiperUtil.encrypt(Constants.SECURITY_KEY, toSenders);
 		        model.put("activeLink", address+"?token="+token);  		    	
 				String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/registermail.vm", "UTF-8", model);
@@ -362,7 +374,8 @@ public class UserSvImpl implements IUserSv {
 				json.put("toAddress", toSenders);
 				json.put("emailTitle", subject);
 				json.put("emailContent", content);
-				String service = CacheUtils.getValueByKey("Email.SendEmail");
+				String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
+//				String service = CacheUtils.getValueByKey("Email.SendEmail");
 				HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail",json.toString());
 				
 			} catch (Exception e) {

@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.OrdStatusOperateRel;
 import com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria;
@@ -45,6 +44,7 @@ import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
 import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 @Service
 @Transactional
@@ -247,7 +247,8 @@ public class IaasApplyWfReverseServiceSVImpl implements IIaasApplyWfReverseServi
 		json.put("toAddress", toAddress);
 		json.put("emailTitle", title);
 		json.put("emailContent", content);
-		String service = CacheUtils.getValueByKey("Email.SendEmail"); 
+//		String service = CacheUtils.getValueByKey("Email.SendEmail"); 
+		String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
 		HttpClientUtil.sendPostRequest(service	+ "/sendEmail/sendEmail", json.toString());
         
         return JSonUtil.toJSon(resVo).toString();
