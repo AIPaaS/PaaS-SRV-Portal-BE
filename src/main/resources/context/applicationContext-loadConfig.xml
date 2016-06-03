@@ -13,14 +13,17 @@
 	<bean id="dubboConfig"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="order" value="1"/>
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-        <property name="locations">
-        	<list>
-        	<value>classpath:context/jdbc.properties</value>
-        	<value>classpath:context/zookeeper.properties</value>
-        	</list>
-        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+        <property name="locations" value="classpath:context/jdbc.properties" />
     </bean>
+    
+    <bean id="zookeeperConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="order" value="1" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="locations" value="classpath:context/zookeeper.properties" />
+	</bean>
     
     <!-- 配置数据源 -->
 	<bean id="ds" class="org.apache.commons.dbcp2.BasicDataSource">
@@ -43,4 +46,6 @@
 		<property name="storePath" value="${zookeeper.storePath}" />
     </bean>
     
+    <bean id="loadConfig" class="com.ai.paas.ipaas.zookeeper.SystemConfigHandler" >
+    </bean>
 </beans>
