@@ -1,9 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'pmd'
-apply plugin: 'findbugs'
-apply plugin: 'checkstyle'
 
 compileJava.dependsOn clean
 
@@ -11,74 +8,6 @@ sourceCompatibility = 1.7
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-    
-checkstyleMain {
-    ignoreFailures = false
-    reports {
-        include ( '**/*.java')
-        xml {
-           destination = new File(rootDir, "reports/checkstyle/${project.name}.xml" )
-        }
-    }
-    configFile = new File(rootDir, 'checkstyle.xml')
-}
-
-checkstyleTest {
-	ignoreFailures = false
-	reports {
-		include ( '**/*.java')
-		xml {
-			destination = new File(rootDir, "reports/checkstyle/${project.name}_test.xml" )
-		}
-	}
-	configFile = new File(rootDir, 'checkstyle.xml')
-}
-
-findbugsMain {
-	ignoreFailures = true
-	reports {
-        include ( '**/*.java')
-        xml {
-           destination = new File(rootDir, "reports/findbugs/${project.name}.xml" )
-        }
-    }
-	effort = "max"
-	reportLevel = "high"
-	omitVisitors = ["FindNonShortCircuit"]
-}
-
-findbugsTest {
-	ignoreFailures = true
-	reports {
-        include ( '**/*.java')
-        xml {
-           destination = new File(rootDir, "reports/findbugs/${project.name}_test.xml" )
-        }
-    }
-	effort = "max"
-	reportLevel = "high"
-	omitVisitors = ["FindNonShortCircuit"]
-}
-
-pmdMain {
-	ignoreFailures = true
-	reports {
-        include ( '**/*.java')
-        xml {
-           destination = new File(rootDir, "reports/pmd/${project.name}.xml" )
-        }
-    }
-}
-
-pmdTest {
-	ignoreFailures = true
-	reports {
-        include ( '**/*.java')
-        xml {
-           destination = new File(rootDir, "reports/pmd/${project.name}_test.xml" )
-        }
-    }
 }
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
