@@ -1,19 +1,14 @@
 package com.ai.paas.ipaas.user.service.impl;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
 import com.ai.paas.ipaas.user.constants.Constants;
@@ -21,8 +16,6 @@ import com.ai.paas.ipaas.user.dto.OrdStatusOperateRel;
 import com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria;
 import com.ai.paas.ipaas.user.dto.OrderDetail;
 import com.ai.paas.ipaas.user.dto.OrderDetailCriteria;
-import com.ai.paas.ipaas.user.dto.OrderSchemeCriteria;
-import com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs;
 import com.ai.paas.ipaas.user.dto.OrderWo;
 import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dto.UserProdInstCriteria;
@@ -33,18 +26,12 @@ import com.ai.paas.ipaas.user.service.IIaasApplyWfReverseServiceSV;
 import com.ai.paas.ipaas.user.service.IOaSv;
 import com.ai.paas.ipaas.user.service.dao.OrdStatusOperateRelMapper;
 import com.ai.paas.ipaas.user.service.dao.OrderDetailMapper;
-import com.ai.paas.ipaas.user.service.dao.OrderSchemeMapper;
 import com.ai.paas.ipaas.user.service.dao.OrderWoMapper;
 import com.ai.paas.ipaas.user.service.dao.UserProdInstMapper;
 import com.ai.paas.ipaas.user.utils.DateUtil;
-import com.ai.paas.ipaas.user.utils.EmailTemplUtil;
-import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.OaApplySynchronizeClent;
-import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
-import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
-import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 @Service
 @Transactional
@@ -137,121 +124,123 @@ public class IaasApplyWfReverseServiceSVImpl implements IIaasApplyWfReverseServi
     }
    
     public String troubleCompleteDispatch(ReverseVariablesVo reverseVo) throws Exception {
-        VariablesVo variablesVo = this.getVariableFromReverseVo(reverseVo);
-        OrderDetail orderDetail = new OrderDetail();
-        OrderDetailMapper orderDetailMapper = template.getMapper(OrderDetailMapper.class);
-        orderDetail = orderDetailMapper.selectByPrimaryKey(Long.parseLong(variablesVo.getApplyId()));
-        ResponseVo resVo = new ResponseVo();
-        OrderSchemeWithBLOBs orderScheme = null;
-        if (orderDetail != null) {
-            orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.ORDER_STATUS_CLOSE);
-            OrderDetailCriteria orderDetailCriteria = new OrderDetailCriteria();
-            orderDetailCriteria.createCriteria().andOrderDetailIdEqualTo(
-                    Long.parseLong(variablesVo.getApplyId()));
-            int uptCnt = orderDetailMapper.updateByExampleSelective(orderDetail,orderDetailCriteria);
-            String openParam = orderDetail.getOpenParam();        
-            Map map = GsonUtil.fromJSon(openParam, Map.class);
-            
-            Map openParamMap = new HashMap();		
-    		openParamMap.put("username", map.get("username"));
-    		openParamMap.put("password", map.get("password"));        		
-    		
-    		OrderSchemeMapper orderSchemeMapper = template.getMapper(OrderSchemeMapper.class);
-    		OrderSchemeCriteria orderSchemeCriteria = new OrderSchemeCriteria();   		
-    		
-    		OrderSchemeCriteria.Criteria criteria = orderSchemeCriteria.createCriteria();
-    		criteria.andOrderDetailIdEqualTo(orderDetail.getOrderDetailId());
-    		criteria.andValidFlagEqualTo(Constants.OrderScheme.VaildFlag.YES);
-    		List<OrderSchemeWithBLOBs>  orderSchemeList= orderSchemeMapper.selectByExampleWithBLOBs(orderSchemeCriteria);
-    		orderScheme = orderSchemeList.get(0);
-            
-    		List ips = (List) map.get("ip");        
-            for(int i=0;i<ips.size();i++){
-            	String ipStr = (String) ips.get(i);
-            	String[] ipArrs = ipStr.split("_");
-            	openParamMap.put("in_ip", ipArrs[0]);  
-            	if(ipArrs.length == 2){
-            		openParamMap.put("public_ip", ipArrs[1]);
-            	}else{
-            		openParamMap.put("public_ip", "");
-            	}
-            	openParamMap.put("softsConfig", orderDetail.getSoftsConfig());
-            	String userServIpaasId   = createUserServIpaasId(orderDetail);	
-         	    orderDetail.setUserServIpaasId(userServIpaasId);
-         		UserProdInst userProdInst = new UserProdInst() ;	
-         		userProdInst.setUserServIpaasId(userServIpaasId);
-         		userProdInst.setUserServBackParam(GsonUtil.toJSon(openParamMap));		
-         		userProdInst.setUserServIpaasId(orderDetail.getUserServIpaasId());
-         		userProdInst.setUserServParam(orderScheme.getProdParam());
-         		userProdInst.setUserServParamZh(orderScheme.getProdParamZh());
-         		long userServId = this.saveUserProdInst(orderDetail, userProdInst);
-         		orderDetail.setUserServId(String.valueOf(userServId));
-            } 
-            
-            resVo.setResponseCode(Constants.OPERATE_CODE_SUCCESS);
-        } else {
-            throw new Exception("无效的applyID");
-        } 
-
-        String prodParam = orderScheme.getProdParam();
-        Map map = GsonUtil.fromJSon(prodParam, HashMap.class);
-        String title = null;
-		String message = null;
-		String toAddress = null;
-		String applyCant = null;
-
-		Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-		String fromAddress = properties.getProperty("fromaddress");
-		String fromPwd = properties.getProperty("frompwd");
-		Map<String, Object> model = new HashMap<String, Object>();
-
-		title = "虚拟机申请流程结束通知";
-		message = "申请的亚信云虚拟机申请流程已经结束,请查看最终配置方案。";
-		String Nt = orderDetail.getApplicantEmail().split("@")[0];
-		String buiCode = oaSv.getBuiCodeByNt(Nt);
-		Map<String,String> paramMap = new HashMap<String,String>();
-		paramMap.put("param", buiCode);
-		String oaNtAccount = oaSv.getOaOperators(paramMap);
-		toAddress = oaNtAccount+"@asiainfo.com";
-		applyCant = orderDetail.getApplicant();
-		model.put("toAddress", toAddress);// 收件人
-		model.put("applyCant", applyCant);// 申请人
-		model.put("message", message);
-		model.put("title", title);
-		
-		model.put("virtualType", map.get("virtualType"));
-		model.put("netType", map.get("netType"));
-		model.put("cpu", map.get("cpu"));
-		model.put("netBandW", map.get("netBandW"));
-		model.put("virtualRam", map.get("virtualRam"));		
-		model.put("netNum", map.get("netNum"));
-		model.put("virtualHard", map.get("virtualHard"));
-		model.put("SysTemChild", map.get("SysTemChild"));
-		model.put("vmNumber", map.get("vmNumber"));
-		String content = null;
-		if(Constants.Order.BelongCloud.ZUYONG_YUN.equals(orderDetail.getBelongCloud())){
-			content = VelocityEngineUtils.mergeTemplateIntoString(
-						EmailTemplUtil.getVelocityEngineInstance(), "email/zuyongCloseNotify.vm",
-						"UTF-8", model);
-		}else{
-			content = VelocityEngineUtils.mergeTemplateIntoString(
-					EmailTemplUtil.getVelocityEngineInstance(), "email/yafaCloseNotify.vm",
-					"UTF-8", model);
-		}
-		
-		logger.info("======================邮件模板信息：" + content + "======================");
-		// 邮件发送
-		JSONObject json = new JSONObject();
-		json.put("fromAddress", fromAddress);
-		json.put("fromPwd", fromPwd);
-		json.put("toAddress", toAddress);
-		json.put("emailTitle", title);
-		json.put("emailContent", content);
+		/** 屏蔽portal中的iaas模块功能，屏蔽此方法路逻辑。2016-06-12 **/
+//        VariablesVo variablesVo = this.getVariableFromReverseVo(reverseVo);
+//        OrderDetail orderDetail = new OrderDetail();
+//        OrderDetailMapper orderDetailMapper = template.getMapper(OrderDetailMapper.class);
+//        orderDetail = orderDetailMapper.selectByPrimaryKey(Long.parseLong(variablesVo.getApplyId()));
+//        ResponseVo resVo = new ResponseVo();
+//        OrderSchemeWithBLOBs orderScheme = null;
+//        if (orderDetail != null) {
+//            orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.ORDER_STATUS_CLOSE);
+//            OrderDetailCriteria orderDetailCriteria = new OrderDetailCriteria();
+//            orderDetailCriteria.createCriteria().andOrderDetailIdEqualTo(
+//                    Long.parseLong(variablesVo.getApplyId()));
+//            int uptCnt = orderDetailMapper.updateByExampleSelective(orderDetail,orderDetailCriteria);
+//            String openParam = orderDetail.getOpenParam();        
+//            Map map = GsonUtil.fromJSon(openParam, Map.class);
+//            
+//            Map openParamMap = new HashMap();		
+//    		openParamMap.put("username", map.get("username"));
+//    		openParamMap.put("password", map.get("password"));        		
+//    		
+//    		OrderSchemeMapper orderSchemeMapper = template.getMapper(OrderSchemeMapper.class);
+//    		OrderSchemeCriteria orderSchemeCriteria = new OrderSchemeCriteria();   		
+//    		
+//    		OrderSchemeCriteria.Criteria criteria = orderSchemeCriteria.createCriteria();
+//    		criteria.andOrderDetailIdEqualTo(orderDetail.getOrderDetailId());
+//    		criteria.andValidFlagEqualTo(Constants.OrderScheme.VaildFlag.YES);
+//    		List<OrderSchemeWithBLOBs>  orderSchemeList= orderSchemeMapper.selectByExampleWithBLOBs(orderSchemeCriteria);
+//    		orderScheme = orderSchemeList.get(0);
+//            
+//    		List ips = (List) map.get("ip");        
+//            for(int i=0;i<ips.size();i++){
+//            	String ipStr = (String) ips.get(i);
+//            	String[] ipArrs = ipStr.split("_");
+//            	openParamMap.put("in_ip", ipArrs[0]);  
+//            	if(ipArrs.length == 2){
+//            		openParamMap.put("public_ip", ipArrs[1]);
+//            	}else{
+//            		openParamMap.put("public_ip", "");
+//            	}
+//            	openParamMap.put("softsConfig", orderDetail.getSoftsConfig());
+//            	String userServIpaasId   = createUserServIpaasId(orderDetail);	
+//         	    orderDetail.setUserServIpaasId(userServIpaasId);
+//         		UserProdInst userProdInst = new UserProdInst() ;	
+//         		userProdInst.setUserServIpaasId(userServIpaasId);
+//         		userProdInst.setUserServBackParam(GsonUtil.toJSon(openParamMap));		
+//         		userProdInst.setUserServIpaasId(orderDetail.getUserServIpaasId());
+//         		userProdInst.setUserServParam(orderScheme.getProdParam());
+//         		userProdInst.setUserServParamZh(orderScheme.getProdParamZh());
+//         		long userServId = this.saveUserProdInst(orderDetail, userProdInst);
+//         		orderDetail.setUserServId(String.valueOf(userServId));
+//            } 
+//            
+//            resVo.setResponseCode(Constants.OPERATE_CODE_SUCCESS);
+//        } else {
+//            throw new Exception("无效的applyID");
+//        } 
+//
+//        String prodParam = orderScheme.getProdParam();
+//        Map map = GsonUtil.fromJSon(prodParam, HashMap.class);
+//        String title = null;
+//		String message = null;
+//		String toAddress = null;
+//		String applyCant = null;
+//
+//		Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
+//		String fromAddress = properties.getProperty("fromaddress");
+//		String fromPwd = properties.getProperty("frompwd");
+//		Map<String, Object> model = new HashMap<String, Object>();
+//
+//		title = "虚拟机申请流程结束通知";
+//		message = "申请的亚信云虚拟机申请流程已经结束,请查看最终配置方案。";
+//		String Nt = orderDetail.getApplicantEmail().split("@")[0];
+//		String buiCode = oaSv.getBuiCodeByNt(Nt);
+//		Map<String,String> paramMap = new HashMap<String,String>();
+//		paramMap.put("param", buiCode);
+//		String oaNtAccount = oaSv.getOaOperators(paramMap);
+//		toAddress = oaNtAccount+"@asiainfo.com";
+//		applyCant = orderDetail.getApplicant();
+//		model.put("toAddress", toAddress);// 收件人
+//		model.put("applyCant", applyCant);// 申请人
+//		model.put("message", message);
+//		model.put("title", title);
+//		
+//		model.put("virtualType", map.get("virtualType"));
+//		model.put("netType", map.get("netType"));
+//		model.put("cpu", map.get("cpu"));
+//		model.put("netBandW", map.get("netBandW"));
+//		model.put("virtualRam", map.get("virtualRam"));		
+//		model.put("netNum", map.get("netNum"));
+//		model.put("virtualHard", map.get("virtualHard"));
+//		model.put("SysTemChild", map.get("SysTemChild"));
+//		model.put("vmNumber", map.get("vmNumber"));
+//		String content = null;
+//		if(Constants.Order.BelongCloud.ZUYONG_YUN.equals(orderDetail.getBelongCloud())){
+//			content = VelocityEngineUtils.mergeTemplateIntoString(
+//						EmailTemplUtil.getVelocityEngineInstance(), "email/zuyongCloseNotify.vm",
+//						"UTF-8", model);
+//		}else{
+//			content = VelocityEngineUtils.mergeTemplateIntoString(
+//					EmailTemplUtil.getVelocityEngineInstance(), "email/yafaCloseNotify.vm",
+//					"UTF-8", model);
+//		}
+//		
+//		logger.info("======================邮件模板信息：" + content + "======================");
+//		// 邮件发送
+//		JSONObject json = new JSONObject();
+//		json.put("fromAddress", fromAddress);
+//		json.put("fromPwd", fromPwd);
+//		json.put("toAddress", toAddress);
+//		json.put("emailTitle", title);
+//		json.put("emailContent", content);
 //		String service = CacheUtils.getValueByKey("Email.SendEmail"); 
-		String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
-		HttpClientUtil.sendPostRequest(service	+ "/sendEmail/sendEmail", json.toString());
-        
-        return JSonUtil.toJSon(resVo).toString();
+//		String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
+//		HttpClientUtil.sendPostRequest(service	+ "/sendEmail/sendEmail", json.toString());
+//        
+//        return JSonUtil.toJSon(resVo).toString();
+    	return null;
     }
 
    
