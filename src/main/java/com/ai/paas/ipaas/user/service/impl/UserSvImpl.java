@@ -22,6 +22,7 @@ import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.UserCenter;
 import com.ai.paas.ipaas.user.dto.UserCenterCriteria;
 import com.ai.paas.ipaas.user.dto.UserMgrOperate;
+import com.ai.paas.ipaas.user.dubbo.vo.EmailDetail;
 import com.ai.paas.ipaas.user.dubbo.vo.RegisterResult;
 import com.ai.paas.ipaas.user.dubbo.vo.UserVo;
 import com.ai.paas.ipaas.user.exception.BusinessException;
@@ -67,7 +68,6 @@ public class UserSvImpl implements IUserSv {
 		String pId = uservo.getPid();
 		String userEmail = uservo.getUserEmail();
 		logger.info("##### begin to register user ##### ");
-		
 		try {
 			//幂等性操作
 			UserCenter userCenter = getUserInfoByEmail(userEmail);
@@ -78,7 +78,7 @@ public class UserSvImpl implements IUserSv {
 			}
 			String adress = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +
 					SystemConfigHandler.configMap.get("CCS_CUST.INIT.URL");
-//			String adress = CacheUtils.getOptionByKey("PASS.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("CCS_CUST.INIT","URL");
+			
 			logger.info("##### begin to createConfigInfo ##### userId:"+userId);
 			String createConfigResult = HttpClientUtil.sendPostRequest(adress,  "{\"userId\":"+userId+"}");
 			logger.info("##### finish to to createConfigInfo   spend time："+(System.currentTimeMillis()-beginTime));
@@ -88,48 +88,47 @@ public class UserSvImpl implements IUserSv {
 			String code = json.get(Constants.Restful.OpenServKey.CODE).getAsString();
 			
 			if(Constants.Restful.OpenServResult.SUCCESS.equals(code)){
-				
 				logger.info("##### begin to white to user_center#######");
 				UserCenter uc = new UserCenter();
 				BeanUtils.copyProperties(uservo, uc);
 				
 				UserCenterMapper userCenterMapper = template.getMapper(UserCenterMapper.class);
-				if("18610176415".equals(uc.getUserPhoneNum())){
-					uc.setUserPhoneNum("");
-				}
-				int ucInsertResult = userCenterMapper.insert(uc);////insert()
+				int ucInsertResult = userCenterMapper.insert(uc);
 				logger.info("##### finish to white to user_center#######result:"+ucInsertResult);
 				
 				if(ucInsertResult > 0){
 					logger.info("##### begin to white to auth_center#######");/////auth_center
 					adress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
 							SystemConfigHandler.configMap.get("IPAAS-UAC.SVWEB.URL");
-//					adress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.SVWEB","URL");
 					String svWebResult = HttpRequestUtil.sendPost(adress,  "authUserId="+userId+"&authUserName="+userEmail+"|"+uservo.getUserPhoneNum()+"&authPassword="+uservo.getUserPwd()+"&authPid="+pId);	//  pId				
 					JsonObject svWebJson = gson.fromJson(svWebResult, JsonObject.class);
 					String svWebCode = svWebJson.get(Constants.Restful.OpenServKey.CODE).getAsString();
 					if(!Constants.Restful.OpenServResult.SUCCESS.equals(svWebCode)){
 						throw new RuntimeException("fail to svWeb!stupid!");
 					}
-						logger.info("##### begin to send email #######");
-						String subject = "亚信云  激活验证链接";
-						sendRegisterEmail(subject,userEmail);
-						logger.info("#####finish to send email      spend time："+(System.currentTimeMillis()-beginTime));
+					
+					logger.info("##### begin to send email #######");
+					String subject = "亚信云  激活验证链接";
+//					sendRegisterEmail(subject,userEmail);
+					registerResult.setNeedSend(true);
+					EmailDetail email = getRegisterEmail(subject, userEmail);
+					registerResult.setEmail(email);
+					logger.info("#####finish to send email spend time："+(System.currentTimeMillis()-beginTime));
 				}else{
 					throw new RuntimeException("fail to white to auth_center!stupid!");
 				}
-				
-				
-			}else {
+			} else {
 				throw new RuntimeException("fail to init ccs when register!stupid!");
 			}
+			
 			logger.info("##### finish to register user ##### ");
 			registerResult.setUserId(userId);
 			registerResult.setRegisterSuccess(true);
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 			throw new RuntimeException("fail to register!stupid!");
-		} 
+		}
+		
 		return registerResult;
 	}
 
@@ -202,6 +201,7 @@ public class UserSvImpl implements IUserSv {
 			throw new RuntimeException("activeUser error");
 		}
 	}
+	
 	@Override
 	public int updateUserEmailbyKey(UserVo uv) throws PaasException {
 		logger.info("begin to updateUserbyKey by UserId ====:"+uv.getUserId());
@@ -213,7 +213,7 @@ public class UserSvImpl implements IUserSv {
 					SystemConfigHandler.configMap.get("IPAAS-UAC.MODIFYACCOUNT.URL");
 //			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYACCOUNT","URL");
 			String svWebResult = HttpRequestUtil.sendPost(modAdress, "mail="+uv.getUserEmail()+"&userId="+uv.getUserId());
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>svWebResult:"+svWebResult);
+			logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>svWebResult:"+svWebResult);
 			
 			Gson gson = new Gson();
 			JsonObject json = gson.fromJson(svWebResult, JsonObject.class);
@@ -222,19 +222,18 @@ public class UserSvImpl implements IUserSv {
 				UserCenterMapper mapper = template.getMapper(UserCenterMapper.class);
 				rsv=mapper.updateByPrimaryKeySelective(userCenter);
 				logger.info("userSvImpl rsv:"+rsv);
+				
 				//if("1".equals(rsv)){
-					logger.info("##### begin to insert UserMgrOperate ");
-					int count = -1;
-					UserMgrOperate userMgrOperate = makeUserMgrOperateVo(uv,"0001","11","000000"); //uservo ,ProdId 0001/0002 ,actionCode 11/12,resultCode 000000
-					UserMgrOperateMapper userMgrOperateMapper =  template.getMapper(UserMgrOperateMapper.class);
-					userMgrOperate.setUserUpdateBefore(uv.getOldEmail());//更改前内容
-					userMgrOperate.setUserUpdateAfter(uv.getUserEmail());//更改后内容
-					count = userMgrOperateMapper.insert(userMgrOperate);
-					logger.info("##### finish to insert UserMgrOperate ,result is :"+count);
+				logger.info("##### begin to insert UserMgrOperate ");
+				int count = -1;
+				UserMgrOperate userMgrOperate = makeUserMgrOperateVo(uv,"0001","11","000000"); //uservo ,ProdId 0001/0002 ,actionCode 11/12,resultCode 000000
+				UserMgrOperateMapper userMgrOperateMapper =  template.getMapper(UserMgrOperateMapper.class);
+				userMgrOperate.setUserUpdateBefore(uv.getOldEmail());//更改前内容
+				userMgrOperate.setUserUpdateAfter(uv.getUserEmail());//更改后内容
+				count = userMgrOperateMapper.insert(userMgrOperate);
+				logger.info("##### finish to insert UserMgrOperate ,result is :"+count);
 				//}
 			}
-			
-			
 			
 			return rsv;
 		} catch (Exception e) {
@@ -273,8 +272,6 @@ public class UserSvImpl implements IUserSv {
 			throw new RuntimeException("updateUserPsById error");
 		}
 	}
-	
-	
 
 	@Override
 	public UserCenter getUserInfoByEmail(String email) throws PaasException {
@@ -323,7 +320,7 @@ public class UserSvImpl implements IUserSv {
 	}
 
 	//用于修改密码，账户时建立UserMgrOperate实体类
-		public UserMgrOperate makeUserMgrOperateVo(UserVo uservo ,String ProdId ,String actionCode, String resultCode){
+	public UserMgrOperate makeUserMgrOperateVo(UserVo uservo ,String ProdId ,String actionCode, String resultCode){
 			UserMgrOperate  userMgrOperate = new  UserMgrOperate();
 			userMgrOperate.setUserId(uservo.getUserId());//用户编码  
 			userMgrOperate.setUserProdType("1");// 产品类型 1：存储  2：计算
@@ -349,40 +346,68 @@ public class UserSvImpl implements IUserSv {
 	       return userMgrOperate;
 		}
 
-
-		public void sendRegisterEmail(String subject,String toSenders) throws PaasException {
-			long beginTime = System.currentTimeMillis();
-			try {
-				
-				Map<String,Object> model = new HashMap<String,Object>();  
-		        model.put("email", toSenders);  
-		        //获取邮件激活链接地址			
-		        String address = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") +
-		        		SystemConfigHandler.configMap.get("AUTH.VERIFY.url");
-//				String address = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE") + CacheUtils.getOptionByKey("AUTH.VERIFY","url");
-				String token   = CiperUtil.encrypt(Constants.SECURITY_KEY, toSenders);
-		        model.put("activeLink", address+"?token="+token);  		    	
-				String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/registermail.vm", "UTF-8", model);
-				
-		    	JSONObject json = new JSONObject();
-				Properties properties;
-				properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-				String fromAddress = properties.getProperty("fromaddress");
-				String fromPwd = properties.getProperty("frompwd");
-				json.put("fromAddress", fromAddress);
-				json.put("fromPwd", fromPwd);
-				json.put("toAddress", toSenders);
-				json.put("emailTitle", subject);
-				json.put("emailContent", content);
-				String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
-//				String service = CacheUtils.getValueByKey("Email.SendEmail");
-				HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail",json.toString());
-				
-			} catch (Exception e) {
-				  throw new PaasException("发送邮件失败");				
-			} 
-			
-		}
-
+	/**
+	 * 用户注册成功的邮件信息
+	 * @param subject
+	 * @param toSenders
+	 * @return
+	 * @throws Exception
+	 */
+	private EmailDetail getRegisterEmail(String subject, String toSenders) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("email", toSenders);
+		// 获取邮件激活链接地址
+		String address = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE")
+				+ SystemConfigHandler.configMap.get("AUTH.VERIFY.url");
+		String token = CiperUtil.encrypt(Constants.SECURITY_KEY, toSenders);
+		model.put("activeLink", address + "?token=" + token);
+		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(),
+				"email/registermail.vm", "UTF-8", model);
+		
+		Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
+		String fromAddress = properties.getProperty("fromaddress");
+		String fromPwd = properties.getProperty("frompwd");
+		
+		EmailDetail email = new EmailDetail();
+		email.setToAddress(toSenders);
+		email.setEmailTitle(subject);
+		email.setFromAddress(fromAddress);
+		email.setFromPwd(fromPwd);
+		email.setEmailContent(content);
+		return email;
+	}
+	
+//	public void sendRegisterEmailxxx(String subject, String toSenders)
+//			throws PaasException {
+//		long beginTime = System.currentTimeMillis();
+//		try {
+//			Map<String, Object> model = new HashMap<String, Object>();
+//			model.put("email", toSenders);
+//			// 获取邮件激活链接地址
+//			String address = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE")
+//					+ SystemConfigHandler.configMap.get("AUTH.VERIFY.url");
+//			String token = CiperUtil.encrypt(Constants.SECURITY_KEY, toSenders);
+//			model.put("activeLink", address + "?token=" + token);
+//			String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(),
+//					"email/registermail.vm", "UTF-8", model);
+//			
+//			JSONObject json = new JSONObject();
+//			Properties properties;
+//			properties = ReadPropertiesUtil.getProperties("/context/email.properties");
+//			
+//			String fromAddress = properties.getProperty("fromaddress");
+//			String fromPwd = properties.getProperty("frompwd");
+//			json.put("fromAddress", fromAddress);
+//			json.put("fromPwd", fromPwd);
+//			json.put("toAddress", toSenders);
+//			json.put("emailTitle", subject);
+//			json.put("emailContent", content);
+//			
+//			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
+//			HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail", json.toString());
+//		} catch (Exception e) {
+//			throw new PaasException("发送邮件失败");
+//		}
+//	}
 
 }
