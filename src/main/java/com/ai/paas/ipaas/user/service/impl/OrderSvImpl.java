@@ -39,10 +39,10 @@ import com.ai.paas.ipaas.user.dto.WfTicketsCriteria;
 import com.ai.paas.ipaas.user.dubbo.vo.CheckOrdersRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.EmailDetail;
 import com.ai.paas.ipaas.user.dubbo.vo.OrderDetailRequest;
+import com.ai.paas.ipaas.user.dubbo.vo.OrderDetailResponse;
 import com.ai.paas.ipaas.user.dubbo.vo.OrderDetailVo;
 import com.ai.paas.ipaas.user.dubbo.vo.PageEntity;
 import com.ai.paas.ipaas.user.dubbo.vo.PageResult;
-import com.ai.paas.ipaas.user.dubbo.vo.RegisterResult;
 import com.ai.paas.ipaas.user.dubbo.vo.SelectOrderRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.SysParamVo;
 import com.ai.paas.ipaas.user.dubbo.vo.SysParmRequest;
@@ -90,7 +90,7 @@ public class OrderSvImpl implements IOrderSv {
 	private ISysParamSv iSysParamSv;
 
 	@Override
-	public RegisterResult saveOrderDetail(OrderDetailRequest request) throws PaasException {
+	public OrderDetailResponse saveOrderDetail(OrderDetailRequest request) throws PaasException {
 		OrderDetailMapper orderDetailMapper =  template.getMapper(OrderDetailMapper.class);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(Short.valueOf(request.getProdId()));
 		OrderDetail orderDetail = new OrderDetail();
@@ -106,11 +106,14 @@ public class OrderSvImpl implements IOrderSv {
 		orderDetail.setOrderStatus(Constants.Order.PaasOrderStatus.ORDER_STATUS_EXECUTE);		
 		orderDetailMapper.insert(orderDetail);
 		
-		RegisterResult rs = null;
-		rs.setEmail(getAuditPointEmail(orderDetail));
-		rs.setNeedSend(true);
+		List<EmailDetail> rs = new ArrayList<EmailDetail>();
+		EmailDetail vo = getAuditPointEmail(orderDetail);
+		rs.add(vo);
 		
-		return rs;
+		OrderDetailResponse rsp = null;
+		rsp.setEmail(rs);
+		rsp.setNeedSend(true);
+		return rsp;
 	}
 
 	@Override
@@ -212,42 +215,40 @@ public class OrderSvImpl implements IOrderSv {
 	}
 
 	@Override
-	public List<RegisterResult> checkOrders(CheckOrdersRequest request) throws PaasException {
+	public OrderDetailResponse checkOrders(CheckOrdersRequest request) throws PaasException {
 		List<Long> orderIds = request.getIdlist();
 		logger.info("input orderIds:"+orderIds);	
 		if(null == orderIds || 0 == orderIds.size()){
 			throw new PaasException("传入订单id列表为空");
 		}
 		
-		List<RegisterResult> result = null;
+		List<EmailDetail> rs = new ArrayList<EmailDetail>();
 		for(long orderId: orderIds){
 			logger.info("orderId:"+orderId);
 			OrderDetail orderDetail = this.selectByPrimaryKey(orderId);
 			logger.info("orderDetail:"+orderDetail.getOrderDetailId());
 			
-			RegisterResult rs = null;
 			if(Constants.Order.OperateType.APPLY.equals(orderDetail.getOperateType())){
 				//申请订单
 				checkPurchaseOrder(orderDetail,request);
 				
 				//TODO:设置邮件信息
 				EmailDetail email = getEmailandPID(orderDetail,request);
-				rs.setEmail(email);
-				rs.setNeedSend(true);
-				result.add(rs);
+				rs.add(email);
 			} else {
 				//扩展订单
 				checkExpenseOrder(orderDetail,request);
 				
 				//TODO:设置邮件信息
 				EmailDetail email = getCheckExpenseOrderResultEmail(orderDetail,request);
-				rs.setEmail(email);
-				rs.setNeedSend(true);
-				result.add(rs);
+				rs.add(email);
 			}	
 		}
 		
-		return result;
+		OrderDetailResponse rsp = null;
+		rsp.setEmail(rs);
+		rsp.setNeedSend(true);
+		return rsp;
 	}
 	
 	public void checkPurchaseOrder(OrderDetail orderDetail,CheckOrdersRequest request)

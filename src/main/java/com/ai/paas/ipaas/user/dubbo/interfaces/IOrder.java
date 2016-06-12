@@ -24,11 +24,11 @@ public interface IOrder {
 	
 	@Path("/selectOrderDetails")
 	@POST
-	public SelectOrderResponse  selectOrderDetails(SelectOrderRequest request) throws PaasException;
+	public SelectOrderResponse selectOrderDetails(SelectOrderRequest request) throws PaasException;
 	
 	@Path("/selectOrderList")
 	@POST
-	public SelectOrderResponse  selectOrderList(SelectOrderRequest request) throws PaasException;
+	public SelectOrderResponse selectOrderList(SelectOrderRequest request) throws PaasException;
 
 	@Path("/checkOrders")
 	@POST
