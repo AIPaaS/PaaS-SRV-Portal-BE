@@ -42,14 +42,11 @@ public interface IOrder {
 	@POST
 	public String verifyOrders(String params);
 	
-	
 	@Path("/applyOrders")
 	@POST
 	public String applyOrders(String params);
 	
-	
 	@Path("/selectConfirmList")
 	@POST
 	public String selectConfirmList(String params);
-	
 }

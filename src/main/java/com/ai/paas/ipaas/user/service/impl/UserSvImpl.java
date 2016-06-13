@@ -7,7 +7,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -376,38 +375,5 @@ public class UserSvImpl implements IUserSv {
 		email.setEmailContent(content);
 		return email;
 	}
-	
-//	public void sendRegisterEmailxxx(String subject, String toSenders)
-//			throws PaasException {
-//		long beginTime = System.currentTimeMillis();
-//		try {
-//			Map<String, Object> model = new HashMap<String, Object>();
-//			model.put("email", toSenders);
-//			// 获取邮件激活链接地址
-//			String address = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE")
-//					+ SystemConfigHandler.configMap.get("AUTH.VERIFY.url");
-//			String token = CiperUtil.encrypt(Constants.SECURITY_KEY, toSenders);
-//			model.put("activeLink", address + "?token=" + token);
-//			String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(),
-//					"email/registermail.vm", "UTF-8", model);
-//			
-//			JSONObject json = new JSONObject();
-//			Properties properties;
-//			properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-//			
-//			String fromAddress = properties.getProperty("fromaddress");
-//			String fromPwd = properties.getProperty("frompwd");
-//			json.put("fromAddress", fromAddress);
-//			json.put("fromPwd", fromPwd);
-//			json.put("toAddress", toSenders);
-//			json.put("emailTitle", subject);
-//			json.put("emailContent", content);
-//			
-//			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
-//			HttpClientUtil.sendPostRequest(service + "/sendEmail/sendEmail", json.toString());
-//		} catch (Exception e) {
-//			throw new PaasException("发送邮件失败");
-//		}
-//	}
 
 }

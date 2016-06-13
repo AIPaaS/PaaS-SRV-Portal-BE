@@ -106,13 +106,13 @@ public class OrderSvImpl implements IOrderSv {
 		orderDetail.setOrderStatus(Constants.Order.PaasOrderStatus.ORDER_STATUS_EXECUTE);		
 		orderDetailMapper.insert(orderDetail);
 		
-		List<EmailDetail> rs = new ArrayList<EmailDetail>();
-		EmailDetail vo = getAuditPointEmail(orderDetail);
-		rs.add(vo);
-		
-		OrderDetailResponse rsp = null;
-		rsp.setEmail(rs);
+		List<EmailDetail> emailList = new ArrayList<EmailDetail>();
+		EmailDetail email = getAuditPointEmail(orderDetail);
+		emailList.add(email);
+		OrderDetailResponse rsp = new OrderDetailResponse();
+		rsp.setEmail(emailList);
 		rsp.setNeedSend(true);
+		
 		return rsp;
 	}
 
@@ -222,7 +222,7 @@ public class OrderSvImpl implements IOrderSv {
 			throw new PaasException("传入订单id列表为空");
 		}
 		
-		List<EmailDetail> rs = new ArrayList<EmailDetail>();
+		List<EmailDetail> emailList = new ArrayList<EmailDetail>();
 		for(long orderId: orderIds){
 			logger.info("orderId:"+orderId);
 			OrderDetail orderDetail = this.selectByPrimaryKey(orderId);
@@ -233,21 +233,24 @@ public class OrderSvImpl implements IOrderSv {
 				checkPurchaseOrder(orderDetail,request);
 				
 				//TODO:设置邮件信息
-				EmailDetail email = getEmailandPID(orderDetail,request);
-				rs.add(email);
+				EmailDetail email = getEmailandPID(orderDetail, request);
+				emailList.add(email);
 			} else {
 				//扩展订单
 				checkExpenseOrder(orderDetail,request);
 				
 				//TODO:设置邮件信息
-				EmailDetail email = getCheckExpenseOrderResultEmail(orderDetail,request);
-				rs.add(email);
+				EmailDetail email = getCheckExpenseOrderResultEmail(orderDetail, request);
+				emailList.add(email);
 			}	
 		}
 		
-		OrderDetailResponse rsp = null;
-		rsp.setEmail(rs);
-		rsp.setNeedSend(true);
+		OrderDetailResponse rsp = new OrderDetailResponse();
+		rsp.setEmail(emailList);
+		if(emailList.size() > 0) {
+			rsp.setNeedSend(true);
+		}
+		
 		return rsp;
 	}
 	
@@ -374,27 +377,26 @@ public class OrderSvImpl implements IOrderSv {
 		userProdInst.setUserServState(Constants.UserProdInst.UserServState.OPEN);
 		userProdInst.setUserServOpenTime(DateUtil.getSysDate());
 		userProdInst.setUserServBackParam(prodInst.getUserServBackParam());	
-	    //缓存默认为启动
 		if(Constants.ProdProduct.ProdId.MCS.equals(orderDetail.getProdId())){
-			userProdInst.setUserServRunState(Constants.UserProdInst.UserServRunState.OPEN);
-		}		
+			userProdInst.setUserServRunState(Constants.UserProdInst.UserServRunState.OPEN); //缓存默认为启动
+		}
 		mapper.insert(userProdInst);
 		
 		return userProdInst.getUserServId();
 	}
 	
 	public  void transferAuth(OrderDetail orderDetail) throws PaasException {
-		if(Constants.ProdProduct.ProdId.ATS.equals(orderDetail.getProdId())){
+		if(Constants.ProdProduct.ProdId.ATS.equals(orderDetail.getProdId())) {
 			return ;
 		}
 		
 		//调用配置中心获取zk信息
 		logger.info("调用配置中心获取zk信息");				
-//		String address = CacheUtils.getOptionByKey("PASS.SERVICE","IP_PORT_SERVICE")+CacheUtils.getValueByKey("AUTH.CCS_GETCONFIGINFO");		
 		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + SystemConfigHandler.configMap.get("AUTH.CCS_GETCONFIGINFO.url");
 		String ccsResult ="";
 		JSONObject ccsReqJson = new JSONObject();
 		ccsReqJson.put("userId", orderDetail.getUserId());
+		
 		//根据userid查找PID
 		UserCenterMapper mapper = template.getMapper(UserCenterMapper.class);
 		UserCenter userCenter = mapper.selectByPrimaryKey(orderDetail.getUserId());
@@ -425,17 +427,19 @@ public class OrderSvImpl implements IOrderSv {
 		ccsResJson.remove("resultCode");
 		ccsResJson.remove("resultDescription");
 		String authParam = ccsResJson.toString();
+		
 		//调用认证中心沉淀数据
 		logger.info("调用认证中心沉淀数据");		
-		
 		String createAddress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
 				SystemConfigHandler.configMap.get("AUTH.SERAUTH_SVSDK.url");
 		String createResult ="";	
 		String createParam = "authUserId="+orderDetail.getUserId()+"&authUserName="+orderDetail.getUserServIpaasId()
 				            +"&authPassword="+orderDetail.getUserServIpaasPwd()+"&authParam="+authParam+"&authPid="+userCenter.getPid();
+		
 		logger.info("调用认证中心入参："+createParam);	
 		createResult =HttpRequestUtil.sendPost(createAddress,createParam );
 		logger.info("调用认证中心返回结果："+createResult);
+		
 		JSONObject createJson = new JSONObject();
 		createJson=JsonUtils.parse(createResult);
 		String resultCode = createJson.getString("resultCode");
@@ -452,7 +456,6 @@ public class OrderSvImpl implements IOrderSv {
 		String prodId = orderDetail.getProdId();
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
-//		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdOpenRestfull();
 		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdOpenRestfull();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
@@ -477,6 +480,7 @@ public class OrderSvImpl implements IOrderSv {
 			logger.error(errorMessage,e);
 			throw new PaasException("服务开通异常");
 		}
+		
 		JSONObject json = new JSONObject();
 		json=JsonUtils.parse(result);
 		String resultCode = json.getString("resultCode");		
@@ -498,6 +502,7 @@ public class OrderSvImpl implements IOrderSv {
 		criteria.andUserProdBynameEqualTo(orderDetail.getProdByname());
 		userProdInstCriteria.setOrderByClause(" USER_SERV_IPAAS_ID desc");
 		List<UserProdInst> list = mapper.selectByExample(userProdInstCriteria);
+		
 		String userServIpaasId = "";
 		if((list == null || list.size() == 0) && !Constants.ProdProduct.ProdId.ATS.equals(orderDetail.getProdId())){
 			userServIpaasId = orderDetail.getProdByname()+Constants.IPAAS_START_ID;
@@ -519,7 +524,8 @@ public class OrderSvImpl implements IOrderSv {
 			}else{
 				return txsList.get(0).getUserServIpaasId();
 			}
-		}		
+		}
+		
 		UserProdInst userProdInst = list.get(0);
 		String maxserServIpaasId = userProdInst.getUserServIpaasId();
 		String curNumStr = maxserServIpaasId.substring(orderDetail.getProdByname().length(),maxserServIpaasId.length());
@@ -527,12 +533,12 @@ public class OrderSvImpl implements IOrderSv {
 		String nexNumStr = String.valueOf(nextNum);
 		String nextNumStr = StringUtil.lPad(nexNumStr, Constants.IPAAS_ID_FIX, Constants.IPAAS_ID_LENGTH);
 		userServIpaasId = orderDetail.getProdByname() + nextNumStr;
-		logger.info("create servIpaasId："+userServIpaasId);		       
+		logger.info("create servIpaasId："+userServIpaasId);		    
+		
 		return userServIpaasId;
 	}	
 	
 	public String  createServOpenParam(OrderDetail orderDetail) throws PaasException{
-		
 		JSONObject prodParamJson = new JSONObject();
 		String prodParam = orderDetail.getProdParam();
 		if(StringUtil.isBlank(prodParam)){
@@ -558,98 +564,8 @@ public class OrderSvImpl implements IOrderSv {
 		if(Constants.ProdProduct.ProdId.SES.equals(orderDetail.getProdId())){
 			prodParamJson.put("replicasNum",1);
 		}*/
+		
 		return prodParamJson.toString();
-		
-	}
-	
-	private EmailDetail getEmailandPID(OrderDetail orderDetailtmp, CheckOrdersRequest request) throws PaasException{
-		UserCenterMapper userCenterMapper =  template.getMapper(UserCenterMapper.class);
-		UserCenter checker = userCenterMapper.selectByPrimaryKey(request.getUserId());
-		if(checker == null){
-			throw new PaasException("根据id查询用户信息为空");
-		}
-		
-		OrderDetail orderDetail = this.selectByPrimaryKey(orderDetailtmp.getOrderDetailId());
-		UserCenter orderUser = userCenterMapper.selectByPrimaryKey(orderDetail.getUserId());
-		if(orderUser == null){
-			throw new PaasException("根据id查询用户信息为空");
-		}		
-		
-		ProdProductMapper prodProductMapper =  template.getMapper(ProdProductMapper.class);
-		ProdProduct prodProduct = prodProductMapper.selectByPrimaryKey(Short.parseShort(orderDetail.getProdId()));
-		if(prodProduct == null){
-			throw new PaasException("根据id查询服务信息为空");
-		}
-		
-		String message = "";
-		JSONObject json = new JSONObject();
-		String date = orderDetail.getOrderAppDate().toString().substring(0, 10);
-		if(Constants.Order.OrderCheckResult.CHECK_PASS.equals(orderDetail.getOrderCheckResult())){
-			message = "您于"	+ date	+ "提交的"+ prodProduct.getProdName()
-					+ "申请<span>审批已通过</span>了，您可以使用亚信云提供的服务了。"	 ;
-			json.put("error", "使用过程中有什么问题，请联系运维人员！");
-		}else{
-			message = "您于"	+ date	+ "提交的"+ prodProduct.getProdName()
-					+ "申请<span>审批未通过</span>。"	+ "审核意见 :"+ orderDetail.getOrderCheckDesc() ;
-			json.put("error", "若您对结果有异议，请联系运维人员！");
-		}
-		
-		String subject = "亚信云产品审核结果通知" ;
-		String toEmail = orderUser.getUserEmail();
-		
-		json.put("message", message);
-		json.put("email", toEmail);
-		json.put("senderEmail", checker.getUserEmail());
-		
-		/************************************************************/
-		String SdkUrl = SystemConfigHandler.configMap.get("iPaas-Auth.SERVICE.IP_PORT_SERVICE") +
-				SystemConfigHandler.configMap.get("AUTH.SDKUrl.1");
-		
-		String iPaasWebConsoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE");
-		logger.info(">>>>>>>pass资源审核通过邮件通知部分参数>>>pid:"+orderUser.getPid()+"|SdkUrl:"+SdkUrl+"|ServIpaasId"+orderDetailtmp.getUserServIpaasId());
-		json.put("pid", orderUser.getPid());//
-		json.put("SdkUrl", SdkUrl);//
-		json.put("ServerId", orderDetailtmp.getUserServIpaasId());//
-		json.put("url", iPaasWebConsoleUrl);//
-		json.put("urlHtml", iPaasWebConsoleUrl.replace( "&","&amp;" ));//
-		/************************************************************/
-		
-		SysParmRequest request1 = new SysParmRequest();
-		request1.setTypeCode("CONTACTS");
-		request1.setParamCode("CONTACTS");
-		
-		List<SysParamVo> sysParamVoList = iSysParamSv.getSysParams(request1);
-		if(null == sysParamVoList || 0 == sysParamVoList.size()){
-			throw new PaasException("参数表未配置认证地址址 ");
-		}
-		for(int i=0;i<sysParamVoList.size();i++){
-			json.put(sysParamVoList.get(i).getServiceValue(), sysParamVoList.get(i).getServiceOption());
-		}		
-		String param = json.toString();
-		
-		Map model = GsonUtil.fromJSon(param, Map.class);
-		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/purchaseOrderCheck.vm", "UTF-8", model);
-		logger.info("======================邮件模板信息：" + content	+ "======================");
-		
-		// 邮件发送
-		json = new JSONObject();
-		Properties properties;
-		try {
-			properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-			String fromAddress = properties.getProperty("fromaddress");
-			String fromPwd = properties.getProperty("frompwd");
-			
-			EmailDetail email = new EmailDetail();
-			email.setToAddress(toEmail);
-			email.setEmailTitle(subject);
-			email.setFromAddress(fromAddress);
-			email.setFromPwd(fromPwd);
-			email.setEmailContent(content);
-			
-			return email;
-		} catch (Exception e) {         
-           throw new PaasException("发送邮件失败");
-		}
 	}
 	
 	public void  saveUserMessage(OrderDetail orderDetailTmp) throws PaasException{
@@ -729,12 +645,19 @@ public class OrderSvImpl implements IOrderSv {
 		}
 	}
 	
-	private EmailDetail getAuditPointEmail(OrderDetail orderDetail) throws PaasException{		
+	/**
+	 * 待审核提醒邮件，组织邮件内容并返回portal发送。
+	 * @param orderDetail
+	 * @return
+	 * @throws PaasException
+	 */
+	private EmailDetail getAuditPointEmail(OrderDetail orderDetail) throws PaasException {		
 		UserCenterMapper userCenterMapper =  template.getMapper(UserCenterMapper.class);			
 		UserCenter orderUser = userCenterMapper.selectByPrimaryKey(orderDetail.getUserId());
 		if(orderUser == null){
 			throw new PaasException("根据id查询用户信息为空");
-		}		
+		}	
+		
 		ProdProductMapper prodProductMapper =  template.getMapper(ProdProductMapper.class);
 		ProdProduct prodProduct = prodProductMapper.selectByPrimaryKey(Short.parseShort(orderDetail.getProdId()));
 		if(prodProduct == null){
@@ -767,18 +690,16 @@ public class OrderSvImpl implements IOrderSv {
 		for(int i=0;i<sysParamVoList.size();i++){
 			json.put(sysParamVoList.get(i).getServiceValue(), sysParamVoList.get(i).getServiceOption());
 		}
-		String param=json.toString();		
+		String param=json.toString();
+		
 		String subject = "审核提醒";		
 		String toEmail = json.getString("CONTACTS_EMAIL");		
 		Map model = GsonUtil.fromJSon(param, Map.class);
 		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/pointAuditMail.vm", "UTF-8", model);
 		logger.info("======================邮件模板信息：" + content	+ "======================");
 		
-		// 邮件发送
-		json = new JSONObject();
-		Properties properties;
 		try {
-			properties = ReadPropertiesUtil.getProperties("/context/email.properties");
+			Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
 			String fromAddress = properties.getProperty("fromaddress");
 			String fromPwd = properties.getProperty("frompwd");
 
@@ -794,7 +715,255 @@ public class OrderSvImpl implements IOrderSv {
            throw new PaasException("获取并组织服务开通的审核通过邮件失败");
 		}
 	}
+	
+	/**
+	 * 审核通过的提醒邮件，返回portal发送。
+	 * @param orderDetailtmp
+	 * @param request
+	 * @return
+	 * @throws PaasException
+	 */
+	private EmailDetail getEmailandPID(OrderDetail orderDetailtmp, CheckOrdersRequest request) throws PaasException {
+		UserCenterMapper userCenterMapper =  template.getMapper(UserCenterMapper.class);
+		UserCenter checker = userCenterMapper.selectByPrimaryKey(request.getUserId());
+		if(checker == null){
+			throw new PaasException("根据id查询用户信息为空");
+		}
+		
+		OrderDetail orderDetail = this.selectByPrimaryKey(orderDetailtmp.getOrderDetailId());
+		UserCenter orderUser = userCenterMapper.selectByPrimaryKey(orderDetail.getUserId());
+		if(orderUser == null){
+			throw new PaasException("根据id查询用户信息为空");
+		}		
+		
+		ProdProductMapper prodProductMapper =  template.getMapper(ProdProductMapper.class);
+		ProdProduct prodProduct = prodProductMapper.selectByPrimaryKey(Short.parseShort(orderDetail.getProdId()));
+		if(prodProduct == null){
+			throw new PaasException("根据id查询服务信息为空");
+		}
+		
+		String message = "";
+		JSONObject json = new JSONObject();
+		String date = orderDetail.getOrderAppDate().toString().substring(0, 10);
+		if(Constants.Order.OrderCheckResult.CHECK_PASS.equals(orderDetail.getOrderCheckResult())){
+			message = "您于"	+ date	+ "提交的"+ prodProduct.getProdName()
+					+ "申请<span>审批已通过</span>了，您可以使用亚信云提供的服务了。"	 ;
+			json.put("error", "使用过程中有什么问题，请联系运维人员！");
+		}else{
+			message = "您于"	+ date	+ "提交的"+ prodProduct.getProdName()
+					+ "申请<span>审批未通过</span>。"	+ "审核意见 :"+ orderDetail.getOrderCheckDesc() ;
+			json.put("error", "若您对结果有异议，请联系运维人员！");
+		}
+		
+		String subject = "亚信云产品审核结果通知" ;
+		String toEmail = orderUser.getUserEmail();
+		
+		json.put("message", message);
+		json.put("email", toEmail);
+		json.put("senderEmail", checker.getUserEmail());
+		/************************************************************/
+		
+		String SdkUrl = SystemConfigHandler.configMap.get("iPaas-Auth.SERVICE.IP_PORT_SERVICE") +
+				SystemConfigHandler.configMap.get("AUTH.SDKUrl.1");
+		String iPaasWebConsoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE");
+		logger.info(">>>>>>>pass资源审核通过邮件通知部分参数>>>pid:"+orderUser.getPid()+"|SdkUrl:"+SdkUrl+"|ServIpaasId"+orderDetailtmp.getUserServIpaasId());
+		
+		json.put("pid", orderUser.getPid());//
+		json.put("SdkUrl", SdkUrl);//
+		json.put("ServerId", orderDetailtmp.getUserServIpaasId());//
+		json.put("url", iPaasWebConsoleUrl);//
+		json.put("urlHtml", iPaasWebConsoleUrl.replace( "&","&amp;" ));//
+		/************************************************************/
+		
+		SysParmRequest request1 = new SysParmRequest();
+		request1.setTypeCode("CONTACTS");
+		request1.setParamCode("CONTACTS");
+		
+		List<SysParamVo> sysParamVoList = iSysParamSv.getSysParams(request1);
+		if(null == sysParamVoList || 0 == sysParamVoList.size()){
+			throw new PaasException("参数表未配置认证地址址 ");
+		}
+		for(int i=0;i<sysParamVoList.size();i++){
+			json.put(sysParamVoList.get(i).getServiceValue(), sysParamVoList.get(i).getServiceOption());
+		}		
+		String param = json.toString();
+		
+		Map model = GsonUtil.fromJSon(param, Map.class);
+		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/purchaseOrderCheck.vm", "UTF-8", model);
+		logger.info("======================邮件模板信息：" + content	+ "======================");
+		
+		try {
+			Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
+			String fromAddress = properties.getProperty("fromaddress");
+			String fromPwd = properties.getProperty("frompwd");
+			
+			EmailDetail email = new EmailDetail();
+			email.setToAddress(toEmail);
+			email.setEmailTitle(subject);
+			email.setFromAddress(fromAddress);
+			email.setFromPwd(fromPwd);
+			email.setEmailContent(content);
+			
+			return email;
+		} catch (Exception e) {
+           throw new PaasException("组织审核结果通知的邮件信息，失败");
+		}
+	}
+	
+	/**
+	 * 获取审核通过后的邮件信息，返回portal进行邮件发送。
+	 * @param orderDetailtmp
+	 * @param request
+	 * @return
+	 * @throws PaasException
+	 */
+	private EmailDetail getCheckExpenseOrderResultEmail(OrderDetail orderDetailtmp, CheckOrdersRequest request) throws PaasException{
+		UserCenterMapper userCenterMapper =  template.getMapper(UserCenterMapper.class);
+		UserCenter checker = userCenterMapper.selectByPrimaryKey(request.getUserId());
+		if(checker == null){
+			throw new PaasException("根据id查询用户信息为空");
+		}
+		
+		OrderDetail orderDetail = this.selectByPrimaryKey(orderDetailtmp.getOrderDetailId());
+		UserCenter orderUser = userCenterMapper.selectByPrimaryKey(orderDetail.getUserId());
+		if(orderUser == null){
+			throw new PaasException("根据id查询用户信息为空");
+		}		
+		
+		ProdProductMapper prodProductMapper =  template.getMapper(ProdProductMapper.class);
+		ProdProduct prodProduct = prodProductMapper.selectByPrimaryKey(Short.parseShort(orderDetail.getProdId()));
+		if(prodProduct == null){
+			throw new PaasException("根据id查询服务信息为空");
+		}
+		
+		String prodParam = orderDetail.getProdParam();
+		Map map = GsonUtil.fromJSon(prodParam, Map.class);
+		String serviceId = (String) map.get("serviceId");
+		String message = "";
+		
+		JSONObject json = new JSONObject();
+		String date = orderDetail.getOrderAppDate().toString().substring(0, 10);
+		if(Constants.Order.OrderCheckResult.CHECK_PASS.equals(orderDetail.getOrderCheckResult())){
+			message = "您于"	+ date	+ "提交的对"+ prodProduct.getProdName()
+					+ "服务的扩容申请已经审批通过。您可以使用亚信云提供的服务了。"	 ;
+			json.put("error", "使用过程中有什么问题，请联系运维人员！");
+		}else{
+			message = "您于"	+ date	+ "提交的对"+ prodProduct.getProdName()
+					+ "服务的扩容申请审批未通过。"	+ "审核意见 :"+ orderDetail.getOrderCheckDesc() ;
+			json.put("error", "若您对结果有异议，请联系运维人员！");
+		}
+		String subject = "亚信云产品审核结果通知" ;
+		String toEmail = orderUser.getUserEmail();
+		
+		json.put("message", message);
+		json.put("email", toEmail);
+		json.put("senderEmail", checker.getUserEmail());
+		/************************************************************/
+		
+		String SdkUrl = SystemConfigHandler.configMap.get("iPaas-Auth.SERVICE.IP_PORT_SERVICE") +
+        		SystemConfigHandler.configMap.get("AUTH.SDKUrl.1");
+		String iPaasWebConsoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") ;
+		logger.info(">>>>>>>pass资源审核通过邮件通知部分参数>>>pid:"+orderUser.getPid()+"|SdkUrl:"+SdkUrl+"|ServIpaasId"+orderDetailtmp.getUserServIpaasId());
+		
+		json.put("pid", orderUser.getPid());//
+		json.put("SdkUrl", SdkUrl);//
+		json.put("ServerId",serviceId );//
+		json.put("url", iPaasWebConsoleUrl);//
+		json.put("urlHtml", iPaasWebConsoleUrl.replace( "&","&amp;" ));//
+		/************************************************************/
+		
+		SysParmRequest request1 = new SysParmRequest();
+		request1.setTypeCode("CONTACTS");
+		request1.setParamCode("CONTACTS");
+		
+		List<SysParamVo> sysParamVoList = iSysParamSv.getSysParams(request1);
+		if(null == sysParamVoList || 0 == sysParamVoList.size()){
+			throw new PaasException("参数表未配置认证地址址 ");
+		}
+		for(int i=0;i<sysParamVoList.size();i++){
+			json.put(sysParamVoList.get(i).getServiceValue(), sysParamVoList.get(i).getServiceOption());
+		}		
+		String param = json.toString();
+		
+		Map model = GsonUtil.fromJSon(param, Map.class);
+		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/ExpenseOrderCheck.vm", "UTF-8", model);
+		logger.info("======================邮件模板信息：" + content	+ "======================");
+		
+		try {
+			Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
+			String fromAddress = properties.getProperty("fromaddress");
+			String fromPwd = properties.getProperty("frompwd");
+			
+			EmailDetail email = new EmailDetail();
+			email.setToAddress(toEmail);
+			email.setEmailTitle(subject);
+			email.setFromAddress(fromAddress);
+			email.setFromPwd(fromPwd);
+			email.setEmailContent(content);
+			
+			return email;
+		} catch (Exception e) {
+           throw new PaasException("组织并获取邮件信息失败");
+		}
+	}
 
+	@Override
+	public Object updateIaasOrderProdparam(OrderDataVo orderDataVo)throws Exception {
+		logger.info(" input OrderDetailSvImpl class saveIaasOrder function ...");
+		OrderDetailMapper orderDetailMapper =  template.getMapper(OrderDetailMapper.class);
+		OrderWoMapper orderWoMapper = template.getMapper(OrderWoMapper.class);
+		
+		OrderWo orderWo = new OrderWo();
+		OrderDetail orderDetail = new OrderDetail();
+		BeanUtils.copyProperties(orderDataVo, orderDetail);
+		
+		OrderWoCriteria orderWoCriteria = new OrderWoCriteria();
+		orderWoCriteria.createCriteria().andOrderDetailIdEqualTo(orderDetail.getOrderDetailId())
+		.andWoStatusEqualTo("0");//待处理
+		List<OrderWo> orderWoList = orderWoMapper.selectByExample(orderWoCriteria);
+		OrderDetail orderDetail2 = orderDetailMapper.selectByPrimaryKey(orderDetail.getOrderDetailId());
+		
+		orderWo.setWoStatus("1");
+		orderWo.setWoResult("8");//申请修改完成
+		
+		orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.WAIT_OA_AUDIT);// 待用户修改订单10 改为5
+		orderDetail.setSbutractFlag(Constants.Order.SbutractFlag.NOT_REDUCED);
+		int i = orderDetailMapper.updateByPrimaryKeySelective(orderDetail);
+		
+		OrderAttributeMapper orderAttributeMapper =  template.getMapper(OrderAttributeMapper.class);
+		OrderAttribute orderAttribute = new OrderAttribute();
+		BeanUtils.copyProperties(orderDataVo, orderAttribute);
+		orderAttribute.setOrderDetailId(orderDetail.getOrderDetailId());
+		orderAttribute.setApplyType("2");//资源申请方式    1， 新建    2变更
+		int j = orderAttributeMapper.updateByPrimaryKeySelective(orderAttribute);
+		orderWoMapper.updateByExampleSelective(orderWo, orderWoCriteria);
+		
+		WorkflowRequest workflowRequest = new WorkflowRequest();
+		workflowRequest.setProcessInstanceId(orderDetail2.getWfInstId());
+		workflowRequest.setTaskId(orderWoList.get(0).getWfTaskId());		
+		String ntAccount = orderDetail2.getApplicantEmail().split("@")[0];
+		List<VariablesVo> variables  = new ArrayList<VariablesVo>();
+		VariablesVo  wariablesVo = new VariablesVo();
+		wariablesVo.setApplyId(String.valueOf(orderDetail.getOrderDetailId()));
+		wariablesVo.setUserId(orderDetail2.getUserId());
+		wariablesVo.setNtAccount(ntAccount);
+		wariablesVo.setWoResult("8");
+		if("Y".equals(orderAttribute.getIsProject())){
+			wariablesVo.setCostCenterCode(orderAttribute.getCostCenterCode());
+		}
+		workflowRequest.setVariables(variables);
+		variables.add(wariablesVo);
+		workflowRequest.setVariables(variables);
+		logger.info("======申请修改完成调工作流参数=============="+JsonUtils.toJsonStr(workflowRequest));
+		WorkflowClientUtils.taskComplete(workflowRequest);
+		
+		if(i>0 && j>0){
+			return orderDetail.getOrderDetailId();
+		}else{
+			return "000000";
+		}
+	}
+	
 	@Override
 	public Object saveIaasOrder(OrderDataVo orderDataVo) throws Exception {
 		logger.info(" input OrderDetailSvImpl class saveIaasOrder function ...");
@@ -821,8 +990,6 @@ public class OrderSvImpl implements IOrderSv {
 		BeanUtils.copyProperties(orderDataVo, orderAttribute);
 		orderAttribute.setOrderDetailId(orderDetail.getOrderDetailId());
 		orderAttributeMapper.insert(orderAttribute);
-		
-
 		
 		WfTicketsMapper wfTicketsMapper =  template.getMapper(WfTicketsMapper.class);
 		WfTicketsCriteria wfTicketsCriteria = new WfTicketsCriteria();
@@ -1083,158 +1250,5 @@ public class OrderSvImpl implements IOrderSv {
 //		logger.info(" output OrderDetailSvImpl class saveIaasOpenParam function ...");
 //		return null;
 //	}
-
-	@Override
-	public Object updateIaasOrderProdparam(OrderDataVo orderDataVo)throws Exception {
-		logger.info(" input OrderDetailSvImpl class saveIaasOrder function ...");
-		OrderDetailMapper orderDetailMapper =  template.getMapper(OrderDetailMapper.class);
-		OrderWoMapper orderWoMapper = template.getMapper(OrderWoMapper.class);
-		
-		OrderWo orderWo = new OrderWo();
-		OrderDetail orderDetail = new OrderDetail();
-		BeanUtils.copyProperties(orderDataVo, orderDetail);
-		
-		OrderWoCriteria orderWoCriteria = new OrderWoCriteria();
-		orderWoCriteria.createCriteria().andOrderDetailIdEqualTo(orderDetail.getOrderDetailId())
-		.andWoStatusEqualTo("0");//待处理
-		List<OrderWo> orderWoList = orderWoMapper.selectByExample(orderWoCriteria);
-		OrderDetail orderDetail2 = orderDetailMapper.selectByPrimaryKey(orderDetail.getOrderDetailId());
-		
-		orderWo.setWoStatus("1");
-		orderWo.setWoResult("8");//申请修改完成
-		
-		orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.WAIT_OA_AUDIT);// 待用户修改订单10 改为5
-		orderDetail.setSbutractFlag(Constants.Order.SbutractFlag.NOT_REDUCED);
-		int i = orderDetailMapper.updateByPrimaryKeySelective(orderDetail);
-		
-		OrderAttributeMapper orderAttributeMapper =  template.getMapper(OrderAttributeMapper.class);
-		OrderAttribute orderAttribute = new OrderAttribute();
-		BeanUtils.copyProperties(orderDataVo, orderAttribute);
-		orderAttribute.setOrderDetailId(orderDetail.getOrderDetailId());
-		orderAttribute.setApplyType("2");//资源申请方式    1， 新建    2变更
-		int j = orderAttributeMapper.updateByPrimaryKeySelective(orderAttribute);
-		orderWoMapper.updateByExampleSelective(orderWo, orderWoCriteria);
-		
-		
-		WorkflowRequest workflowRequest = new WorkflowRequest();
-		workflowRequest.setProcessInstanceId(orderDetail2.getWfInstId());
-		workflowRequest.setTaskId(orderWoList.get(0).getWfTaskId());		
-		String ntAccount = orderDetail2.getApplicantEmail().split("@")[0];
-		List<VariablesVo> variables  = new ArrayList<VariablesVo>();
-		VariablesVo  wariablesVo = new VariablesVo();
-		wariablesVo.setApplyId(String.valueOf(orderDetail.getOrderDetailId()));
-		wariablesVo.setUserId(orderDetail2.getUserId());
-		wariablesVo.setNtAccount(ntAccount);
-		wariablesVo.setWoResult("8");
-		if("Y".equals(orderAttribute.getIsProject())){
-			wariablesVo.setCostCenterCode(orderAttribute.getCostCenterCode());
-		}
-		workflowRequest.setVariables(variables);
-		variables.add(wariablesVo);
-		workflowRequest.setVariables(variables);
-		logger.info("======申请修改完成调工作流参数=============="+JsonUtils.toJsonStr(workflowRequest));
-		WorkflowClientUtils.taskComplete(workflowRequest);
-		
-     	
-		
-		if(i>0 && j>0){
-			return orderDetail.getOrderDetailId();
-		}else{
-			return "000000";
-		}
-	}
 	
-	private EmailDetail getCheckExpenseOrderResultEmail(OrderDetail orderDetailtmp,CheckOrdersRequest request) throws PaasException{
-		UserCenterMapper userCenterMapper =  template.getMapper(UserCenterMapper.class);
-		UserCenter checker = userCenterMapper.selectByPrimaryKey(request.getUserId());
-		if(checker == null){
-			throw new PaasException("根据id查询用户信息为空");
-		}	
-		
-		OrderDetail orderDetail = this.selectByPrimaryKey(orderDetailtmp.getOrderDetailId());
-		UserCenter orderUser = userCenterMapper.selectByPrimaryKey(orderDetail.getUserId());
-		if(orderUser == null){
-			throw new PaasException("根据id查询用户信息为空");
-		}		
-		
-		ProdProductMapper prodProductMapper =  template.getMapper(ProdProductMapper.class);
-		ProdProduct prodProduct = prodProductMapper.selectByPrimaryKey(Short.parseShort(orderDetail.getProdId()));
-		if(prodProduct == null){
-			throw new PaasException("根据id查询服务信息为空");
-		}
-		
-		String prodParam = orderDetail.getProdParam();
-		Map map = GsonUtil.fromJSon(prodParam, Map.class);
-		String serviceId = (String) map.get("serviceId");
-		String message = "";
-		
-		JSONObject json = new JSONObject();
-		String date = orderDetail.getOrderAppDate().toString().substring(0, 10);
-		if(Constants.Order.OrderCheckResult.CHECK_PASS.equals(orderDetail.getOrderCheckResult())){
-			message = "您于"	+ date	+ "提交的对"+ prodProduct.getProdName()
-					+ "服务的扩容申请已经审批通过。您可以使用亚信云提供的服务了。"	 ;
-			json.put("error", "使用过程中有什么问题，请联系运维人员！");
-		}else{
-			message = "您于"	+ date	+ "提交的对"+ prodProduct.getProdName()
-					+ "服务的扩容申请审批未通过。"	+ "审核意见 :"+ orderDetail.getOrderCheckDesc() ;
-			json.put("error", "若您对结果有异议，请联系运维人员！");
-		}
-		String subject = "亚信云产品审核结果通知" ;
-		String toEmail = orderUser.getUserEmail();
-		
-		json.put("message", message);
-		json.put("email", toEmail);
-		json.put("senderEmail", checker.getUserEmail());
-		/************************************************************/
-		
-		String SdkUrl = SystemConfigHandler.configMap.get("iPaas-Auth.SERVICE.IP_PORT_SERVICE") +
-        		SystemConfigHandler.configMap.get("AUTH.SDKUrl.1");
-		
-		String iPaasWebConsoleUrl = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") ;
-		logger.info(">>>>>>>pass资源审核通过邮件通知部分参数>>>pid:"+orderUser.getPid()+"|SdkUrl:"+SdkUrl+"|ServIpaasId"+orderDetailtmp.getUserServIpaasId());
-		json.put("pid", orderUser.getPid());//
-		json.put("SdkUrl", SdkUrl);//
-		json.put("ServerId",serviceId );//
-		json.put("url", iPaasWebConsoleUrl);//
-		json.put("urlHtml", iPaasWebConsoleUrl.replace( "&","&amp;" ));//
-		/************************************************************/
-		
-		SysParmRequest request1 = new SysParmRequest();
-		request1.setTypeCode("CONTACTS");
-		request1.setParamCode("CONTACTS");
-		
-		List<SysParamVo> sysParamVoList = iSysParamSv.getSysParams(request1);
-		if(null == sysParamVoList || 0 == sysParamVoList.size()){
-			throw new PaasException("参数表未配置认证地址址 ");
-		}
-		for(int i=0;i<sysParamVoList.size();i++){
-			json.put(sysParamVoList.get(i).getServiceValue(), sysParamVoList.get(i).getServiceOption());//管理员张振宇信息
-		}		
-		String param=json.toString();
-		
-		Map model = GsonUtil.fromJSon(param, Map.class);
-		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(), "email/ExpenseOrderCheck.vm", "UTF-8", model);
-
-		logger.info("======================邮件模板信息：" + content	+ "======================");
-		
-		// 邮件发送
-		json = new JSONObject();
-		Properties properties;
-		try {
-			properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-			String fromAddress = properties.getProperty("fromaddress");
-			String fromPwd = properties.getProperty("frompwd");
-			
-			EmailDetail email = new EmailDetail();
-			email.setToAddress(toEmail);
-			email.setEmailTitle(subject);
-			email.setFromAddress(fromAddress);
-			email.setFromPwd(fromPwd);
-			email.setEmailContent(content);
-			
-			return email;
-		} catch (Exception e) {         
-           throw new PaasException("组织并获取邮件信息失败");
-		}
-	}
 }

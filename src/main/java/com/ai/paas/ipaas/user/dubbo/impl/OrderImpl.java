@@ -1,6 +1,5 @@
 package com.ai.paas.ipaas.user.dubbo.impl;
 
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +27,9 @@ import com.ai.paas.ipaas.user.dubbo.vo.SelectOrderResponse;
 import com.ai.paas.ipaas.user.service.IPlanConfirmSv;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.alibaba.dubbo.config.annotation.Service;
+
 @Service
 public class OrderImpl implements IOrder{
-	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -58,7 +57,6 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public SelectOrderResponse selectOrderDetails(SelectOrderRequest request) throws PaasException{
-		
 		ResponseHeader responseHeader = new ResponseHeader();	
 		PageResult<OrderDetailVo>   pageResult  = new PageResult<OrderDetailVo>();
 		try{
@@ -77,7 +75,6 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public SelectOrderResponse selectOrderList(SelectOrderRequest request) throws PaasException{
-		
 		ResponseHeader responseHeader = new ResponseHeader();	
 		PageResult<OrderDetailVo>   pageResult  = new PageResult<OrderDetailVo>();
 		try{
@@ -158,10 +155,7 @@ public class OrderImpl implements IOrder{
 			confirmResult.put("resultCode", Constants.OPERATE_CODE_FAIL);
 			confirmResult.put("resultMsg", e.getMessage());
 			e.printStackTrace();
-			
 		}
 		return JSonUtil.toJSon(confirmResult);
 	}
-
-
 }
