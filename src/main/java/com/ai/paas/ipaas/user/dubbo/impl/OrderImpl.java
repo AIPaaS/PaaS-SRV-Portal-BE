@@ -92,11 +92,12 @@ public class OrderImpl implements IOrder{
 	}
 
 	@Override
-	public CheckOrdersResponse checkOrders(CheckOrdersRequest request) {
+	public OrderDetailResponse checkOrders(CheckOrdersRequest request) {
+		OrderDetailResponse response = new OrderDetailResponse();
 		ResponseHeader responseHeader = new ResponseHeader();
 		logger.info("checkOrders start");	
 		try{
-			orderSv.checkOrders(request);
+			response = orderSv.checkOrders(request);
 			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_SUCCESS);
 			logger.info("checkOrders success");	
 		}catch(PaasException e){
@@ -104,7 +105,6 @@ public class OrderImpl implements IOrder{
 			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_FAIL);		
 			responseHeader.setResultMessage(e.getMessage());
 		}		
-		CheckOrdersResponse response = new CheckOrdersResponse();
 		response.setResponseHeader(responseHeader);		
 		return response;
 	}
@@ -129,8 +129,8 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public String verifyOrders(String params) {
-		CheckOrdersRequest request=JSonUtil.fromJSon(params, CheckOrdersRequest.class);
-		CheckOrdersResponse response=checkOrders(request);
+		CheckOrdersRequest request = JSonUtil.fromJSon(params, CheckOrdersRequest.class);
+		OrderDetailResponse response = checkOrders(request);
 		return JSonUtil.toJSon(response);
 	}
 

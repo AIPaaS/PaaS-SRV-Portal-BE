@@ -32,7 +32,7 @@ public interface IOrder {
 
 	@Path("/checkOrders")
 	@POST
-	public CheckOrdersResponse  checkOrders(CheckOrdersRequest request) ;
+	public OrderDetailResponse  checkOrders(CheckOrdersRequest request) ;
 	
 	@Path("/checkIaasOrders")
 	@POST
