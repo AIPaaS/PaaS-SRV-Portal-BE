@@ -6,7 +6,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import com.ai.paas.ipaas.user.constants.Constants;
 import com.alibaba.fastjson.JSON;
 
 public class RedisClient {
