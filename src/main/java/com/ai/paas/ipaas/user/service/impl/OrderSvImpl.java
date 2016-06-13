@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +65,6 @@ import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.HttpRequestUtil;
 import com.ai.paas.ipaas.user.utils.JsonUtils;
 import com.ai.paas.ipaas.user.utils.PageUtils;
-import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
 import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
 import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.ai.paas.ipaas.user.vo.OrderDataVo;
@@ -699,15 +697,9 @@ public class OrderSvImpl implements IOrderSv {
 		logger.info("======================邮件模板信息：" + content	+ "======================");
 		
 		try {
-			Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-			String fromAddress = properties.getProperty("fromaddress");
-			String fromPwd = properties.getProperty("frompwd");
-
 			EmailDetail email = new EmailDetail();
 			email.setToAddress(toEmail);
 			email.setEmailTitle(subject);
-			email.setFromAddress(fromAddress);
-			email.setFromPwd(fromPwd);
 			email.setEmailContent(content);
 			
 			return email;
@@ -793,15 +785,9 @@ public class OrderSvImpl implements IOrderSv {
 		logger.info("======================邮件模板信息：" + content	+ "======================");
 		
 		try {
-			Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-			String fromAddress = properties.getProperty("fromaddress");
-			String fromPwd = properties.getProperty("frompwd");
-			
 			EmailDetail email = new EmailDetail();
 			email.setToAddress(toEmail);
 			email.setEmailTitle(subject);
-			email.setFromAddress(fromAddress);
-			email.setFromPwd(fromPwd);
 			email.setEmailContent(content);
 			
 			return email;
@@ -890,15 +876,9 @@ public class OrderSvImpl implements IOrderSv {
 		logger.info("======================邮件模板信息：" + content	+ "======================");
 		
 		try {
-			Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-			String fromAddress = properties.getProperty("fromaddress");
-			String fromPwd = properties.getProperty("frompwd");
-			
 			EmailDetail email = new EmailDetail();
 			email.setToAddress(toEmail);
 			email.setEmailTitle(subject);
-			email.setFromAddress(fromAddress);
-			email.setFromPwd(fromPwd);
 			email.setEmailContent(content);
 			
 			return email;

@@ -3,7 +3,6 @@ package com.ai.paas.ipaas.user.service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +32,6 @@ import com.ai.paas.ipaas.user.utils.DateUtil;
 import com.ai.paas.ipaas.user.utils.EmailTemplUtil;
 import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.HttpRequestUtil;
-import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
 import com.ai.paas.ipaas.user.utils.oamd5.OaMd5Util;
 import com.ai.paas.ipaas.util.CiperUtil;
 import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
@@ -106,9 +104,8 @@ public class UserSvImpl implements IUserSv {
 						throw new RuntimeException("fail to svWeb!stupid!");
 					}
 					
-					logger.info("##### begin to send email #######");
+					logger.info("##### setting email info and returned to portal #######");
 					String subject = "亚信云  激活验证链接";
-//					sendRegisterEmail(subject,userEmail);
 					registerResult.setNeedSend(true);
 					EmailDetail email = getRegisterEmail(subject, userEmail);
 					registerResult.setEmail(email);
@@ -210,7 +207,6 @@ public class UserSvImpl implements IUserSv {
 			BeanUtils.copyProperties(uv, userCenter);
 			String modAdress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
 					SystemConfigHandler.configMap.get("IPAAS-UAC.MODIFYACCOUNT.URL");
-//			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYACCOUNT","URL");
 			String svWebResult = HttpRequestUtil.sendPost(modAdress, "mail="+uv.getUserEmail()+"&userId="+uv.getUserId());
 			logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>svWebResult:"+svWebResult);
 			
@@ -247,7 +243,6 @@ public class UserSvImpl implements IUserSv {
 		try {
 			String modAdress = SystemConfigHandler.configMap.get("IPAAS-UAC.SERVICE.IP_PORT_SERVICE") +
 					SystemConfigHandler.configMap.get("IPAAS-UAC.MODIFYSERVPWD.URL");
-//			String modAdress = CacheUtils.getOptionByKey("IPAAS-UAC.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-UAC.MODIFYSERVPWD","URL");
 			String svWebResult = HttpRequestUtil.sendPost(modAdress, "newPwd="+uv.getNewPwd()+"&oldPwd="+uv.getUserPwd()+"&serviceId="+uv.getUserEmail()+"&userId="+uv.getUserId());
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>svWebResult:"+svWebResult);
 			
@@ -295,12 +290,10 @@ public class UserSvImpl implements IUserSv {
 	@Override
 	public Object getAiEmployeeInfo(Map<String, String> paramMap)
 			throws BusinessException {
-
 		Object object = null;
 		String key;
 		try {	
 			String addressTime = SystemConfigHandler.configMap.get("OA.OA.getAIServerTime");
-//            String	addressTime = CacheUtils.getOptionByKey("OA.OA", "getAIServerTime");		
 			key = OaMd5Util.encryptToMD5(HttpRequestUtil.sendGet(addressTime, "")
 					+ "AIHRA_EMPLOYEE_INFO_FOR_HR_Vdjk*3k@-3_31");
 
@@ -309,7 +302,6 @@ public class UserSvImpl implements IUserSv {
 			reqMap.put("key", key);
 			reqMap.put("sw=nt_account", ntAccount);			
 			String addressEmp = SystemConfigHandler.configMap.get("OA.OA.getAIHRA_EMPLOYEE");
-//			String	addressEmp = CacheUtils.getOptionByKey("OA.OA", "getAIHRA_EMPLOYEE");			
 			object = HttpClientUtil.sendGet(addressEmp,reqMap);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -363,15 +355,9 @@ public class UserSvImpl implements IUserSv {
 		String content = VelocityEngineUtils.mergeTemplateIntoString(EmailTemplUtil.getVelocityEngineInstance(),
 				"email/registermail.vm", "UTF-8", model);
 		
-		Properties properties = ReadPropertiesUtil.getProperties("/context/email.properties");
-		String fromAddress = properties.getProperty("fromaddress");
-		String fromPwd = properties.getProperty("frompwd");
-		
 		EmailDetail email = new EmailDetail();
 		email.setToAddress(toSenders);
 		email.setEmailTitle(subject);
-		email.setFromAddress(fromAddress);
-		email.setFromPwd(fromPwd);
 		email.setEmailContent(content);
 		return email;
 	}
