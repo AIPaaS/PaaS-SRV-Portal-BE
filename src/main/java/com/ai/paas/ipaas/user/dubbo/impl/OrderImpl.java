@@ -40,9 +40,10 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public OrderDetailResponse saveOrderDetail(OrderDetailRequest request)  {	
+		OrderDetailResponse response = new OrderDetailResponse();
 		ResponseHeader responseHeader = new ResponseHeader();
 		try{
-			orderSv.saveOrderDetail(request);
+			response = orderSv.saveOrderDetail(request);
 			responseHeader.setResultCode(Constants.OPERATE_CODE_SUCCESS);
 			responseHeader.setResultMessage("操作成功");
 		}catch(Exception e){
@@ -50,7 +51,6 @@ public class OrderImpl implements IOrder{
 			responseHeader.setResultCode(Constants.OPERATE_CODE_FAIL);
 			responseHeader.setResultMessage(e.getMessage());
 		}
-		OrderDetailResponse response = new OrderDetailResponse();
 		response.setResponseHeader(responseHeader);
 		return response;
 	}
