@@ -6,7 +6,7 @@
 		</Console>
 
 		<File name="MyFile"
-			fileName="/Users/yuanman/logs/portal-backend.log">
+			fileName="/aifs01/users/tstusr11/logs/ipass-IPAAS-USER-SERV-10889.log">
 			<PatternLayout>
 				<Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
 			</PatternLayout>
