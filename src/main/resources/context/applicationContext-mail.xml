@@ -7,7 +7,7 @@
 	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <!-- 服务器 -->
          <property name="host">  
-            <value>mail.asiainfo.com</value>  
+            <value>smtp.126.com</value>  
          </property>  
         
         <!-- 端口号 -->
@@ -16,11 +16,11 @@
          </property> 
         <!-- 用户名 -->
         <property name="username">  
-            <value>zhanglei11@asiainfo.com</value>  
+            <value>ai_cloud_001@126.com</value>  
          </property> 
         <!--  密码   -->
         <property name="password">  
-            <value>zlhappy1988@</value>  
+            <value>yuanman123</value>  
          </property> 
         <!-- SMTP服务器验证 -->
         <property name="javaMailProperties">
@@ -34,7 +34,7 @@
     
     <bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage">
         <!-- 发件人email -->
-        <property name="from" value="zhanglei11@asiainfo.com" />
+        <property name="from" value="ai_cloud_001@126.com" />
        
     </bean>
     
