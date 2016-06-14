@@ -50,6 +50,11 @@ public class SysConfigStore {
 	public SysConfigStore() throws Exception{
 	}
 	
+	/**
+	 * 从DB中sys_config表中读取status为1的配置数据，返回json格式。
+	 * @return json
+	 * @throws Exception
+	 */
     public String getSysConfig() throws Exception {
     	Connection conn = null;
         PreparedStatement pst = null;
@@ -87,7 +92,11 @@ public class SysConfigStore {
     	return gson.toJson(configList);
     }
     
-    public String getConfig() {
+    /**
+     * 根据zk路径，获取node值。
+     * @return
+     */
+    public String getNodeValue() {
     	String confJson = "";
 		try{
 			ZKClient client = getZKClient();
@@ -97,7 +106,12 @@ public class SysConfigStore {
 		}
 		return confJson;
 	}
-    
+   
+    /**
+     * 将zk中json格式的配置数据，转成HashMap。
+     * @param config
+     * @return
+     */
     public static HashMap<String, String> getConfigMap(String config) {
     	HashMap<String, String> map = new HashMap<String, String>();
 		try{
@@ -127,6 +141,9 @@ public class SysConfigStore {
 		return map;
 	}
     
+    /**
+     * 从sys_config表获取数据，加载到zk中。
+     */
     public void storeConfig() {
 		try{
 			ZKClient client = getZKClient();
@@ -137,6 +154,11 @@ public class SysConfigStore {
 		}
 	}
     
+    /**
+     * 获取zkClint
+     * @return
+     * @throws Exception
+     */
     private ZKClient getZKClient() throws Exception {
         ZKClient client = null;
         try {
@@ -148,6 +170,13 @@ public class SysConfigStore {
         return client;
     }
     
+    /**
+     * 添加zk节点，存放sys_config的配置数据。
+     * @param client
+     * @param configPath
+     * @param value
+     * @throws Exception
+     */
     private void add(ZKClient client, String configPath, String value) throws Exception {
         if (!StringUtil.isBlank(value)) {
         	if(userNodeIsExist(client, configPath)) {
@@ -159,6 +188,14 @@ public class SysConfigStore {
         }
     }
     
+    /**
+     * 添加zk节点，存放sys_config的配置数据。
+     * @param client
+     * @param configPath
+     * @param bytes
+     * @param mode
+     * @throws Exception
+     */
     private void add(ZKClient client, String configPath, byte[] bytes, AddMode mode) throws Exception {
     	/** 校验用户传入Path，必须以'/'开头,否则抛出异常 **/
     	if (!configPath.startsWith(PaaSConstant.UNIX_SEPERATOR) 
@@ -176,6 +213,13 @@ public class SysConfigStore {
         }
     }
     
+    /**
+     * 判断zk节点是否存在
+     * @param client
+     * @param nodePath
+     * @return
+     * @throws ConfigException
+     */
     private boolean userNodeIsExist(ZKClient client, String nodePath) throws ConfigException {
         boolean result = true;
         try {
@@ -190,6 +234,11 @@ public class SysConfigStore {
         return result;
     }
     
+    /**
+     * 设置zk操作权限
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private List<ACL> createWritableACL() throws NoSuchAlgorithmException {
         List<ACL> acls = new ArrayList<ACL>();
         Id id1 = new Id("digest", DigestAuthenticationProvider.generateDigest(zkUser + ":" + zkPasswd));
