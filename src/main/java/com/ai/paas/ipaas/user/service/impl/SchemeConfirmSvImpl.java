@@ -1,63 +1,26 @@
 package com.ai.paas.ipaas.user.service.impl;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
 import com.ai.paas.ipaas.user.constants.Constants;
-import com.ai.paas.ipaas.user.dto.OrdStatusOperateRel;
-import com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria;
 import com.ai.paas.ipaas.user.dto.OrderDetail;
-import com.ai.paas.ipaas.user.dto.OrderDetailCriteria;
-import com.ai.paas.ipaas.user.dto.OrderSchemeCriteria;
-import com.ai.paas.ipaas.user.dto.OrderSchemeWithBLOBs;
-import com.ai.paas.ipaas.user.dto.OrderWo;
-import com.ai.paas.ipaas.user.dto.OrderWoCriteria;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
-import com.ai.paas.ipaas.user.dto.ProdQuota;
-import com.ai.paas.ipaas.user.dto.ProdQuotaCriteria;
 import com.ai.paas.ipaas.user.dto.UserMessage;
-import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
-import com.ai.paas.ipaas.user.dubbo.vo.WorkflowRequest;
-import com.ai.paas.ipaas.user.dubbo.vo.WorkflowResponse;
 import com.ai.paas.ipaas.user.service.ISchemeConfirmSv;
 import com.ai.paas.ipaas.user.service.IUserSv;
 import com.ai.paas.ipaas.user.service.ProdQuotaSv;
-import com.ai.paas.ipaas.user.service.dao.OrdStatusOperateRelMapper;
-import com.ai.paas.ipaas.user.service.dao.OrderDetailMapper;
-import com.ai.paas.ipaas.user.service.dao.OrderSchemeMapper;
-import com.ai.paas.ipaas.user.service.dao.OrderWoMapper;
 import com.ai.paas.ipaas.user.service.dao.ProdProductMapper;
-import com.ai.paas.ipaas.user.service.dao.ProdQuotaMapper;
 import com.ai.paas.ipaas.user.service.dao.UserMessageMapper;
 import com.ai.paas.ipaas.user.utils.DateUtil;
-import com.ai.paas.ipaas.user.utils.EmailTemplUtil;
-import com.ai.paas.ipaas.user.utils.HttpClientUtil;
-import com.ai.paas.ipaas.user.utils.JsonUtils;
-import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
-import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
-import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
+
 @Service
 public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
-	private static final Logger logger = LogManager.getLogger(SchemeConfirmSvImpl.class
-            .getName());
+	
 	@Autowired
 	private SqlSessionTemplate template;
-	private String responeStr;
-	
 	@Autowired
 	private IUserSv iUserSv; 
 	@Autowired
@@ -306,8 +269,6 @@ public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
 		return null;
 	}
 	
-	
-	
 	public void  saveUserMessage(OrderDetail orderDetail) throws PaasException{
 		//OrderDetail orderDetail = this.selectByPrimaryKey(orderDetailTmp.getOrderDetailId());				
 		ProdProductMapper prodProductMapper =  template.getMapper(ProdProductMapper.class);
@@ -333,14 +294,6 @@ public class SchemeConfirmSvImpl implements ISchemeConfirmSv {
 		userMessage.setUserMsgSendTime(DateUtil.getSysDate());
 		UserMessageMapper userMessageMapper=template.getMapper(UserMessageMapper.class);
 		userMessageMapper.insert(userMessage);
-
-		
 	}
 	
-	
-	
-	
-	
-	
-
 }

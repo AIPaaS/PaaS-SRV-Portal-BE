@@ -1,59 +1,28 @@
 package com.ai.paas.ipaas.user.service.impl;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
 import com.ai.paas.ipaas.user.dto.OrderDetail;
-import com.ai.paas.ipaas.user.dto.OrderDetailCriteria;
-import com.ai.paas.ipaas.user.dto.OrderWo;
-import com.ai.paas.ipaas.user.dto.OrderWoCriteria;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.UserMessage;
-import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
-import com.ai.paas.ipaas.user.dubbo.vo.WorkflowRequest;
-import com.ai.paas.ipaas.user.dubbo.vo.WorkflowResponse;
 import com.ai.paas.ipaas.user.service.ISoftwareInstallSv;
 import com.ai.paas.ipaas.user.service.dao.OrderDetailMapper;
-import com.ai.paas.ipaas.user.service.dao.OrderWoMapper;
 import com.ai.paas.ipaas.user.service.dao.ProdProductMapper;
 import com.ai.paas.ipaas.user.service.dao.UserMessageMapper;
 import com.ai.paas.ipaas.user.utils.DateUtil;
-import com.ai.paas.ipaas.user.utils.EmailTemplUtil;
-import com.ai.paas.ipaas.user.utils.HttpClientUtil;
-import com.ai.paas.ipaas.user.utils.JsonUtils;
-import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
-import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
-import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
+
 /**
  * 软件安装提交后场服务
- * @author renfeng
- *
  */
 @Transactional
 @Service
 public class SoftwareInstallSvImpl implements ISoftwareInstallSv {
-
-	private static final Logger logger = LogManager.getLogger(SoftwareInstallSvImpl.class
-            .getName());
 	@Autowired
 	private SqlSessionTemplate template;
-	private String responeStr;
-	
 	
 	@Override
 	public String softwareInstallSubmit(String params) throws Exception {
@@ -188,7 +157,5 @@ public class SoftwareInstallSvImpl implements ISoftwareInstallSv {
 		userMessage.setUserMsgSendTime(DateUtil.getSysDate());
 		UserMessageMapper userMessageMapper=template.getMapper(UserMessageMapper.class);
 		userMessageMapper.insert(userMessage);
-
-		
 	}
 }
