@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.UserProdInst;
@@ -34,6 +33,7 @@ import com.ai.paas.ipaas.user.service.dao.UserProdInstMapper;
 import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
 @Service
 @Transactional 
@@ -171,7 +171,9 @@ public class AtsConsoleSvImpl implements IAtsConsoleSv {
 		String data=JSonUtil.toJSon(params);
 		short prikey=Short.parseShort(selectRequestVo.getUserServiceId());
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(prikey);		
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdUsedAmountRestfull();
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdUsedAmountRestfull();
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdUsedAmountRestfull();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -208,7 +210,8 @@ public class AtsConsoleSvImpl implements IAtsConsoleSv {
 		}
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getProdSeltedkeyRestfull();  
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getProdSeltedkeyRestfull();  
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdSeltedkeyRestfull();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -242,7 +245,9 @@ public class AtsConsoleSvImpl implements IAtsConsoleSv {
 		JSONObject object=new JSONObject(params);
 		object.put("applyType", "skip");
 		String data=object.toString();
-		String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getProdUnbindRestful();//跳过消息;  
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE")+ prodProduct.getProdUnbindRestful();//跳过消息;  
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdUnbindRestful();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -264,7 +269,9 @@ public class AtsConsoleSvImpl implements IAtsConsoleSv {
 	public String resendMessage(String params) throws NumberFormatException, PaasException, IOException, URISyntaxException {
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort(Constants.ProdProduct.ProdId.ATS));
 		
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdFiltertableRestful(); //重发消息；
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdFiltertableRestful(); //重发消息；
+		String address=SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdFiltertableRestful();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}

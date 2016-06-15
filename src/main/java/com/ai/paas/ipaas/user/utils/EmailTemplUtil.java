@@ -1,11 +1,9 @@
 package com.ai.paas.ipaas.user.utils;
 
-
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.velocity.app.VelocityEngine;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import org.apache.velocity.app.VelocityEngine;
 
 /**
  * User: Haoyanhui

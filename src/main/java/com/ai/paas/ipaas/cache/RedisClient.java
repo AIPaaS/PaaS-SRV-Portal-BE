@@ -6,7 +6,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import com.ai.paas.ipaas.user.constants.Constants;
 import com.alibaba.fastjson.JSON;
 
 public class RedisClient {
@@ -149,7 +148,7 @@ public class RedisClient {
 //        System.out.println(RedisClient.get4Json(key));
     	String valueByKey=null;
     	
-    	valueByKey = CacheUtils.getValueByKey(Constants.CacheKeys.WORKFLOW_URL_PREFIX);
+//    	valueByKey = CacheUtils.getValueByKey(Constants.CacheKeys.WORKFLOW_URL_PREFIX);
     	
     	System.out.println(valueByKey);
     }

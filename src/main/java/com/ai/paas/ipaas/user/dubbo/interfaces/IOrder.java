@@ -24,15 +24,15 @@ public interface IOrder {
 	
 	@Path("/selectOrderDetails")
 	@POST
-	public SelectOrderResponse  selectOrderDetails(SelectOrderRequest request) throws PaasException;
+	public SelectOrderResponse selectOrderDetails(SelectOrderRequest request) throws PaasException;
 	
 	@Path("/selectOrderList")
 	@POST
-	public SelectOrderResponse  selectOrderList(SelectOrderRequest request) throws PaasException;
+	public SelectOrderResponse selectOrderList(SelectOrderRequest request) throws PaasException;
 
 	@Path("/checkOrders")
 	@POST
-	public CheckOrdersResponse  checkOrders(CheckOrdersRequest request) ;
+	public OrderDetailResponse  checkOrders(CheckOrdersRequest request) ;
 	
 	@Path("/checkIaasOrders")
 	@POST
@@ -42,14 +42,11 @@ public interface IOrder {
 	@POST
 	public String verifyOrders(String params);
 	
-	
 	@Path("/applyOrders")
 	@POST
 	public String applyOrders(String params);
 	
-	
 	@Path("/selectConfirmList")
 	@POST
 	public String selectConfirmList(String params);
-	
 }

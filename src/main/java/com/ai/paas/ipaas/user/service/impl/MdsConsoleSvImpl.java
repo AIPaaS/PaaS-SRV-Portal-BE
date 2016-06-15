@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.MdsRestfullReq;
 import com.ai.paas.ipaas.user.dto.MdsSearchRestfullReq;
@@ -41,6 +40,7 @@ import com.ai.paas.ipaas.user.utils.DateUtil;
 import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
 
 @Service
@@ -141,8 +141,8 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 
-	
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUsedAmountRestfull();
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUsedAmountRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdUsedAmountRestfull();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的已使用量查询地址为空");
 		}
@@ -185,7 +185,9 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdCancleRestfull(); // 获取注销restful
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdCancleRestfull(); // 获取注销restful
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdCancleRestfull();
+		
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -253,7 +255,8 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 		
 		
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdKeyclearRestfull(); // 获取注销restful
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdKeyclearRestfull(); // 获取注销restful
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdKeyclearRestfull();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -284,7 +287,8 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		
 		JSONObject object=new JSONObject(params);
 		object.put("applyType", "send");
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdFiltertableRestful(); //重发消息；
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdFiltertableRestful(); //重发消息；
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdFiltertableRestful();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}
@@ -311,7 +315,9 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		JSONObject object=new JSONObject(params);
 		object.put("applyType", "adjust");
 		String data=object.toString();
-		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdUnbindRestful();//跳过消息;  
+//		String address = CacheUtils.getValueByKey("PASS.SERVICE") + prodProduct.getProdUnbindRestful();//跳过消息;  
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdUnbindRestful();
+
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
 		}

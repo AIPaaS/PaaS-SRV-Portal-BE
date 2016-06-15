@@ -1,6 +1,5 @@
 package com.ai.paas.ipaas.user.dubbo.impl;
 
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +27,9 @@ import com.ai.paas.ipaas.user.dubbo.vo.SelectOrderResponse;
 import com.ai.paas.ipaas.user.service.IPlanConfirmSv;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.alibaba.dubbo.config.annotation.Service;
+
 @Service
 public class OrderImpl implements IOrder{
-	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -41,9 +40,10 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public OrderDetailResponse saveOrderDetail(OrderDetailRequest request)  {	
+		OrderDetailResponse response = new OrderDetailResponse();
 		ResponseHeader responseHeader = new ResponseHeader();
 		try{
-			orderSv.saveOrderDetail(request);
+			response = orderSv.saveOrderDetail(request);
 			responseHeader.setResultCode(Constants.OPERATE_CODE_SUCCESS);
 			responseHeader.setResultMessage("操作成功");
 		}catch(Exception e){
@@ -51,14 +51,12 @@ public class OrderImpl implements IOrder{
 			responseHeader.setResultCode(Constants.OPERATE_CODE_FAIL);
 			responseHeader.setResultMessage(e.getMessage());
 		}
-		OrderDetailResponse response = new OrderDetailResponse();
 		response.setResponseHeader(responseHeader);
 		return response;
 	}
 
 	@Override
 	public SelectOrderResponse selectOrderDetails(SelectOrderRequest request) throws PaasException{
-		
 		ResponseHeader responseHeader = new ResponseHeader();	
 		PageResult<OrderDetailVo>   pageResult  = new PageResult<OrderDetailVo>();
 		try{
@@ -77,7 +75,6 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public SelectOrderResponse selectOrderList(SelectOrderRequest request) throws PaasException{
-		
 		ResponseHeader responseHeader = new ResponseHeader();	
 		PageResult<OrderDetailVo>   pageResult  = new PageResult<OrderDetailVo>();
 		try{
@@ -95,11 +92,12 @@ public class OrderImpl implements IOrder{
 	}
 
 	@Override
-	public CheckOrdersResponse checkOrders(CheckOrdersRequest request) {
+	public OrderDetailResponse checkOrders(CheckOrdersRequest request) {
+		OrderDetailResponse response = new OrderDetailResponse();
 		ResponseHeader responseHeader = new ResponseHeader();
 		logger.info("checkOrders start");	
 		try{
-			orderSv.checkOrders(request);
+			response = orderSv.checkOrders(request);
 			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_SUCCESS);
 			logger.info("checkOrders success");	
 		}catch(PaasException e){
@@ -107,7 +105,6 @@ public class OrderImpl implements IOrder{
 			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_FAIL);		
 			responseHeader.setResultMessage(e.getMessage());
 		}		
-		CheckOrdersResponse response = new CheckOrdersResponse();
 		response.setResponseHeader(responseHeader);		
 		return response;
 	}
@@ -132,8 +129,8 @@ public class OrderImpl implements IOrder{
 
 	@Override
 	public String verifyOrders(String params) {
-		CheckOrdersRequest request=JSonUtil.fromJSon(params, CheckOrdersRequest.class);
-		CheckOrdersResponse response=checkOrders(request);
+		CheckOrdersRequest request = JSonUtil.fromJSon(params, CheckOrdersRequest.class);
+		OrderDetailResponse response = checkOrders(request);
 		return JSonUtil.toJSon(response);
 	}
 
@@ -158,10 +155,7 @@ public class OrderImpl implements IOrder{
 			confirmResult.put("resultCode", Constants.OPERATE_CODE_FAIL);
 			confirmResult.put("resultMsg", e.getMessage());
 			e.printStackTrace();
-			
 		}
 		return JSonUtil.toJSon(confirmResult);
 	}
-
-
 }

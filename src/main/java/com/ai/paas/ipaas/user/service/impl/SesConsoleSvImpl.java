@@ -3,7 +3,6 @@ package com.ai.paas.ipaas.user.service.impl;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.json.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.RestfullReq;
@@ -21,13 +19,13 @@ import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dubbo.vo.UserProdInstVo;
 import com.ai.paas.ipaas.user.service.IProdProductSv;
 import com.ai.paas.ipaas.user.service.ISesConsoleSv;
-import com.ai.paas.ipaas.user.service.ISysParamSv;
 import com.ai.paas.ipaas.user.service.IUserMgrOperateSv;
 import com.ai.paas.ipaas.user.service.dao.UserProdInstMapper;
 import com.ai.paas.ipaas.user.utils.DateUtil;
 import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.util.JSonUtil;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
  
 @Service
 @Transactional
@@ -54,7 +52,9 @@ public class SesConsoleSvImpl implements ISesConsoleSv{
 		}
 		Short priKey=Short.parseShort(prodId);
 		ProdProduct prodProduct=prodProductSv.selectProductByPrimaryKey(priKey);
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdStartRestfull();
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdStartRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdStartRestfull();
+		
 		if(StringUtil.isBlank(address)){
 			throw new PaasException("产品的服务地址为空");
 		}
@@ -94,7 +94,8 @@ public class SesConsoleSvImpl implements ISesConsoleSv{
 		}
 		Short priKey=Short.parseShort(prodId);
 		ProdProduct prodProduct=prodProductSv.selectProductByPrimaryKey(priKey);
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdStopRestfull();
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdStopRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") +prodProduct.getProdStopRestfull();
 		if(StringUtil.isBlank(address)){
 			throw new PaasException("产品的服务地址为空");
 		}
@@ -134,7 +135,8 @@ public class SesConsoleSvImpl implements ISesConsoleSv{
 		}
 		Short priKey=Short.parseShort(prodId);
 		ProdProduct prodProduct=prodProductSv.selectProductByPrimaryKey(priKey);
-		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdCancleRestfull();
+//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdCancleRestfull();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE")+prodProduct.getProdCancleRestfull();
 		if(StringUtil.isBlank(address)){
 			throw new PaasException("产品的服务地址为空");
 		}

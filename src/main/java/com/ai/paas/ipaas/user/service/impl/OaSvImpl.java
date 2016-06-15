@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,29 +14,19 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ai.paas.ipaas.PaasException;
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.constants.Constants;
-import com.ai.paas.ipaas.user.constants.Constants.IaasApplyWoResult;
 import com.ai.paas.ipaas.user.constants.ExceptionConstants;
 import com.ai.paas.ipaas.user.dto.OaOperaters;
 import com.ai.paas.ipaas.user.dto.OaOperatersCriteria;
-import com.ai.paas.ipaas.user.dto.OrdStatusOperateRel;
-import com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria;
 import com.ai.paas.ipaas.user.dto.OrderDetail;
-import com.ai.paas.ipaas.user.dto.OrderWo;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.ProdQuota;
 import com.ai.paas.ipaas.user.dto.ProdQuotaCriteria;
 import com.ai.paas.ipaas.user.dto.UserCenter;
 import com.ai.paas.ipaas.user.dto.UserMessage;
 import com.ai.paas.ipaas.user.dubbo.vo.PageResult;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParamVo;
-import com.ai.paas.ipaas.user.dubbo.vo.SysParmRequest;
-import com.ai.paas.ipaas.user.dubbo.vo.VariablesVo;
-import com.ai.paas.ipaas.user.dubbo.vo.WorkflowRequest;
 import com.ai.paas.ipaas.user.exception.BusinessException;
 import com.ai.paas.ipaas.user.service.IOaSv;
 import com.ai.paas.ipaas.user.service.IOrderSv;
@@ -45,22 +34,17 @@ import com.ai.paas.ipaas.user.service.ISysParamSv;
 import com.ai.paas.ipaas.user.service.IUserSv;
 import com.ai.paas.ipaas.user.service.ProdQuotaSv;
 import com.ai.paas.ipaas.user.service.dao.OaOperatersMapper;
-import com.ai.paas.ipaas.user.service.dao.OrdStatusOperateRelMapper;
 import com.ai.paas.ipaas.user.service.dao.OrderDetailMapper;
-import com.ai.paas.ipaas.user.service.dao.OrderWoMapper;
 import com.ai.paas.ipaas.user.service.dao.ProdProductMapper;
 import com.ai.paas.ipaas.user.service.dao.ProdQuotaMapper;
 import com.ai.paas.ipaas.user.service.dao.UserMessageMapper;
 import com.ai.paas.ipaas.user.utils.DateUtil;
-import com.ai.paas.ipaas.user.utils.EmailTemplUtil;
 import com.ai.paas.ipaas.user.utils.HttpClientUtil;
 import com.ai.paas.ipaas.user.utils.HttpRequestUtil;
-import com.ai.paas.ipaas.user.utils.JsonUtils;
-import com.ai.paas.ipaas.user.utils.ReadPropertiesUtil;
-import com.ai.paas.ipaas.user.utils.WorkflowClientUtils;
 import com.ai.paas.ipaas.user.utils.gson.GsonUtil;
 import com.ai.paas.ipaas.user.utils.oamd5.OaMd5Util;
 import com.ai.paas.ipaas.user.vo.ErpProjectVo;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -104,150 +88,157 @@ public class OaSvImpl implements IOaSv {
 
 	@Override
 	public Object oaAuditResultNotify(Map<String, Object> paramMap) throws Exception {
-		 
-		String orderDetailId = (String) paramMap.get("orderDetailId");
-		String operType = (String) paramMap.get("operType");
-		String orderWoId = (String) paramMap.get("orderWoId");
-		String woDesc = (String) paramMap.get("woDesc");
-		
-		OrderDetailMapper orderDetailMapper=  template.getMapper(OrderDetailMapper.class);	
-		OrderDetail orderDetail = orderDetailMapper.selectByPrimaryKey(Long.parseLong(orderDetailId));
-		logger.info("==============oa审核通知orderdetail=========="+JsonUtils.toJsonStr(orderDetail));
-		OrderWoMapper orderWoMapper = template.getMapper(OrderWoMapper.class);		
-		OrderWo orderWo = orderWoMapper.selectByPrimaryKey(Long.parseLong(orderWoId));
-		orderWo.setWoDesc(woDesc);		
-		orderWo.setWoStatus(Constants.WoStatus.HAS_OPERATED);		
-		orderWo.setWoDate(DateUtil.getSysDate());
-				
-		if("AGREE".equals(operType)){			
-			orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.WAIT_INTEGRATED_SCHEME);
-			orderDetail.setOrderCheckStatus("2");//审核通过
-			orderDetail.setOrderCheckResult("1");//审核通过
-			orderWo.setWoResult(IaasApplyWoResult.OA_CHECK_PASS);
-		}else{
-			orderDetail.setOrderCheckResult("2");//审核驳回
-			orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.WAIT_USER_MODIFY_ORDER);
-			orderWo.setWoResult(IaasApplyWoResult.OA_CHECK_NOT_PASS);
-			//审核不通过时，已经核减的配额需要回滚
-			if(Constants.Order.SbutractFlag.REDUCED.equals(orderDetail.getSbutractFlag()) 
-					&& Constants.Order.BelongCloud.YANFA_YUN.equals(orderDetail.getBelongCloud()) ){	
-				orderDetail.setSbutractFlag(Constants.Order.SbutractFlag.NOT_REDUCED);
-				this.reducedRollback(orderDetail);
-			}
-		}
-		
-		//邮件通知beging。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
-		String title = null;
-		String button = null;
-		String message = null;
-		String toAddress = null;
-		String applyCant = null;
-
-		Properties properties = ReadPropertiesUtil
-				.getProperties("/context/email.properties");
-		String fromAddress = properties.getProperty("fromaddress");
-		String fromPwd = properties.getProperty("frompwd");
-		String url = CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
-		String url2 = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.PURCHASERECORDS","URL");
-		Map<String, Object> model = new HashMap<String, Object>();
-
-		if ("AGREE".equals(operType)) {
-			// OA 通过 ，资源管理员制定方案发送邮件
-			title = "云虚拟机制定方案通知";
-			button = "制定方案";
-			message = "申请的亚信云虚拟机服务，需要您制定方案。";
-			applyCant = orderDetail.getApplicant();// 申请人
-			model.put("url", url);
-			model.put("urlHtml", url.replace( "&","&amp;" ));
-			model.put("applyCant", applyCant);// 申请人
-			
-			OrdStatusOperateRelCriteria ordStsOptRelCriteria = new OrdStatusOperateRelCriteria();
-			com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria.Criteria criteria = ordStsOptRelCriteria
-					.createCriteria();
-			criteria.andOrderStatusEqualTo(Constants.Order.IaasOrderStatus.WAIT_INTEGRATED_SCHEME);// 6
-																									// orderDetail.getOrderStatus()
-			criteria.andValidFlagEqualTo(Constants.ColumnStatus.EFFECTIVE);
-			OrdStatusOperateRelMapper ordStsOptRelMapper = template
-					.getMapper(OrdStatusOperateRelMapper.class);
-			List<OrdStatusOperateRel> ordStsOptRelsList = ordStsOptRelMapper
-					.selectByExample(ordStsOptRelCriteria);
-			if (ordStsOptRelsList != null && ordStsOptRelsList.size() == 1) {
-				if (ordStsOptRelsList.get(0).getNtAccount() != null) {
-					toAddress = ordStsOptRelsList.get(0).getMailGroup()
-							+ "@asiainfo.com";// 收件人  getNtAccount()
-				}
-
-			}
-
-		} else {
-
-			// ////消息中心
-			logger.info("=========申请修改通知=====消息中心" + orderDetail);
-			this.saveUserMessage(orderDetail);
-			// ////消息中心
-
-			// OA 不通过 ，给申请人发送邮件
-			title = "云虚拟机修改通知";
-			button = "修改";
-			message = "申请的亚信云虚拟机服务，需要您修改申请。";
-			toAddress = orderDetail.getApplicantEmail();
-			//applyCant = orderDetail.getApplicant();
-			model.put("url", url2);
-			model.put("urlHtml", url2.replace( "&","&amp;" ));
-			model.put("applyCant", "您");// 申请人
-		}
-
-		if (toAddress != null
-				&& !"".equals(toAddress.split("@asiainfo.com")[0])) {
-			// Map<String,Object> model = new HashMap<String,Object>();
-			model.put("toAddress", toAddress);// 收件人
-			//model.put("applyCant", applyCant);// 申请人
-			// model.put("url", url);
-			model.put("button", button);
-			model.put("message", message);
-			model.put("title", title);
-			String content = VelocityEngineUtils.mergeTemplateIntoString(
-					EmailTemplUtil.getVelocityEngineInstance(), "email/common.vm",
-					"UTF-8", model);
-			logger.info("======================邮件模板信息：" + content
-					+ "======================");
-			// 邮件发送
-			JSONObject json = new JSONObject();
-			json.put("fromAddress", fromAddress);
-			json.put("fromPwd", fromPwd);
-			json.put("toAddress", toAddress);
-			json.put("emailTitle", title);
-			json.put("emailContent", content);
-			String service = CacheUtils.getValueByKey("Email.SendEmail"); // "http://10.1.228.198:20184/sendemail"
-			String result = null;
-			result = HttpClientUtil.sendPostRequest(service
-					+ "/sendEmail/sendEmail", json.toString());
-			logger.info("++++++++++++++++OA审批发送结果----->" + result);
-		}
-
-		//邮件通知end。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
-		
-		orderWoMapper.updateByPrimaryKey(orderWo);
-		
-		orderDetailMapper.updateByPrimaryKey(orderDetail);
-
-		WorkflowRequest workflowRequest = new WorkflowRequest();
-		workflowRequest.setProcessInstanceId(orderDetail.getWfInstId());
-		workflowRequest.setTaskId(orderWo.getWfTaskId());		
-		String ntAccount = orderDetail.getApplicantEmail().split("@")[0];
-		List<VariablesVo> variables  = new ArrayList<VariablesVo>();
-		VariablesVo  wariablesVo = new VariablesVo();
-		wariablesVo.setApplyId(String.valueOf(orderDetail.getOrderDetailId()));
-		wariablesVo.setUserId(orderDetail.getUserId());
-		wariablesVo.setNtAccount(ntAccount);
-		wariablesVo.setOrderWoId(orderWoId);
-		wariablesVo.setWoResult(orderWo.getWoResult());
-		workflowRequest.setVariables(variables);
-		variables.add(wariablesVo);
-		workflowRequest.setVariables(variables);
-		logger.info("oa审批通知任务完成参数=============="+JsonUtils.toJsonStr(workflowRequest));
-		WorkflowClientUtils.taskComplete(workflowRequest);
-		
+		/** 屏蔽portal中的iaas模块功能，屏蔽此方法路逻辑。2016-06-12 **/
+//		String orderDetailId = (String) paramMap.get("orderDetailId");
+//		String operType = (String) paramMap.get("operType");
+//		String orderWoId = (String) paramMap.get("orderWoId");
+//		String woDesc = (String) paramMap.get("woDesc");
+//		
+//		OrderDetailMapper orderDetailMapper=  template.getMapper(OrderDetailMapper.class);	
+//		OrderDetail orderDetail = orderDetailMapper.selectByPrimaryKey(Long.parseLong(orderDetailId));
+//		logger.info("==============oa审核通知orderdetail=========="+JsonUtils.toJsonStr(orderDetail));
+//		OrderWoMapper orderWoMapper = template.getMapper(OrderWoMapper.class);		
+//		OrderWo orderWo = orderWoMapper.selectByPrimaryKey(Long.parseLong(orderWoId));
+//		orderWo.setWoDesc(woDesc);		
+//		orderWo.setWoStatus(Constants.WoStatus.HAS_OPERATED);		
+//		orderWo.setWoDate(DateUtil.getSysDate());
+//				
+//		if("AGREE".equals(operType)){			
+//			orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.WAIT_INTEGRATED_SCHEME);
+//			orderDetail.setOrderCheckStatus("2");//审核通过
+//			orderDetail.setOrderCheckResult("1");//审核通过
+//			orderWo.setWoResult(IaasApplyWoResult.OA_CHECK_PASS);
+//		}else{
+//			orderDetail.setOrderCheckResult("2");//审核驳回
+//			orderDetail.setOrderStatus(Constants.Order.IaasOrderStatus.WAIT_USER_MODIFY_ORDER);
+//			orderWo.setWoResult(IaasApplyWoResult.OA_CHECK_NOT_PASS);
+//			//审核不通过时，已经核减的配额需要回滚
+//			if(Constants.Order.SbutractFlag.REDUCED.equals(orderDetail.getSbutractFlag()) 
+//					&& Constants.Order.BelongCloud.YANFA_YUN.equals(orderDetail.getBelongCloud()) ){	
+//				orderDetail.setSbutractFlag(Constants.Order.SbutractFlag.NOT_REDUCED);
+//				this.reducedRollback(orderDetail);
+//			}
+//		}
+//		
+//		//邮件通知beging。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+//		String title = null;
+//		String button = null;
+//		String message = null;
+//		String toAddress = null;
+//		String applyCant = null;
+//
+//		Properties properties = ReadPropertiesUtil
+//				.getProperties("/context/email.properties");
+//		String fromAddress = properties.getProperty("fromaddress");
+//		String fromPwd = properties.getProperty("frompwd");
+////		String url = CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.SERVICE","IP-PORT-SERVICE")+CacheUtils.getOptionByKey("PAAS-MAINTAIN-WEB.LOGIN","URL");
+////		String url2 = CacheUtils.getOptionByKey("IPAAS-WEB.SERVICE","IP_PORT_SERVICE")+CacheUtils.getOptionByKey("IPAAS-WEB.PURCHASERECORDS","URL");
+//		
+//		String url = SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.SERVICE.IP_PORT_SERVICE") +
+//				SystemConfigHandler.configMap.get("PAAS-MAINTAIN-WEB.LOGIN.URL");
+//		String url2 = SystemConfigHandler.configMap.get("IPAAS-WEB.SERVICE.IP_PORT_SERVICE") +
+//				SystemConfigHandler.configMap.get("IPAAS-WEB.PURCHASERECORDS.URL");
+//
+//		Map<String, Object> model = new HashMap<String, Object>();
+//
+//		if ("AGREE".equals(operType)) {
+//			// OA 通过 ，资源管理员制定方案发送邮件
+//			title = "云虚拟机制定方案通知";
+//			button = "制定方案";
+//			message = "申请的亚信云虚拟机服务，需要您制定方案。";
+//			applyCant = orderDetail.getApplicant();// 申请人
+//			model.put("url", url);
+//			model.put("urlHtml", url.replace( "&","&amp;" ));
+//			model.put("applyCant", applyCant);// 申请人
+//			
+//			OrdStatusOperateRelCriteria ordStsOptRelCriteria = new OrdStatusOperateRelCriteria();
+//			com.ai.paas.ipaas.user.dto.OrdStatusOperateRelCriteria.Criteria criteria = ordStsOptRelCriteria
+//					.createCriteria();
+//			criteria.andOrderStatusEqualTo(Constants.Order.IaasOrderStatus.WAIT_INTEGRATED_SCHEME);// 6
+//																									// orderDetail.getOrderStatus()
+//			criteria.andValidFlagEqualTo(Constants.ColumnStatus.EFFECTIVE);
+//			OrdStatusOperateRelMapper ordStsOptRelMapper = template
+//					.getMapper(OrdStatusOperateRelMapper.class);
+//			List<OrdStatusOperateRel> ordStsOptRelsList = ordStsOptRelMapper
+//					.selectByExample(ordStsOptRelCriteria);
+//			if (ordStsOptRelsList != null && ordStsOptRelsList.size() == 1) {
+//				if (ordStsOptRelsList.get(0).getNtAccount() != null) {
+//					toAddress = ordStsOptRelsList.get(0).getMailGroup()
+//							+ "@asiainfo.com";// 收件人  getNtAccount()
+//				}
+//
+//			}
+//
+//		} else {
+//
+//			// ////消息中心
+//			logger.info("=========申请修改通知=====消息中心" + orderDetail);
+//			this.saveUserMessage(orderDetail);
+//			// ////消息中心
+//
+//			// OA 不通过 ，给申请人发送邮件
+//			title = "云虚拟机修改通知";
+//			button = "修改";
+//			message = "申请的亚信云虚拟机服务，需要您修改申请。";
+//			toAddress = orderDetail.getApplicantEmail();
+//			//applyCant = orderDetail.getApplicant();
+//			model.put("url", url2);
+//			model.put("urlHtml", url2.replace( "&","&amp;" ));
+//			model.put("applyCant", "您");// 申请人
+//		}
+//
+//		if (toAddress != null
+//				&& !"".equals(toAddress.split("@asiainfo.com")[0])) {
+//			// Map<String,Object> model = new HashMap<String,Object>();
+//			model.put("toAddress", toAddress);// 收件人
+//			//model.put("applyCant", applyCant);// 申请人
+//			// model.put("url", url);
+//			model.put("button", button);
+//			model.put("message", message);
+//			model.put("title", title);
+//			String content = VelocityEngineUtils.mergeTemplateIntoString(
+//					EmailTemplUtil.getVelocityEngineInstance(), "email/common.vm",
+//					"UTF-8", model);
+//			logger.info("======================邮件模板信息：" + content
+//					+ "======================");
+//			// 邮件发送
+//			JSONObject json = new JSONObject();
+//			json.put("fromAddress", fromAddress);
+//			json.put("fromPwd", fromPwd);
+//			json.put("toAddress", toAddress);
+//			json.put("emailTitle", title);
+//			json.put("emailContent", content);
+////			String service = CacheUtils.getValueByKey("Email.SendEmail"); // "http://10.1.228.198:20184/sendemail"
+//			String service = SystemConfigHandler.configMap.get("Email.SendEmail.service");
+//			String result = null;
+//			result = HttpClientUtil.sendPostRequest(service
+//					+ "/sendEmail/sendEmail", json.toString());
+//			logger.info("++++++++++++++++OA审批发送结果----->" + result);
+//		}
+//
+//		//邮件通知end。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+//		
+//		orderWoMapper.updateByPrimaryKey(orderWo);
+//		
+//		orderDetailMapper.updateByPrimaryKey(orderDetail);
+//
+//		WorkflowRequest workflowRequest = new WorkflowRequest();
+//		workflowRequest.setProcessInstanceId(orderDetail.getWfInstId());
+//		workflowRequest.setTaskId(orderWo.getWfTaskId());		
+//		String ntAccount = orderDetail.getApplicantEmail().split("@")[0];
+//		List<VariablesVo> variables  = new ArrayList<VariablesVo>();
+//		VariablesVo  wariablesVo = new VariablesVo();
+//		wariablesVo.setApplyId(String.valueOf(orderDetail.getOrderDetailId()));
+//		wariablesVo.setUserId(orderDetail.getUserId());
+//		wariablesVo.setNtAccount(ntAccount);
+//		wariablesVo.setOrderWoId(orderWoId);
+//		wariablesVo.setWoResult(orderWo.getWoResult());
+//		workflowRequest.setVariables(variables);
+//		variables.add(wariablesVo);
+//		workflowRequest.setVariables(variables);
+//		logger.info("oa审批通知任务完成参数=============="+JsonUtils.toJsonStr(workflowRequest));
+//		WorkflowClientUtils.taskComplete(workflowRequest);
+	
 		return null;
 	}
 	
@@ -284,7 +275,8 @@ public class OaSvImpl implements IOaSv {
 	public String getBuiCodeByNt(String Nt) {
 		JSONObject param=new JSONObject();
 		param.put("ntAccount", Nt); //String json = "{\"ntAccount\":\""+Nt+"\"}";
-		String service = CacheUtils.getOptionByKey("CONTROLLER.CONTROLLER","url");//http://10.1.228.200:10990/ipaas
+//		String service = CacheUtils.getOptionByKey("CONTROLLER.CONTROLLER","url");//http://10.1.228.200:10990/ipaas
+		String service = SystemConfigHandler.configMap.get("CONTROLLER.CONTROLLER.url");
 		String url = "/user/iUserApi/getAiEmployeeInfo";
 		
 		try {
@@ -412,7 +404,8 @@ public class OaSvImpl implements IOaSv {
 		PageResult<ErpProjectVo> pageResult = new PageResult<ErpProjectVo>();
 				
 		try {
-			String address = CacheUtils.getOptionByKey("OA.OA","getAIServerTime");
+//			String address = CacheUtils.getOptionByKey("OA.OA","getAIServerTime");
+			String address = SystemConfigHandler.configMap.get("OA.OA.getAIServerTime");
 			String key;
 			key = OaMd5Util.encryptToMD5(HttpRequestUtil.sendGet(address, "")
 					+ "XXAI_PROJECT_ALL_V1djk*3k@-3_31");
@@ -423,7 +416,8 @@ public class OaSvImpl implements IOaSv {
 			reqMap.put("pageIndex", pageIndex);
 			reqMap.put("pageSize", pageSize);
 
-			String getProjectListAddress = CacheUtils.getOptionByKey("OA.OA","getProjectList");			
+//			String getProjectListAddress = CacheUtils.getOptionByKey("OA.OA","getProjectList");		
+			String getProjectListAddress = SystemConfigHandler.configMap.get("OA.OA.getProjectList");
 			String object = null;
 			object = HttpClientUtil.sendGet(getProjectListAddress,reqMap);
 

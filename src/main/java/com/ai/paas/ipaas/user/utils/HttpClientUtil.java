@@ -18,10 +18,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import com.ai.paas.ipaas.cache.CacheUtils;
 import com.ai.paas.ipaas.user.dubbo.vo.WorkflowResponse;
 import com.ai.paas.ipaas.user.exception.BusinessException;
 import com.ai.paas.ipaas.user.utils.oamd5.OaMd5Util;
+import com.ai.paas.ipaas.zookeeper.SystemConfigHandler;
 
 public class HttpClientUtil {
     private static final Log logger = LogFactory.getLog(HttpClientUtil.class);
@@ -157,7 +157,8 @@ public class HttpClientUtil {
     	String object = null;
 		String key;
 		try {					
-            String	addressTime = CacheUtils.getOptionByKey("OA.OA", "getAIServerTime");		
+//            String	addressTime = CacheUtils.getOptionByKey("OA.OA", "getAIServerTime");
+			String	addressTime = SystemConfigHandler.configMap.get("OA.OA.getAIServerTime");
 			key = OaMd5Util.encryptToMD5(HttpRequestUtil.sendGet(addressTime, "")
 					+ "AIHRA_EMPLOYEE_INFO_FOR_HR_Vdjk*3k@-3_31");
 
@@ -166,7 +167,8 @@ public class HttpClientUtil {
 			Map reqMap = new HashMap();
 			reqMap.put("key", key);
 			reqMap.put("sw=nt_account", ntAccount);			
-			String	addressEmp = CacheUtils.getOptionByKey("OA.OA", "getAIHRA_EMPLOYEE");			
+//			String	addressEmp = CacheUtils.getOptionByKey("OA.OA", "getAIHRA_EMPLOYEE");	
+			String	addressEmp = SystemConfigHandler.configMap.get("OA.OA.getAIHRA_EMPLOYEE");
 			object = HttpClientUtil.sendGet(addressEmp,reqMap);
 			System.out.println(object);
 		} catch (Exception e) {
