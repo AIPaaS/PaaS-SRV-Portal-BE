@@ -119,6 +119,7 @@ public class MdsConsoleDubboSvImpl implements IMdsConsoleDubboSv{
 	@Override
 	public String resendMessage(String params) {
 		String result="";
+		System.out.println("++++++++++resendMessage+++++++params:" +params);
 		try {
 			result=iMdsConsoleSv.resendMessage(params);
 		} catch (NumberFormatException | PaasException | IOException

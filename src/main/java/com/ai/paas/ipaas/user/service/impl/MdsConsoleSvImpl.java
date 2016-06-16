@@ -283,11 +283,11 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 
 	@Override
 	public String resendMessage(String params) throws NumberFormatException, PaasException, IOException, URISyntaxException {
+		logger.info("+++++++++service.resendMessage++++++++++" + params);
 		ProdProduct prodProduct=iProdProductSv.selectProductByPrimaryKey(Short.parseShort(Constants.ProdProduct.ProdId.MDS));
 		
 		JSONObject object=new JSONObject(params);
 		object.put("applyType", "send");
-//		String address=CacheUtils.getValueByKey("PASS.SERVICE")+prodProduct.getProdFiltertableRestful(); //重发消息；
 		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdFiltertableRestful();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的的服务地址为空");
