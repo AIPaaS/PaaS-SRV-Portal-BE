@@ -6,7 +6,10 @@ done
 
 CLASSPATH="${CP}"
 CLASSPATH="${DUBBO_CONFIG_PATH}:${CLASSPATH}"
+START_CMD="${MEM_ARGS} -Dpaas.dubbo.registry.address=${DUBBO_REGISTRY_ADD} -Dpaas.dubbo.protocol.port=$DUBBO_PORT  ${JAVA_OPTIONS} com.ai.paas.ipaas.DubboServiceStart > ${HOME}/logs/iPaas-${DUBBO_SERVER_NAME}-${DUBBO_PORT}.log & 2 > 1 &"
 
+echo ${JAVA_HOME}
+echo ${START_CMD}
 echo ${CLASSPATH}
 echo ${DUBBO_PORT}
 echo ${DUBBO_SERVER_NAME}
@@ -17,5 +20,5 @@ echo ${MEM_ARGS}
 echo ${JAVA_OPTIONS}
 
 echo "------------------- dubbo start --------------------"
-{JAVA_HOME}/bin/java ${MEM_ARGS} -Dpaas.dubbo.registry.address=${DUBBO_REGISTRY_ADD} -Dpaas.dubbo.protocol.port=$DUBBO_PORT  ${JAVA_OPTIONS} com.ai.paas.ipaas.DubboServiceStart > ${HOME}/logs/iPaas-${DUBBO_SERVER_NAME}-${DUBBO_PORT}.log & 2 > 1 &
+{JAVA_HOME}/bin/java ${START_CMD}
 echo "------------------- user dubbo server started! log is [$PROCESS_PARM].logs -------------------"
