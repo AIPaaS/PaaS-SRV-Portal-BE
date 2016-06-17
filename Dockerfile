@@ -4,7 +4,7 @@ FROM centos:7
 RUN yum install -y java-1.8.0-openjdk
 
 # deploy user dubbo service
-RUN mkdir iPaaS-User-Dubbo && cd /iPaaS-User-Dubbo && mkdir 3rd-libs lib config
+RUN mkdir iPaaS-User-Dubbo logs && cd /iPaaS-User-Dubbo && mkdir 3rd-libs lib config
 COPY ./build/3rd-libs/*.jar /iPaaS-User-Dubbo/3rd-libs/
 COPY ./build/libs/*.jar /iPaaS-User-Dubbo/lib/
 COPY ./build/all-config/* /iPaaS-User-Dubbo/config/
