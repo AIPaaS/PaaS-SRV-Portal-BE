@@ -11,6 +11,7 @@ COPY ./build/all-config/* /iPaaS-User-Dubbo/config/
 
 COPY ./script/user_dubbo_start.sh /user_dubbo_start.sh
 RUN chmod 755 /user_dubbo_start.sh
+RUN chmod 755 /logs
 
 # set start parameter for dubbo service
 ENV COMMON_LIB_HOME /iPaaS-User-Dubbo
