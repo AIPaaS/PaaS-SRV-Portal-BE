@@ -27,6 +27,6 @@ ENV JAVA_OPTIONS="-Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Dsun.ne
 
 # Expose ports.
 EXPOSE 20999
-  
+
 # Define default command.
 CMD ["/user_dubbo_start.sh"]
