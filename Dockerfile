@@ -4,7 +4,7 @@ FROM centos:7
 RUN yum install -y java-1.8.0-openjdk
 
 # deploy user dubbo service
-RUN mkdir iPaaS-User-Dubbo && ls /iPaaS-User-Dubbo && mkdir 3rd-libs lib config
+RUN mkdir iPaaS-User-Dubbo && cd /iPaaS-User-Dubbo && mkdir 3rd-libs lib config
 COPY ./build/3rd-libs/*.jar /iPaaS-User-Dubbo/3rd-libs/
 COPY ./build/libs/*.jar /iPaaS-User-Dubbo/lib/
 COPY ./build/all-config/* /iPaaS-User-Dubbo/config/
@@ -16,7 +16,7 @@ RUN chmod 755 /user_dubbo_start.sh
 ENV COMMON_LIB_HOME /iPaaS-User-Dubbo
 ENV PATH $CATALINA_HOME/bin:$PATH
 
-ENV DUBBO_PORT="10999"
+ENV DUBBO_PORT="20999"
 ENV DUBBO_SERVER_NAME="IPAAS-USER-SERV"
 ENV DUBBO_REGISTRY_ADD="10.1.228.199:49181,10.1.228.200:49181,10.1.228.202:49181"
 ENV DUBBO_CONFIG_PATH=$COMMON_LIB_HOME/config
