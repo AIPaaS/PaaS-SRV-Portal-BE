@@ -27,6 +27,8 @@
     <result column="PROD_UNBIND_RESTFUL" property="prodUnbindRestful" jdbcType="VARCHAR" />
     <result column="PROD_FilterTable_RESTFUL" property="prodFiltertableRestful" jdbcType="VARCHAR" />
     <result column="EXPANSE_CAPACITY_RESTFUL" property="expanseCapacityRestful" jdbcType="VARCHAR" />
+    <result column="PROD_SUBSCRIBE_RESTFUL" property="prodSubscribeRestful" jdbcType="VARCHAR" />
+    <result column="PROD_GETSUBSCRIBE_RESTFUL" property="prodGetsubscribeRestful" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -92,7 +94,8 @@
     PROD_STOP_RESTFULL, PROD_MDYPWD_RESTFULL, PROD_FULLCLEAR_RESTFULL, PROD_KEYCLEAR_RESTFULL, 
     PROD_SELTEDKEY_RESTFULL, PROD_CANCLE_RESTFULL, PROD_USED_AMOUNT_RESTFULL, PROD_BIND_RESTFUL, 
     PROD_GETBOUND_RESTFUL, PROD_GetBoundTableInfo_RESTFUL, PROD_UNBIND_RESTFUL, PROD_FilterTable_RESTFUL, 
-    EXPANSE_CAPACITY_RESTFUL
+    EXPANSE_CAPACITY_RESTFUL,PROD_SUBSCRIBE_RESTFUL,PROD_GETSUBSCRIBE_RESTFUL
+
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.paas.ipaas.user.dto.ProdProductCriteria" >
     select
@@ -137,7 +140,9 @@
       PROD_CANCLE_RESTFULL, PROD_USED_AMOUNT_RESTFULL, 
       PROD_BIND_RESTFUL, PROD_GETBOUND_RESTFUL, PROD_GetBoundTableInfo_RESTFUL, 
       PROD_UNBIND_RESTFUL, PROD_FilterTable_RESTFUL, 
-      EXPANSE_CAPACITY_RESTFUL)
+      EXPANSE_CAPACITY_RESTFUL,PROD_SUBSCRIBE_RESTFUL,PROD_GETSUBSCRIBE_RESTFUL
+      
+)
     values (#{prodId,jdbcType=SMALLINT}, #{prodEnSimp,jdbcType=VARCHAR}, #{prodType,jdbcType=VARCHAR}, 
       #{prodCategory,jdbcType=VARCHAR}, #{prodName,jdbcType=VARCHAR}, #{prodLogopicId,jdbcType=VARCHAR}, 
       #{prodDesc,jdbcType=VARCHAR}, #{prodValidFlag,jdbcType=VARCHAR}, #{prodSaleFlag,jdbcType=VARCHAR}, 
@@ -147,7 +152,9 @@
       #{prodCancleRestfull,jdbcType=VARCHAR}, #{prodUsedAmountRestfull,jdbcType=VARCHAR}, 
       #{prodBindRestful,jdbcType=VARCHAR}, #{prodGetboundRestful,jdbcType=VARCHAR}, #{prodGetboundtableinfoRestful,jdbcType=VARCHAR}, 
       #{prodUnbindRestful,jdbcType=VARCHAR}, #{prodFiltertableRestful,jdbcType=VARCHAR}, 
-      #{expanseCapacityRestful,jdbcType=VARCHAR})
+      #{expanseCapacityRestful,jdbcType=VARCHAR},#{prodSubscribeRestful,jdbcType=VARCHAR},
+      #{prodGetsubscribeRestful,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dto.ProdProduct" >
     insert into prod_product
@@ -227,6 +234,13 @@
       <if test="expanseCapacityRestful != null" >
         EXPANSE_CAPACITY_RESTFUL,
       </if>
+      <if test="prodSubscribeRestful != null" >
+        PROD_SUBSCRIBE_RESTFUL,
+      </if>
+      <if test="prodGetsubscribeRestful != null" >
+        PROD_GETSUBSCRIBE_RESTFUL,
+      </if>
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="prodId != null" >
@@ -303,6 +317,12 @@
       </if>
       <if test="expanseCapacityRestful != null" >
         #{expanseCapacityRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodSubscribeRestful != null" >
+        #{prodSubscribeRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodGetsubscribeRestful != null" >
+        #{prodGetsubscribeRestful,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -390,6 +410,13 @@
       <if test="record.expanseCapacityRestful != null" >
         EXPANSE_CAPACITY_RESTFUL = #{record.expanseCapacityRestful,jdbcType=VARCHAR},
       </if>
+      <if test="record.prodSubscribeRestful != null" >
+        PROD_SUBSCRIBE_RESTFUL = #{record.prodSubscribeRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodGetsubscribeRestful != null" >
+        PROD_GETSUBSCRIBE_RESTFUL = #{record.prodGetsubscribeRestful,jdbcType=VARCHAR},
+      </if>
+
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -421,7 +448,10 @@
       PROD_GetBoundTableInfo_RESTFUL = #{record.prodGetboundtableinfoRestful,jdbcType=VARCHAR},
       PROD_UNBIND_RESTFUL = #{record.prodUnbindRestful,jdbcType=VARCHAR},
       PROD_FilterTable_RESTFUL = #{record.prodFiltertableRestful,jdbcType=VARCHAR},
-      EXPANSE_CAPACITY_RESTFUL = #{record.expanseCapacityRestful,jdbcType=VARCHAR}
+      EXPANSE_CAPACITY_RESTFUL = #{record.expanseCapacityRestful,jdbcType=VARCHAR},
+      PROD_SUBSCRIBE_RESTFUL = #{record.prodSubscribeRestful,jdbcType=VARCHAR},
+      PROD_GETSUBSCRIBE_RESTFUL = #{record.prodGetsubscribeRestful,jdbcType=VARCHAR}
+      
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -501,6 +531,13 @@
       <if test="expanseCapacityRestful != null" >
         EXPANSE_CAPACITY_RESTFUL = #{expanseCapacityRestful,jdbcType=VARCHAR},
       </if>
+      <if test="prodSubscribeRestful != null" >
+        PROD_SUBSCRIBE_RESTFUL = #{prodSubscribeRestful,jdbcType=VARCHAR},
+      </if>
+      <if test="prodGetsubscribeRestful != null" >
+        PROD_GETSUBSCRIBE_RESTFUL = #{prodGetsubscribeRestful,jdbcType=VARCHAR},
+      </if>
+      
     </set>
     where PROD_ID = #{prodId,jdbcType=SMALLINT}
   </update>
@@ -529,7 +566,10 @@
       PROD_GetBoundTableInfo_RESTFUL = #{prodGetboundtableinfoRestful,jdbcType=VARCHAR},
       PROD_UNBIND_RESTFUL = #{prodUnbindRestful,jdbcType=VARCHAR},
       PROD_FilterTable_RESTFUL = #{prodFiltertableRestful,jdbcType=VARCHAR},
-      EXPANSE_CAPACITY_RESTFUL = #{expanseCapacityRestful,jdbcType=VARCHAR}
+      EXPANSE_CAPACITY_RESTFUL = #{expanseCapacityRestful,jdbcType=VARCHAR},
+      PROD_SUBSCRIBE_RESTFUL = #{prodSubscribeRestful,jdbcType=VARCHAR},
+      PROD_GETSUBSCRIBE_RESTFUL = #{prodGetsubscribeRestful,jdbcType=VARCHAR}
+
     where PROD_ID = #{prodId,jdbcType=SMALLINT}
   </update>
 </mapper>

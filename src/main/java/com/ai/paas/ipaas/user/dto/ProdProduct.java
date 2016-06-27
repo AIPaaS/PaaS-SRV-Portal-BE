@@ -50,7 +50,11 @@ public class ProdProduct {
     private String prodFiltertableRestful;
 
     private String expanseCapacityRestful;
-
+    
+    private String prodSubscribeRestful;
+    
+    private String prodGetsubscribeRestful;
+    
     public Short getProdId() {
         return prodId;
     }
@@ -250,4 +254,20 @@ public class ProdProduct {
     public void setExpanseCapacityRestful(String expanseCapacityRestful) {
         this.expanseCapacityRestful = expanseCapacityRestful == null ? null : expanseCapacityRestful.trim();
     }
+
+	public String getProdSubscribeRestful() {
+		return prodSubscribeRestful;
+	}
+
+	public void setProdSubscribeRestful(String prodSubscribeRestful) {
+		this.prodSubscribeRestful = prodSubscribeRestful;
+	}
+
+	public String getProdGetsubscribeRestful() {
+		return prodGetsubscribeRestful;
+	}
+
+	public void setProdGetsubscribeRestful(String prodGetsubscribeRestful) {
+		this.prodGetsubscribeRestful = prodGetsubscribeRestful;
+	}
 }

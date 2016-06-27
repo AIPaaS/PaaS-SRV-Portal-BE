@@ -19,9 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
 import com.ai.paas.ipaas.user.constants.Constants;
+import com.ai.paas.ipaas.user.dto.MdsGetSubscribeRestfullRes;
 import com.ai.paas.ipaas.user.dto.MdsRestfullReq;
 import com.ai.paas.ipaas.user.dto.MdsSearchRestfullReq;
 import com.ai.paas.ipaas.user.dto.MdsSearchRestfullRes;
+import com.ai.paas.ipaas.user.dto.MdsSubscribeRestfullReq;
+import com.ai.paas.ipaas.user.dto.MdsSubscribeRestfullRes;
 import com.ai.paas.ipaas.user.dto.ProdProduct;
 import com.ai.paas.ipaas.user.dto.RestfullReq;
 import com.ai.paas.ipaas.user.dto.RestfullReturn;
@@ -30,6 +33,8 @@ import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dto.UserProdInstCriteria;
 import com.ai.paas.ipaas.user.dubbo.vo.MdsSearchMessageVo;
 import com.ai.paas.ipaas.user.dubbo.vo.MdsUserPageVo;
+import com.ai.paas.ipaas.user.dubbo.vo.MdsUserSubscribeVo;
+import com.ai.paas.ipaas.user.dubbo.vo.ResponseSubPathList;
 import com.ai.paas.ipaas.user.dubbo.vo.UserProdInstVo;
 import com.ai.paas.ipaas.user.service.IMdsConsoleSv;
 import com.ai.paas.ipaas.user.service.IProdProductSv;
@@ -120,11 +125,64 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 				UserProdInstVo userProdInstVo = new UserProdInstVo();
 				BeanUtils.copyProperties(userProdInsts.get(i), userProdInstVo);
 				userProdInstVo.getUserServParam();
-				
+				userProdInstVo.setSubscribeName(selectRequestVo.getSubscribeName());
 				getAmountUsed(userProdInstVo);
 				
 				userProdInstVoist.add(userProdInstVo);
 			}
+		}
+		return userProdInstVoist;
+	}
+	
+	@Override
+	public List<String> getListSubPath(UserProdInstVo selectRequestVo) 
+			throws PaasException{
+		List<String> userProdInstVoist = null;
+		logger.info("查询消息队列下的所有子节点");
+		UserProdInstCriteria userProdInstCriteria = new UserProdInstCriteria();
+		UserProdInstCriteria.Criteria criteria = userProdInstCriteria.createCriteria();	
+		long userServId = selectRequestVo.getUserServId();
+		criteria.andUserServIdEqualTo(userServId);
+		UserProdInstMapper UserProdInstMapper = template.getMapper(UserProdInstMapper.class);
+		List<UserProdInst> userProdInsts = UserProdInstMapper.selectByExample(userProdInstCriteria);
+		UserProdInstVo userProdInstVo = new UserProdInstVo();
+		if (userProdInsts != null && userProdInsts.size() > 0) {
+			for (int i = 0; i < userProdInsts.size(); i++) {
+				BeanUtils.copyProperties(userProdInsts.get(i), userProdInstVo);
+				userProdInstVo.getUserServParam();
+				userProdInstVo.setSubscribeName(selectRequestVo.getSubscribeName());
+			}
+		}
+		String prodId = userProdInstVo.getUserServiceId();
+		if (StringUtil.isBlank(prodId)) {
+			throw new PaasException("用户产品实例产品编码为空");
+		}
+		short priKey = Short.parseShort(prodId);
+		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
+//		String address = "http://localhost:20885/services" + prodProduct.getProdGetboundtableinfoRestful();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE")  + prodProduct.getProdGetboundtableinfoRestful();
+		if (StringUtil.isBlank(address)) {
+			throw new PaasException("查询消息队列下的所有子节点地址为空");
+		}
+		MdsRestfullReq restfullReq = new MdsRestfullReq();
+		restfullReq.setUserId(userProdInstVo.getUserId());
+		restfullReq.setServiceId(userProdInstVo.getUserServIpaasId());
+		restfullReq.setApplyType( "topicUsage");
+		restfullReq.setSubscribeName(userProdInstVo.getSubscribeName());
+		Map<String , String> map = new HashMap<String,String>();
+		String str = userProdInstVo.getUserServParam();
+		map = new Gson().fromJson(str, map.getClass());
+		restfullReq.setTopicEnName(map.get("topicEnName"));
+		String param = JSonUtil.toJSon(restfullReq);
+		logger.info("调用查询消息队列下的所有子节点服务接口url："+address);
+		logger.info("调用查询消息队列下的所有子节点服务接口入参："+param);
+		String result = HttpClientUtil.send(address, param);
+		if (StringUtil.isBlank(result)) {
+			throw new PaasException("查询消息队列下的所有子节点--服务异常");
+		}
+		ResponseSubPathList listSubPath = new Gson().fromJson(result, ResponseSubPathList.class);
+		if(listSubPath !=null && !"".equals(listSubPath)){
+			userProdInstVoist = listSubPath.getListSubPath();
 		}
 		return userProdInstVoist;
 	}
@@ -141,7 +199,7 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 
-//		String address = CacheUtils.getValueByKey("PASS.SERVICE") +prodProduct.getProdUsedAmountRestfull();
+//		String address = "http://localhost:20885/services" + prodProduct.getProdUsedAmountRestfull();
 		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdUsedAmountRestfull();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("产品的已使用量查询地址为空");
@@ -151,7 +209,7 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		restfullReq.setUserId(userProdInstVo.getUserId());
 		restfullReq.setServiceId(userProdInstVo.getUserServIpaasId());
 		restfullReq.setApplyType( "topicUsage");
-		
+		restfullReq.setSubscribeName(userProdInstVo.getSubscribeName());
 		Map<String , String> map = new HashMap<String,String>();
 		String str = userProdInstVo.getUserServParam();
 		map = new Gson().fromJson(str, map.getClass());
@@ -276,10 +334,67 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 			throw new PaasException("服务异常");
 		}
 		MdsSearchRestfullRes restfullReturn = JSonUtil.fromJSon(result, MdsSearchRestfullRes.class);
-		String resultCode = restfullReturn.getResultCode();
 		
         return restfullReturn;
 	}
+	
+	@Override
+	public MdsSubscribeRestfullRes createSubscribe(MdsUserSubscribeVo vo)  throws PaasException{
+		String prodId = "3";
+		short priKey = Short.parseShort(prodId);
+		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
+
+//		String address = "http://localhost:20885/services" + prodProduct.getProdSubscribeRestful();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdSubscribeRestful();
+		if (StringUtil.isBlank(address)) {
+			throw new PaasException("订阅服务的地址为空");
+		}
+		//组织逻辑参数(UserServId 要对应上)
+		MdsSubscribeRestfullReq restfullReq = new MdsSubscribeRestfullReq();
+		restfullReq.setUserId(vo.getUserId());
+		restfullReq.setTopicEnName(vo.getTopicEnName());
+		restfullReq.setSubscribeName(vo.getSubscribeName());
+		restfullReq.setUserServIpaasId(vo.getUserServIpaasId());
+		
+		String param = JSonUtil.toJSon(restfullReq);
+		logger.info("调用mds订阅服务接口url："+address);
+		logger.info("调用mds订阅服务接口入参："+param);
+		String result = HttpClientUtil.send(address, param);
+		if (StringUtil.isBlank(result)) {
+			throw new PaasException("服务异常");
+		}
+		MdsSubscribeRestfullRes restfullReturn = JSonUtil.fromJSon(result, MdsSubscribeRestfullRes.class);
+        return restfullReturn;
+	}
+	
+	@Override
+	public MdsGetSubscribeRestfullRes getSubscribe(MdsUserSubscribeVo vo)  throws PaasException{
+		String prodId = "3";
+		short priKey = Short.parseShort(prodId);
+		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
+
+//		String address = "http://localhost:20885/services" + prodProduct.getProdGetsubscribeRestful();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdGetsubscribeRestful();
+		if (StringUtil.isBlank(address)) {
+			throw new PaasException("查询之前是否订阅，订阅服务的地址为空");
+		}
+		//组织逻辑参数(UserServId 要对应上)
+		MdsSubscribeRestfullReq restfullReq = new MdsSubscribeRestfullReq();
+		restfullReq.setTopicEnName(vo.getTopicEnName());
+		restfullReq.setSubscribeName(vo.getSubscribeName());
+		
+		String param = JSonUtil.toJSon(restfullReq);
+		logger.info("查询之前是否订阅，调用mds订阅服务接口url："+address);
+		logger.info("查询之前是否订阅，调用mds订阅服务接口入参："+param);
+		String result = HttpClientUtil.send(address, param);
+		if (StringUtil.isBlank(result)) {
+			throw new PaasException("查询之前是否订阅，服务异常");
+		}
+		MdsGetSubscribeRestfullRes restfullReturn = JSonUtil.fromJSon(result, MdsGetSubscribeRestfullRes.class);
+        return restfullReturn;
+	}
+	
+	
 
 	@Override
 	public String resendMessage(String params) throws NumberFormatException, PaasException, IOException, URISyntaxException {
