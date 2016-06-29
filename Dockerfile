@@ -16,13 +16,24 @@ RUN chmod 755 /user_dubbo_start.sh
 ENV COMMON_LIB_HOME /iPaaS-User-Dubbo
 ENV PATH $CATALINA_HOME/bin:$PATH
 
-ENV DUBBO_PORT="20999"
-ENV DUBBO_SERVER_NAME="IPAAS-USER-SERV"
-ENV DUBBO_REGISTRY_ADD="10.1.228.199:49181,10.1.228.200:49181,10.1.228.202:49181"
-ENV DUBBO_CONFIG_PATH=$COMMON_LIB_HOME/config
-ENV PROCESS_PARM="paas.dubbo.protocol.port=$DUBBO_PORT"
-ENV MEM_ARGS="-Xms256m -Xmx512m -XX:PermSize=64M -XX:MaxPermSize=128M"
-ENV JAVA_OPTIONS="-Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Dsun.net.inetaddr.ttl=10 -Dpaas.dubbo.provider.timeout=300000"
+# set jdbc.properties
+ENV DB_HOST ""
+ENV DB_NAME ""
+ENV DB_USRER ""
+ENV DB_PWD ""
+RUN sed -i 's/jdbc.url=.*/jdbc.url=jdbc:mysql:\/\/${DB_HOST}\/${DB_NAME}?useUnicode=true\&characterEncoding=UTF-8/g' /iPaaS-User-Dubbo/config/context/jdbc.properties
+RUN sed -i 's/jdbc.username=.*/jdbc.username=${DB_USRER}/g' /iPaaS-User-Dubbo/config/context/jdbc.properties
+RUN sed -i 's/jdbc.password=.*/jdbc.password=${DB_PWD}/g' /iPaaS-User-Dubbo/config/context/jdbc.properties
+
+# set dubbo.properties
+ENV DUBBO_PORT ""
+ENV DUBBO_REGISTRY_ADDR ""
+RUN sed -i 's/paas.dubbo.protocol.port=.*/paas.dubbo.protocol.port=${DUBBO_PORT}/g' /iPaaS-User-Dubbo/config/context/dubbo.properties
+RUN sed -i 's/default.dubbo.registry.address=.*/default.dubbo.registry.address=${DUBBO_REGISTRY_ADDR}/g' /iPaaS-User-Dubbo/config/context/dubbo.properties
+
+# set zookeeper.properties
+ENV ZK_ADDR ""
+RUN sed -i 's/zookeeper.address=.*/zookeeper.address=${ZK_ADDR}/g' /iPaaS-User-Dubbo/config/context/zookeeper.properties
 
 # Expose ports.
 EXPOSE 20999
