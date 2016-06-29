@@ -12,6 +12,10 @@ COPY ./build/all-config/* /iPaaS-User-Dubbo/config/
 COPY ./script/user_dubbo_start.sh /user_dubbo_start.sh
 RUN chmod 755 /user_dubbo_start.sh
 
+## copy config files
+RUN cd /iPaaS-User-Dubbo/config && mkdir context
+COPY ./build/all-config/context/* /iPaaS-Service-Dubbo/config/context/
+
 # set start parameter for dubbo service
 ENV COMMON_LIB_HOME /iPaaS-User-Dubbo
 ENV PATH $CATALINA_HOME/bin:$PATH
