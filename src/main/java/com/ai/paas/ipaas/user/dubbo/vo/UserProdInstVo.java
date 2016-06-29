@@ -72,8 +72,6 @@ public class UserProdInstVo implements Serializable {
 	
 	private String field;	
 	
-	private String subscribeName;
-	
 	public String getField() {
 		return field;
 	}
@@ -328,14 +326,6 @@ public class UserProdInstVo implements Serializable {
 
 	public void setSignatureId(String signatureId) {
 		this.signatureId = signatureId;
-	}
-
-	public String getSubscribeName() {
-		return subscribeName;
-	}
-
-	public void setSubscribeName(String subscribeName) {
-		this.subscribeName = subscribeName;
 	}
 	
 	

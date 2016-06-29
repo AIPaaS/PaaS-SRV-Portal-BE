@@ -125,7 +125,8 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 				UserProdInstVo userProdInstVo = new UserProdInstVo();
 				BeanUtils.copyProperties(userProdInsts.get(i), userProdInstVo);
 				userProdInstVo.getUserServParam();
-				userProdInstVo.setSubscribeName(selectRequestVo.getSubscribeName());
+				userProdInstVo.setUserServParamMap(selectRequestVo.getUserServParamMap());
+//				userProdInstVo.setSubscribeName(selectRequestVo.getSubscribeName());
 				getAmountUsed(userProdInstVo);
 				
 				userProdInstVoist.add(userProdInstVo);
@@ -150,7 +151,8 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 			for (int i = 0; i < userProdInsts.size(); i++) {
 				BeanUtils.copyProperties(userProdInsts.get(i), userProdInstVo);
 				userProdInstVo.getUserServParam();
-				userProdInstVo.setSubscribeName(selectRequestVo.getSubscribeName());
+				userProdInstVo.setUserServParamMap(selectRequestVo.getUserServParamMap());
+//				userProdInstVo.setSubscribeName(selectRequestVo.getSubscribeName());
 			}
 		}
 		String prodId = userProdInstVo.getUserServiceId();
@@ -160,7 +162,7 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		short priKey = Short.parseShort(prodId);
 		ProdProduct prodProduct = iProdProductSv.selectProductByPrimaryKey(priKey);
 //		String address = "http://localhost:20885/services" + prodProduct.getProdGetboundtableinfoRestful();
-		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE")  + prodProduct.getProdGetboundtableinfoRestful();
+		String address = SystemConfigHandler.configMap.get("PASS.SERVICE.IP_PORT_SERVICE") + prodProduct.getProdGetboundtableinfoRestful();
 		if (StringUtil.isBlank(address)) {
 			throw new PaasException("查询消息队列下的所有子节点地址为空");
 		}
@@ -168,7 +170,10 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		restfullReq.setUserId(userProdInstVo.getUserId());
 		restfullReq.setServiceId(userProdInstVo.getUserServIpaasId());
 		restfullReq.setApplyType( "topicUsage");
-		restfullReq.setSubscribeName(userProdInstVo.getSubscribeName());
+		Map<String , String> maps = new HashMap<String,String>();
+		maps = userProdInstVo.getUserServParamMap();
+		String subscribeName = maps.get("subscribeName");
+		restfullReq.setSubscribeName(subscribeName);
 		Map<String , String> map = new HashMap<String,String>();
 		String str = userProdInstVo.getUserServParam();
 		map = new Gson().fromJson(str, map.getClass());
@@ -209,7 +214,10 @@ public class MdsConsoleSvImpl implements IMdsConsoleSv{
 		restfullReq.setUserId(userProdInstVo.getUserId());
 		restfullReq.setServiceId(userProdInstVo.getUserServIpaasId());
 		restfullReq.setApplyType( "topicUsage");
-		restfullReq.setSubscribeName(userProdInstVo.getSubscribeName());
+		Map<String , String> maps = new HashMap<String,String>();
+		maps = userProdInstVo.getUserServParamMap();
+		String subscribeName = maps.get("subscribeName");
+		restfullReq.setSubscribeName(subscribeName);
 		Map<String , String> map = new HashMap<String,String>();
 		String str = userProdInstVo.getUserServParam();
 		map = new Gson().fromJson(str, map.getClass());
