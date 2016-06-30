@@ -20,6 +20,13 @@ echo ${CLASSPATH}
 echo ${DUBBO_PORT}
 echo ${START_CMD}
 
+sed -i "s/jdbc.url=.*/jdbc.url=jdbc:mysql:\/\/${DB_HOST}\/${DB_NAME}?useUnicode=true\&characterEncoding=UTF-8/g" /iPaaS-User-Dubbo/config/context/jdbc.properties
+sed -i "s/jdbc.username=.*/jdbc.username=${DB_USRER}/g" /iPaaS-User-Dubbo/config/context/jdbc.properties
+sed -i "s/jdbc.password=.*/jdbc.password=${DB_PWD}/g" /iPaaS-User-Dubbo/config/context/jdbc.properties
+sed -i "s/paas.dubbo.protocol.port=.*/paas.dubbo.protocol.port=${DUBBO_PORT}/g" /iPaaS-User-Dubbo/config/context/dubbo.properties
+sed -i "s/default.dubbo.registry.address=.*/default.dubbo.registry.address=${DUBBO_REGISTRY_ADDR}/g" /iPaaS-User-Dubbo/config/context/dubbo.properties
+sed -i "s/zookeeper.address=.*/zookeeper.address=${ZK_ADDR}/g" /iPaaS-User-Dubbo/config/context/zookeeper.properties
+
 echo "------------------- portal dubbo start --------------------"
 java ${START_CMD}
 echo "------------------- portal dubbo server started! -------------------"
