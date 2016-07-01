@@ -12,7 +12,7 @@ COPY ./script/user_dubbo_start.sh /user_dubbo_start.sh
 RUN chmod 755 /user_dubbo_start.sh
 
 ## copy config
-RUN cd /iPaaS-User-Dubbo && mkdir config && cd ./config && mkdir context email mybatis
+RUN cd /iPaaS-User-Dubbo/config && mkdir context email mybatis
 COPY ./build/all-config/context/* /iPaaS-User-Dubbo/config/context/
 COPY ./build/all-config/email/* /iPaaS-User-Dubbo/config/email/
 COPY ./build/all-config/mybatis/* /iPaaS-User-Dubbo/config/mybatis/
