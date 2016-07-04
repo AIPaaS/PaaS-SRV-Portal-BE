@@ -1,10 +1,11 @@
 #!/bin/sh
 
+COMMON_LIB_HOME=/iPaaS-User-Dubbo
+DUBBO_CONFIG_PATH=${COMMON_LIB_HOME}/config
+
 for file in ${COMMON_LIB_HOME}/**/*.jar;
 do CP=${CP}:$file;
 done
-
-DUBBO_CONFIG_PATH=${COMMON_LIB_HOME}/config
 
 CLASSPATH="${CP}"
 CLASSPATH="${DUBBO_CONFIG_PATH}:${CLASSPATH}"

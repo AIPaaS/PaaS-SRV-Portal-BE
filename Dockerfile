@@ -18,10 +18,6 @@ COPY ./build/all-config/email/* /iPaaS-User-Dubbo/config/email/
 COPY ./build/all-config/mybatis/* /iPaaS-User-Dubbo/config/mybatis/
 COPY ./build/all-config/*.* /iPaaS-User-Dubbo/config/
 
-# set start parameter for dubbo service
-ENV COMMON_LIB_HOME /iPaaS-User-Dubbo
-ENV PATH $CATALINA_HOME/bin:$PATH
-
 # Expose ports.
 EXPOSE 20999
 
