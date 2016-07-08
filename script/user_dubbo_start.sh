@@ -28,6 +28,12 @@ sed -i "s/paas.dubbo.protocol.port=.*/paas.dubbo.protocol.port=${DUBBO_PORT}/g" 
 sed -i "s/paas.dubbo.registry.address=.*/paas.dubbo.registry.address=${DUBBO_REGISTRY_ADDR}/g" /iPaaS-User-Dubbo/config/context/dubbo.properties
 sed -i "s/zookeeper.address=.*/zookeeper.address=${ZK_ADDR}/g" /iPaaS-User-Dubbo/config/context/zookeeper.properties
 
+if [ ! -n "$LOG_LEVEL" ] ;then  
+    sed -i "s/\<Root level=.*/\<Root level=\"INFO\"\>/g" /iPaaS-User-Dubbo/config/log4j2.xml 
+else  
+    sed -i "s/\<Root level=.*\<Root level=\"${LOG_LEVEL}\"\>/g" /iPaaS-User-Dubbo/config/log4j2.xml
+fi
+
 echo "------------------- portal dubbo start --------------------"
 java ${START_CMD}
 echo "------------------- portal dubbo server started! -------------------"
