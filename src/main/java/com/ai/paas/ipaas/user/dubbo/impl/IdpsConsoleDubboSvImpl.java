@@ -55,4 +55,26 @@ public class IdpsConsoleDubboSvImpl implements IIdpsConsoleDubboSv {
 		}
 	}
 
+	@Override
+	public ResponseHeader stopIdpsContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.stopIdpsContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
+	@Override
+	public ResponseHeader startIdpsContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.startIdpsContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
 }
