@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.ai.paas.ipaas.user.dubbo.vo.ResponseHeader;
 import com.ai.paas.ipaas.user.dubbo.vo.SelectWithNoPageRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.SelectWithNoPageResponse;
 import com.ai.paas.ipaas.user.dubbo.vo.UserProdInstVo;
@@ -21,5 +22,23 @@ public interface IIdpsConsoleDubboSv {
 	@Path("/selectUserProdInsts")
 	@POST
 	public SelectWithNoPageResponse<UserProdInstVo> selectUserProdInsts(SelectWithNoPageRequest<UserProdInstVo> request);
+	
+	/**
+	 * 停用容器
+	 * @param request
+	 * @return
+	 */
+	@Path("/stopIdpsContainer")
+	@POST
+	public ResponseHeader stopIdpsContainer(String paraprodBackPara);
+	
+	/**
+	 * 启用容器
+	 * @param request
+	 * @return
+	 */
+	@Path("/startIdpsContainer")
+	@POST
+	public ResponseHeader startIdpsContainer(String paraprodBackPara);
 	 
 }

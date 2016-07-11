@@ -7,7 +7,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.ai.paas.ipaas.user.dubbo.vo.MdsSearchMessageVo;
+import com.ai.paas.ipaas.user.dubbo.vo.MdsUserSubscribeVo;
 import com.ai.paas.ipaas.user.dubbo.vo.ResponseHeader;
+import com.ai.paas.ipaas.user.dubbo.vo.ResponseSubPathList;
 import com.ai.paas.ipaas.user.dubbo.vo.SelectWithNoPageRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.SelectWithNoPageResponse;
 import com.ai.paas.ipaas.user.dubbo.vo.UserProdInstVo;
@@ -31,6 +33,10 @@ public interface IMdsConsoleDubboSv {
 	@POST
 	public SelectWithNoPageResponse<UserProdInstVo> selectMdsById(SelectWithNoPageRequest<UserProdInstVo> request);
 	
+	@Path("/getListSubPath")
+	@POST
+	public ResponseSubPathList getListSubPath(SelectWithNoPageRequest<UserProdInstVo> request);
+	
 	
 	@Path("/cancleUserProdInst")
 	@POST
@@ -40,6 +46,15 @@ public interface IMdsConsoleDubboSv {
 	@Path("/searchMessage")
 	@POST
 	public ResponseHeader searchMessage(MdsSearchMessageVo vo);
+	
+	@Path("/createSubscribe")
+	@POST
+	public ResponseHeader createSubscribe(MdsUserSubscribeVo vo);
+	
+	@Path("/getSubscribe")
+	@POST
+	public ResponseHeader getSubscribe(MdsUserSubscribeVo vo);
+	
 	
 	@Path("/resendMessage")
 	@POST
