@@ -249,7 +249,7 @@ public class IdpsConsoleSvImpl implements IIdpsConsoleSv {
 	}
 	
 	@Override
-	public ResponseHeader upgradleContainer(String paraprodBackPara) throws PaasException {
+	public ResponseHeader upgradeContainer(String paraprodBackPara) throws PaasException {
 		ResponseHeader responseHeader = new ResponseHeader();
 		logger.info("调用升级idps容器服务接口");
 		logger.info("调用升级idps容器服务接口---------第一步：调用 停用docker容器的命令");

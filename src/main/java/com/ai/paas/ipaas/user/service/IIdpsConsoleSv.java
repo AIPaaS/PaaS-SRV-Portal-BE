@@ -13,7 +13,7 @@ public interface IIdpsConsoleSv {
 	
 	public ResponseHeader startIdpsContainer(String paraprodBackPara)   throws PaasException;
 	
-	public ResponseHeader upgradleContainer(String paraprodBackPara)   throws PaasException;
+	public ResponseHeader upgradeContainer(String paraprodBackPara)   throws PaasException;
 	
 	public ResponseHeader destroyContainer(String paraprodBackPara)   throws PaasException;
 }
