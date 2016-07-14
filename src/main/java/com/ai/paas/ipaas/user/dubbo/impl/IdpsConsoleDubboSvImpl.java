@@ -77,4 +77,26 @@ public class IdpsConsoleDubboSvImpl implements IIdpsConsoleDubboSv {
 		 return responseHeader;
 	}
 
+	@Override
+	public ResponseHeader upgradeContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.upgradleContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
+	@Override
+	public ResponseHeader destroyContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.destroyContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
 }

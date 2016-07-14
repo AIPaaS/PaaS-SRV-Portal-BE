@@ -40,5 +40,23 @@ public interface IIdpsConsoleDubboSv {
 	@Path("/startIdpsContainer")
 	@POST
 	public ResponseHeader startIdpsContainer(String paraprodBackPara);
+	
+	/**
+	 * 升级容器
+	 * @param request
+	 * @return
+	 */
+	@Path("/upgradeContainer")
+	@POST
+	public ResponseHeader upgradeContainer(String paraprodBackPara);	
+	
+	/**
+	 * 销毁容器
+	 * @param request
+	 * @return
+	 */
+	@Path("/destroyContainer")
+	@POST
+	public ResponseHeader destroyContainer(String paraprodBackPara);
 	 
 }
