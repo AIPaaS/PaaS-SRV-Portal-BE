@@ -29,7 +29,7 @@ sed -i "s/paas.dubbo.registry.address=.*/paas.dubbo.registry.address=${DUBBO_REG
 sed -i "s/zookeeper.address=.*/zookeeper.address=${ZK_ADDR}/g" /iPaaS-User-Dubbo/config/context/zookeeper.properties
 
 if [ -n "$LOG_LEVEL" ]; then   
-    sed -i "s/\<Root level=.*/\<Root level=\"${LOG_LEVEL}\"\>/g" /iPaaS-User-Dubbo/config/log4j2.xml
+    sed -i "s/<Root level=.*/<Root level=\"${LOG_LEVEL}\">/g" /iPaaS-User-Dubbo/config/log4j2.xml
 fi
 
 echo "------------------- portal dubbo start --------------------"
