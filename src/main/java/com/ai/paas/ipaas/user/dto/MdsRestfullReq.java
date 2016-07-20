@@ -9,6 +9,7 @@ public class MdsRestfullReq {
 	private String applyType;
 	private String serviceId;
 	private String topicEnName;
+	private String subscribeName;
 	
 	public String getUserId() {
 		return userId;
@@ -34,4 +35,11 @@ public class MdsRestfullReq {
 	public void setTopicEnName(String topicEnName) {
 		this.topicEnName = topicEnName;
 	}
+	public String getSubscribeName() {
+		return subscribeName;
+	}
+	public void setSubscribeName(String subscribeName) {
+		this.subscribeName = subscribeName;
+	}
+	
 }

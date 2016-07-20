@@ -15,7 +15,7 @@ RUN chmod 755 /user_dubbo_start.sh
 RUN cd /iPaaS-User-Dubbo/config && mkdir context email mybatis
 COPY ./build/all-config/context/* /iPaaS-User-Dubbo/config/context/
 COPY ./build/all-config/email/* /iPaaS-User-Dubbo/config/email/
-COPY ./build/all-config/mybatis/* /iPaaS-User-Dubbo/config/mybatis/
+COPY ./build/all-config/mybatis /iPaaS-User-Dubbo/config/mybatis/
 COPY ./build/all-config/*.* /iPaaS-User-Dubbo/config/
 
 # Expose ports.

@@ -327,4 +327,6 @@ public class UserProdInstVo implements Serializable {
 	public void setSignatureId(String signatureId) {
 		this.signatureId = signatureId;
 	}
+	
+	
 }

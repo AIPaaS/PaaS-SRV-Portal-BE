@@ -55,4 +55,48 @@ public class IdpsConsoleDubboSvImpl implements IIdpsConsoleDubboSv {
 		}
 	}
 
+	@Override
+	public ResponseHeader stopIdpsContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.stopIdpsContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
+	@Override
+	public ResponseHeader startIdpsContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.startIdpsContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
+	@Override
+	public ResponseHeader upgradeContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.upgradeContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
+	@Override
+	public ResponseHeader destroyContainer(String paraprodBackPara) {
+		ResponseHeader responseHeader = new ResponseHeader();	
+		try {
+			responseHeader=iIdpsConsoleSv.destroyContainer(paraprodBackPara);
+		} catch (PaasException e) {
+			e.printStackTrace();
+		}
+		 return responseHeader;
+	}
+
 }
