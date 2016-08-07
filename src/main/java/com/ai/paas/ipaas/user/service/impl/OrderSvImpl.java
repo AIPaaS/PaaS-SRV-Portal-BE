@@ -537,6 +537,9 @@ public class OrderSvImpl implements IOrderSv {
 	}	
 	
 	public String  createServOpenParam(OrderDetail orderDetail) throws PaasException{
+		
+		//RDS 拼接参数
+		JSONObject rds_prodParamJson = new JSONObject();
 		JSONObject prodParamJson = new JSONObject();
 		String prodParam = orderDetail.getProdParam();
 		if(StringUtil.isBlank(prodParam)){
@@ -544,8 +547,15 @@ public class OrderSvImpl implements IOrderSv {
 		}
 		prodParamJson= JsonUtils.parse(orderDetail.getProdParam());
 		prodParamJson.put("userId", orderDetail.getUserId());
-		prodParamJson.put("applyType", "create");
 		prodParamJson.put("serviceId", orderDetail.getUserServIpaasId());
+		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
+			prodParamJson.put("applyType", "create");
+		}else{
+			rds_prodParamJson.put("instanceBase", prodParamJson);
+			rds_prodParamJson.put("createBatmasterNum", 0);
+			rds_prodParamJson.put("createSlaverNum", 1);
+			
+		}
 		if(Constants.ProdProduct.ProdId.CCS.equals(orderDetail.getProdId())){
 			prodParamJson.put("timeOut", 2000);
 		}
@@ -563,7 +573,12 @@ public class OrderSvImpl implements IOrderSv {
 			prodParamJson.put("replicasNum",1);
 		}*/
 		
-		return prodParamJson.toString();
+		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
+			return prodParamJson.toString();
+		}else{
+			return rds_prodParamJson.toString();
+		}
+		
 	}
 	
 	public void  saveUserMessage(OrderDetail orderDetailTmp) throws PaasException{

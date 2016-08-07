@@ -190,6 +190,8 @@ public class Constants {
             public final static String DES = "14"; // 实时增量数据获取服务
 
             public final static String SES = "15"; // 搜索服务
+            
+            public final static String RDS = "17"; // 分布式关系数据库
         }
 
         /**
@@ -225,6 +227,8 @@ public class Constants {
             public final static String DES = "DES";// 实时增量数据获取服务
 
             public final static String SES = "SES";// 搜索服务
+            
+            public final static String RDS = "RDS";// 分布式关系数据库
         }
     }
 
