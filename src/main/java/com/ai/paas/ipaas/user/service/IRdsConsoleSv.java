@@ -14,4 +14,6 @@ public interface IRdsConsoleSv {
 	public ResponseHeader startRdsContainer(String paraprodBackPara)   throws PaasException;
 	
 	public ResponseHeader destroyContainer(String paraprodBackPara)   throws PaasException;
+	
+	public List<UserProdInstVo> selectUserProdInstById(UserProdInstVo vo)  throws PaasException;
 }

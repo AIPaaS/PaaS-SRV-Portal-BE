@@ -66,7 +66,7 @@ public class IaasConsoleSvImpl implements IIaasConsoleSv{
 				String jsonStr = userProdInst.getUserServParam();
 				Map<String,String> userServParamMap  = new HashMap<String,String>();
 				userServParamMap = new Gson().fromJson(jsonStr, userServParamMap.getClass());
-				Map<String,String> userServBackParam  = new HashMap<String,String>();
+				Map<String,Object> userServBackParam  = new HashMap<String,Object>();
 				userServBackParam = new Gson().fromJson(userProdInst.getUserServBackParam(), userServBackParam.getClass());
 				UserProdInstVo userProdInstVo = new UserProdInstVo();
 				BeanUtils.copyProperties(userProdInsts.get(i), userProdInstVo);

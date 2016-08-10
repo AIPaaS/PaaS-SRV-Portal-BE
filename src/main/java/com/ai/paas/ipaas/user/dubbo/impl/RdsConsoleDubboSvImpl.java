@@ -45,6 +45,27 @@ public class RdsConsoleDubboSvImpl implements IRdsConsoleDubboSv {
 		response.setResponseHeader(responseHeader);		
 		return response;
 	}
+	
+	@Override
+	public SelectWithNoPageResponse<UserProdInstVo> selectUserProdInstById(
+			SelectWithNoPageRequest<UserProdInstVo> request) {
+		
+		ResponseHeader responseHeader = new ResponseHeader();	
+		List<UserProdInstVo>   resultList  = new ArrayList<UserProdInstVo>();
+		try{
+			this.validate(request.getSelectRequestVo());
+			resultList = iRdsConsoleSv.selectUserProdInsts(request.getSelectRequestVo());
+			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_SUCCESS);
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_FAIL);
+			responseHeader.setResultMessage(e.getMessage());
+		}		
+		SelectWithNoPageResponse<UserProdInstVo> response = new SelectWithNoPageResponse<UserProdInstVo>();
+		response.setResultList(resultList);
+		response.setResponseHeader(responseHeader);		
+		return response;
+	}
  
 	public void validate(UserProdInstVo vo) throws  PaasException{
 		if(null == vo){

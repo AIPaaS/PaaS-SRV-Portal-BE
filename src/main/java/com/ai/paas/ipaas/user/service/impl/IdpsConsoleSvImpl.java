@@ -79,7 +79,7 @@ public class IdpsConsoleSvImpl implements IIdpsConsoleSv {
 				String prodBackParam = userProdInstVo.getUserServBackParam();
 				Gson gson = new Gson();
 				Map<String,String> map = gson.fromJson(prodParam, Map.class);	
-				Map<String,String> mapBack = gson.fromJson(prodBackParam, Map.class);	
+				Map<String,Object> mapBack = gson.fromJson(prodBackParam, Map.class);	
 				String serviceName = map.get("serviceName");
 				if(serviceName == null){
 					serviceName="";

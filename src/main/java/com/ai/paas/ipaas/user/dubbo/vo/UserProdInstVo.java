@@ -60,7 +60,7 @@ public class UserProdInstVo implements Serializable {
 
     private Map<String, String> userServParamMap;
 
-    private Map<String, String> userServBackParamMap;
+    private Map<String, Object> userServBackParamMap;
 
     private MdsUserPageVo mdsUserPageVo;
     
@@ -304,11 +304,11 @@ public class UserProdInstVo implements Serializable {
         this.userServParamMap = userServParamMap;
     }
 
-    public Map<String, String> getUserServBackParamMap() {
+    public Map<String, Object> getUserServBackParamMap() {
         return userServBackParamMap;
     }
 
-    public void setUserServBackParamMap(Map<String, String> userServBackParamMap) {
+    public void setUserServBackParamMap(Map<String, Object> userServBackParamMap) {
         this.userServBackParamMap = userServBackParamMap;
     }
 

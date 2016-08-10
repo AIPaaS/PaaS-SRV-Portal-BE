@@ -24,6 +24,15 @@ public interface IRdsConsoleDubboSv {
 	public SelectWithNoPageResponse<UserProdInstVo> selectUserProdInsts(SelectWithNoPageRequest<UserProdInstVo> request);
 	
 	/**
+	 * 查询用户订购的RDS的产品列表，根据id
+	 * @param request
+	 * @return
+	 */
+	@Path("/selectUserProdInsts")
+	@POST
+	public SelectWithNoPageResponse<UserProdInstVo> selectUserProdInstById(SelectWithNoPageRequest<UserProdInstVo> request);
+	
+	/**
 	 * 停用RDS
 	 * @param request
 	 * @return
