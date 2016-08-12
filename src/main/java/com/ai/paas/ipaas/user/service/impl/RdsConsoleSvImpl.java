@@ -98,10 +98,10 @@ public class RdsConsoleSvImpl implements IRdsConsoleSv {
 	public List<UserProdInstVo> selectUserProdInstById(UserProdInstVo vo)
 			throws PaasException {
 		UserProdInstCriteria userProdInstCriteria = new UserProdInstCriteria();
-		UserProdInstCriteria.Criteria criteria = userProdInstCriteria.createCriteria();		
+		UserProdInstCriteria.Criteria criteria = userProdInstCriteria.createCriteria();	
+		criteria.andUserIdEqualTo(vo.getUserId());
 		criteria.andUserServIdEqualTo(vo.getUserServId());
 		criteria.andUserIdEqualTo(vo.getUserId()).andUserProdBynameEqualTo("RDS");
-		criteria.andUserServRunStateNotEqualTo(Constants.UserProdInst.UserServRunState.CANCEL);
 		
 		UserProdInstMapper UserProdInstMapper = template.getMapper(UserProdInstMapper.class);
 		List<UserProdInst> userProdInsts = UserProdInstMapper.selectByExample(userProdInstCriteria);

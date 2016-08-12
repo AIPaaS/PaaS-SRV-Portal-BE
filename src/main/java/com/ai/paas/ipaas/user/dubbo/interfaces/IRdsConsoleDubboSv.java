@@ -28,7 +28,7 @@ public interface IRdsConsoleDubboSv {
 	 * @param request
 	 * @return
 	 */
-	@Path("/selectUserProdInsts")
+	@Path("/selectUserProdInstById")
 	@POST
 	public SelectWithNoPageResponse<UserProdInstVo> selectUserProdInstById(SelectWithNoPageRequest<UserProdInstVo> request);
 	

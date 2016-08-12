@@ -54,7 +54,7 @@ public class RdsConsoleDubboSvImpl implements IRdsConsoleDubboSv {
 		List<UserProdInstVo>   resultList  = new ArrayList<UserProdInstVo>();
 		try{
 			this.validate(request.getSelectRequestVo());
-			resultList = iRdsConsoleSv.selectUserProdInsts(request.getSelectRequestVo());
+			resultList = iRdsConsoleSv.selectUserProdInstById(request.getSelectRequestVo());
 			responseHeader.setResultCode(PaaSMgmtConstant.REST_SERVICE_RESULT_SUCCESS);
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
