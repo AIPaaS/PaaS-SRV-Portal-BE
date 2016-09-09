@@ -73,6 +73,13 @@ public class AtsConsoleSvImpl implements IAtsConsoleSv {
 				// 获取产品信息
 				getProdInfo(userProdInstVo);
 				getServiceName(userProdInstVo);
+				String prodParam = userProdInstVo.getUserServParam();
+				String prodBackParam = userProdInstVo.getUserServBackParam();
+				Gson gson = new Gson();
+				Map<String,String> map = gson.fromJson(prodParam, Map.class);	
+				Map<String,Object> mapBack = gson.fromJson(prodBackParam, Map.class);	
+				userProdInstVo.setUserServParamMap(map);
+				userProdInstVo.setUserServBackParamMap(mapBack);
 				if(Constants.ProdProduct.ProdId.ATS.equals(userProdInstVo.getUserServiceId())){
 					getSignatureId(userProdInstVo);
 				}
