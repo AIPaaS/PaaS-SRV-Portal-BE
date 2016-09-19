@@ -18,6 +18,8 @@ COPY ./build/all-config/email/* /iPaaS-User-Dubbo/config/email/
 COPY ./build/all-config/mybatis /iPaaS-User-Dubbo/config/mybatis/
 COPY ./build/all-config/*.* /iPaaS-User-Dubbo/config/
 
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
 # Expose ports.
 EXPOSE 20999
 
