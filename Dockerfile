@@ -19,6 +19,7 @@ COPY ./build/all-config/mybatis /iPaaS-User-Dubbo/config/mybatis/
 COPY ./build/all-config/*.* /iPaaS-User-Dubbo/config/
 
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo “Asia/Shanghai” >> /etc/timezone
 
 # Expose ports.
 EXPOSE 20999
