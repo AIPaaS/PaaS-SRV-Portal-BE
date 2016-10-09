@@ -551,9 +551,10 @@ public class OrderSvImpl implements IOrderSv {
 		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
 			prodParamJson.put("applyType", "create");
 		}else{
+			String createSlaverNum = prodParamJson.get("createSlaverNum").toString();
 			rds_prodParamJson.put("instanceBase", prodParamJson);
 			rds_prodParamJson.put("createBatmasterNum", 0);
-			rds_prodParamJson.put("createSlaverNum", 1);
+			rds_prodParamJson.put("createSlaverNum", createSlaverNum);
 			
 		}
 		if(Constants.ProdProduct.ProdId.CCS.equals(orderDetail.getProdId())){
