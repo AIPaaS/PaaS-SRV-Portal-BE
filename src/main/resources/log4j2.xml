@@ -12,8 +12,10 @@
 	</Appenders>
 	<Loggers>
 		<Root level="INFO">
-			<AppenderRef ref="Console" />
-			<AppenderRef ref="MyFile" />
-		</Root>
+            <AppenderRef ref="RollingFile" />
+        </Root>
+        <logger name="org.apache.zookeeper" level="WARN" additivity="false">
+            <AppenderRef ref="RollingFile"/>
+        </logger>
 	</Loggers>
 </Configuration>
