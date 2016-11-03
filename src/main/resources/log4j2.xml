@@ -21,7 +21,7 @@
    <Root level="INFO">
      <AppenderRef ref="RollingFile" />
    </Root>
-   <logger name="org.apache.zookeeper" level="TRACE" additivity="false">
+   <logger name="org.apache.zookeeper" level="WARN" additivity="false">
      <AppenderRef ref="RollingFile"/>
    </logger>
  </Loggers>
