@@ -1,4 +1,4 @@
-package com.ai.paas.ipaas.user.service;
+package com.ai.paas.ipaas.user.dubbo.interfaces;
 
 import com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeUserInfoKey;
 import com.ai.paas.ipaas.PaasException;

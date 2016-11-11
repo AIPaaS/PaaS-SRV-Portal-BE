@@ -1,4 +1,4 @@
-package com.ai.paas.ipaas.user.service.impl;
+package com.ai.paas.ipaas.user.dubbo.impl;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import java.util.List;
 import com.ai.paas.ipaas.user.dao.interfaces.OrgnizeCenterMapper;
 import com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeCenter;
 import com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeCenterCriteria;
-import com.ai.paas.ipaas.user.service.IOrgnizeCenterSv;
+import com.ai.paas.ipaas.user.dubbo.interfaces.IOrgnizeCenterSv;
 import com.ai.paas.ipaas.PaasException;
 
 @Service
