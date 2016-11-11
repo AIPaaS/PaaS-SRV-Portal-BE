@@ -38,7 +38,7 @@ public class UserVo implements Serializable {
 	private String newPwd;//新密码，用于修改密码
 	private String oldEmail;//新邮箱，用于修改密码
 
-
+    private String orgId;
 
 	public String getPid() {
 		return pid;
@@ -168,6 +168,12 @@ public class UserVo implements Serializable {
 		this.oldEmail = oldEmail;
 	}
 
+	public String getOrgId() {
+		return orgId;
+	}
 
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
 
 }
