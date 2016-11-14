@@ -1,5 +1,7 @@
 package com.ai.paas.ipaas.user.dubbo.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,12 @@ import com.ai.paas.ipaas.PaasException;
 @Transactional
 public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
 	
+	private final Log logger = LogFactory.getLog(getClass());
+	
 	@Autowired
     private SqlSessionTemplate template;
 	
+	@Override
 	public OrgnizeUserInfoVo getOrgnizeUserInfo(String userId) throws PaasException {
 		OrgnizeUserInfoVo orguserinf = new OrgnizeUserInfoVo();
 		OrgnizeUserInfoMapper mapper = template.getMapper(OrgnizeUserInfoMapper.class);
@@ -36,6 +41,7 @@ public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
 		return orguserinf;
 	}
 
+	@Override
 	public void saveOrgnizeUserInfo(OrgnizeUserInfoVo orgnizeuser) throws PaasException {
 		OrgnizeUserInfoKey orguserInfoKey = new OrgnizeUserInfoKey();
 		BeanUtils.copyProperties(orgnizeuser, orguserInfoKey);
