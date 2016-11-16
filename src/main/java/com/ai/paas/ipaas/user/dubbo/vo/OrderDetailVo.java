@@ -12,6 +12,8 @@ public class OrderDetailVo implements Serializable {
     private String operateType;
 
     private String userId;
+    
+    private Integer orgId;
 
     private String prodType;
 
@@ -306,6 +308,14 @@ public class OrderDetailVo implements Serializable {
 
 	public void setUserServIpaasPwd(String userServIpaasPwd) {
 		this.userServIpaasPwd = userServIpaasPwd;
+	}
+
+	public Integer getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Integer orgId) {
+		this.orgId = orgId;
 	}
     
     

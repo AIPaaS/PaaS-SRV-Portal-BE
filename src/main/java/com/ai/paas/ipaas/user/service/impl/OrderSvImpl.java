@@ -35,6 +35,7 @@ import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dto.UserProdInstCriteria;
 import com.ai.paas.ipaas.user.dto.WfTickets;
 import com.ai.paas.ipaas.user.dto.WfTicketsCriteria;
+import com.ai.paas.ipaas.user.dubbo.interfaces.IOrgnizeUserInfoSv;
 import com.ai.paas.ipaas.user.dubbo.vo.CheckOrdersRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.EmailDetail;
 import com.ai.paas.ipaas.user.dubbo.vo.OrderDetailRequest;
@@ -85,6 +86,9 @@ public class OrderSvImpl implements IOrderSv {
 	private IProdProductSv iProdProductSv;
 	
 	@Autowired
+	private IOrgnizeUserInfoSv iOrgnizeUserInfoSv;
+	
+	@Autowired
 	private ISysParamSv iSysParamSv;
 
 	@Override
@@ -94,6 +98,7 @@ public class OrderSvImpl implements IOrderSv {
 		OrderDetail orderDetail = new OrderDetail();
 		orderDetail.setOperateType(request.getOperateType());
 		orderDetail.setUserId(request.getUserId());
+		orderDetail.setOrgId(request.getOrgId());
 		orderDetail.setProdType(prodProduct.getProdType());
 		orderDetail.setProdId(prodProduct.getProdId().toString());
 		orderDetail.setProdByname(prodProduct.getProdEnSimp());
@@ -547,6 +552,9 @@ public class OrderSvImpl implements IOrderSv {
 		}
 		prodParamJson= JsonUtils.parse(orderDetail.getProdParam());
 		prodParamJson.put("userId", orderDetail.getUserId());
+		//根据userId获取用户orgId		
+		Integer orgId = iOrgnizeUserInfoSv.getOrgnizeUserInfo(orderDetail.getUserId()).getOrgId();		
+		prodParamJson.put("orgId", orgId);		
 		prodParamJson.put("serviceId", orderDetail.getUserServIpaasId());
 		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
 			prodParamJson.put("applyType", "create");
