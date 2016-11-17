@@ -553,8 +553,8 @@ public class OrderSvImpl implements IOrderSv {
 		prodParamJson= JsonUtils.parse(orderDetail.getProdParam());
 		prodParamJson.put("userId", orderDetail.getUserId());
 		//根据userId获取用户orgId		
-		Integer orgId = iOrgnizeUserInfoSv.getOrgnizeUserInfo(orderDetail.getUserId()).getOrgId();		
-		prodParamJson.put("orgId", orgId);		
+		Integer tenantId = iOrgnizeUserInfoSv.getOrgnizeUserInfo(orderDetail.getUserId()).getOrgId();		
+		prodParamJson.put("tenantId", tenantId);		
 		prodParamJson.put("serviceId", orderDetail.getUserServIpaasId());
 		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
 			prodParamJson.put("applyType", "create");
