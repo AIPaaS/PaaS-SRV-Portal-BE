@@ -98,7 +98,7 @@ public class OrderSvImpl implements IOrderSv {
 		OrderDetail orderDetail = new OrderDetail();
 		orderDetail.setOperateType(request.getOperateType());
 		orderDetail.setUserId(request.getUserId());
-		orderDetail.setTenantId(request.getTenantId());
+		//orderDetail.setTenantId(request.getTenantId());
 		orderDetail.setProdType(prodProduct.getProdType());
 		orderDetail.setProdId(prodProduct.getProdId().toString());
 		orderDetail.setProdByname(prodProduct.getProdEnSimp());
