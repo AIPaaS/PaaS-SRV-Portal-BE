@@ -8,8 +8,6 @@ public class OrderDetail {
     private String operateType;
 
     private String userId;
-    
-    private String tenantId;
 
     private String prodType;
 
@@ -344,14 +342,5 @@ public class OrderDetail {
     public void setProdParam(String prodParam) {
         this.prodParam = prodParam == null ? null : prodParam.trim();
     }
-
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-
 
 }

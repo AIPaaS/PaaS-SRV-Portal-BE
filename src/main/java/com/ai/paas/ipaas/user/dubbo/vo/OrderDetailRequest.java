@@ -46,8 +46,6 @@ public class OrderDetailRequest implements Serializable {
 	private String userServIpaasId;
 	
 	private String userServIpaasPwd;
-	
-	private String tenantId;
 
 	public String getOperateType() {
 		return operateType;
@@ -209,14 +207,5 @@ public class OrderDetailRequest implements Serializable {
 	public void setUserServIpaasPwd(String userServIpaasPwd) {
 		this.userServIpaasPwd = userServIpaasPwd;
 	}
-
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-	
 
 }
