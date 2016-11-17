@@ -9,7 +9,7 @@ public class OrderDetail {
 
     private String userId;
     
-    private Integer orgId;
+    private String tenantId;
 
     private String prodType;
 
@@ -345,11 +345,13 @@ public class OrderDetail {
         this.prodParam = prodParam == null ? null : prodParam.trim();
     }
 
-	public Integer getOrgId() {
-		return orgId;
+	public String getTenantId() {
+		return tenantId;
 	}
 
-	public void setOrgId(Integer orgId) {
-		this.orgId = orgId;
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
 	}
+
+
 }

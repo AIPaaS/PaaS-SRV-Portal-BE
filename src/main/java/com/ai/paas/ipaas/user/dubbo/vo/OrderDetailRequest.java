@@ -47,7 +47,7 @@ public class OrderDetailRequest implements Serializable {
 	
 	private String userServIpaasPwd;
 	
-	private Integer orgId;
+	private String tenantId;
 
 	public String getOperateType() {
 		return operateType;
@@ -210,12 +210,12 @@ public class OrderDetailRequest implements Serializable {
 		this.userServIpaasPwd = userServIpaasPwd;
 	}
 
-	public Integer getOrgId() {
-		return orgId;
+	public String getTenantId() {
+		return tenantId;
 	}
 
-	public void setOrgId(Integer orgId) {
-		this.orgId = orgId;
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
 	}
 	
 
