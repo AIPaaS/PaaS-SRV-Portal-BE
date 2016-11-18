@@ -30,13 +30,13 @@ public class OrgnizeCenterSvImpl implements IOrgnizeCenterSv{
 		OrgnizeCenterMapper mapper = template.getMapper(OrgnizeCenterMapper.class);
 		OrgnizeCenterCriteria condition = new OrgnizeCenterCriteria();
 		condition.createCriteria().andOrgStatusEqualTo(status);
-		List<OrgnizeCenterVo> orgs = new ArrayList<OrgnizeCenterVo>();
-		OrgnizeCenterVo orgcenterVo = new OrgnizeCenterVo();
+		List<OrgnizeCenterVo> orgs = new ArrayList<OrgnizeCenterVo>();		
 		List<OrgnizeCenter> beans = mapper.selectByExample(condition);
 		if(beans.size() < 1){ 
 			new PaasException("get orgnize info error!");
 		}
 		for(OrgnizeCenter org : beans) {
+			OrgnizeCenterVo orgcenterVo = new OrgnizeCenterVo();
 			BeanUtils.copyProperties(org, orgcenterVo);
 			orgs.add(orgcenterVo);
 		}
