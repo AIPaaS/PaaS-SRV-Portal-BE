@@ -18,5 +18,17 @@ public interface IOrgnizeCenterSv {
 	@Path("/getOrgnizeCenterByStatus")
 	@POST
 	public List<OrgnizeCenterVo> getOrgnizeCenterByStatus(Integer status) throws PaasException;
+	
+	@Path("/insertOrgnizeCenter")
+	@POST
+	public int insertOrgnizeCenter(OrgnizeCenterVo vo) throws PaasException;
+	
+	@Path("/updateOrgnizeCenter")
+	@POST
+	public int updateOrgnizeCenter(OrgnizeCenterVo vo) throws PaasException;
+	
+	@Path("/deleteOrgnize")
+	@POST
+	public int deleteOrgnize(Integer orgId) throws PaasException;	
 
 }
