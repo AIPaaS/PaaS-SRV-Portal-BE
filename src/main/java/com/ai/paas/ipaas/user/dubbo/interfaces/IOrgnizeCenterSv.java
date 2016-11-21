@@ -15,6 +15,10 @@ import com.ai.paas.ipaas.PaasException;
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
 public interface IOrgnizeCenterSv {
+	@Path("/getOrgnizeCenterById")
+	@POST
+	public OrgnizeCenterVo getOrgnizeCenterById(Integer orgId) throws PaasException;
+	
 	@Path("/getOrgnizeCenterByStatus")
 	@POST
 	public List<OrgnizeCenterVo> getOrgnizeCenterByStatus(Integer status) throws PaasException;
