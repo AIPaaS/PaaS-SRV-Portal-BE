@@ -102,9 +102,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeCenter" >
-    insert into orgnize_center (org_id, org_code, org_name, 
+    <selectKey resultType="java.lang.int" order="AFTER" keyProperty="orderDetailId">
+		SELECT LAST_INSERT_ID() AS orgId
+	</selectKey>
+    insert into orgnize_center (org_code, org_name, 
       org_status)
-    values (#{orgId,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
+    values (#{orgCode,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
       #{orgStatus,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeCenter" >
