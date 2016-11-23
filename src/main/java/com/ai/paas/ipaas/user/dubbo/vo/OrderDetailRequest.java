@@ -8,6 +8,8 @@ public class OrderDetailRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String operateType;
+	
+	private String orgCode;
 
 	private String userId;
 
@@ -206,6 +208,14 @@ public class OrderDetailRequest implements Serializable {
 
 	public void setUserServIpaasPwd(String userServIpaasPwd) {
 		this.userServIpaasPwd = userServIpaasPwd;
+	}
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
 	}
 
 }

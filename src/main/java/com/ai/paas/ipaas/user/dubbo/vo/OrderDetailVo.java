@@ -13,7 +13,7 @@ public class OrderDetailVo implements Serializable {
 
     private String userId;
     
-    private Integer orgId;
+    private String orgCode;
 
     private String prodType;
 
@@ -310,14 +310,12 @@ public class OrderDetailVo implements Serializable {
 		this.userServIpaasPwd = userServIpaasPwd;
 	}
 
-	public Integer getOrgId() {
-		return orgId;
+	public String getOrgCode() {
+		return orgCode;
 	}
 
-	public void setOrgId(Integer orgId) {
-		this.orgId = orgId;
-	}
-    
-    
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}   
 
 }
