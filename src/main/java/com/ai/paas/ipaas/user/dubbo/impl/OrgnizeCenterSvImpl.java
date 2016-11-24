@@ -20,7 +20,6 @@ import com.ai.paas.ipaas.user.dubbo.vo.OrgnizeCenterVo;
 import com.ai.paas.ipaas.PaasException;
 
 @Service
-@Transactional
 public class OrgnizeCenterSvImpl implements IOrgnizeCenterSv{
 	
 	private final Log logger = LogFactory.getLog(getClass());

@@ -30,7 +30,6 @@ import com.ai.paas.ipaas.util.JSonUtil;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service
-@Transactional
 public class OrderImpl implements IOrder{
 	private final Log logger = LogFactory.getLog(getClass());
 

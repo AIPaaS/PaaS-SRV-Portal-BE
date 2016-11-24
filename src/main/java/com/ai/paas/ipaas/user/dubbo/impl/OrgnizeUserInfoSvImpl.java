@@ -19,7 +19,6 @@ import com.ai.paas.ipaas.user.dubbo.vo.OrgnizeUserInfoVo;
 import com.ai.paas.ipaas.PaasException;
 
 @Service
-@Transactional
 public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
 	
 	private final Log logger = LogFactory.getLog(getClass());
