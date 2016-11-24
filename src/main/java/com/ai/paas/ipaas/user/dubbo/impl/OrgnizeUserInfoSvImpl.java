@@ -51,10 +51,10 @@ public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
 		mapper.insert(orguserInfoKey);		
 	}
 	
-	@Override
+	/*@Override
 	public String getOrgCodeByUserId(String userId) {
 		String orgCode = ServiceUtil.getMapper(
 				IOrgnizeUserInfoSv.class).getOrgCodeByUserId(userId);
 		return orgCode;
-	}
+	}*/
 }
