@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.config.annotation.Service;
 
@@ -19,6 +20,7 @@ import com.ai.paas.ipaas.user.dubbo.vo.OrgnizeCenterVo;
 import com.ai.paas.ipaas.PaasException;
 
 @Service
+@Transactional
 public class OrgnizeCenterSvImpl implements IOrgnizeCenterSv{
 	
 	private final Log logger = LogFactory.getLog(getClass());
