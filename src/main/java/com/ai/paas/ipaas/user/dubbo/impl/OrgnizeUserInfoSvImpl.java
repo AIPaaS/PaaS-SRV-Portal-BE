@@ -5,18 +5,17 @@ import org.apache.commons.logging.LogFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.config.annotation.Service;
 
 import java.util.List;
-
 import com.ai.paas.ipaas.user.dao.interfaces.OrgnizeUserInfoMapper;
 import com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeUserInfoCriteria;
 import com.ai.paas.ipaas.user.dao.mapper.bo.OrgnizeUserInfoKey;
 import com.ai.paas.ipaas.user.dubbo.interfaces.IOrgnizeUserInfoSv;
 import com.ai.paas.ipaas.user.dubbo.vo.OrgnizeUserInfoVo;
 import com.ai.paas.ipaas.PaasException;
+import com.ai.paas.ipaas.ServiceUtil;
 
 @Service
 public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
@@ -48,6 +47,11 @@ public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
 		OrgnizeUserInfoMapper mapper = template.getMapper(OrgnizeUserInfoMapper.class);
 		mapper.insert(orguserInfoKey);		
 	}
-		
 	
+	@Override
+	public String getOrgCodeByUserId(String userId) {
+		String orgCode = ServiceUtil.getMapper(
+				IOrgnizeUserInfoSv.class).getOrgCodeByUserId(userId);
+		return orgCode;
+	}
 }
