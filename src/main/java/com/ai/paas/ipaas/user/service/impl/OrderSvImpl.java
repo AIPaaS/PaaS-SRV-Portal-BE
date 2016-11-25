@@ -547,10 +547,12 @@ public class OrderSvImpl implements IOrderSv {
 		JSONObject rds_prodParamJson = new JSONObject();
 		JSONObject prodParamJson = new JSONObject();
 		String prodParam = orderDetail.getProdParam();
+		logger.info("prodParam :"+prodParam);
 		if(StringUtil.isBlank(prodParam)){
 			prodParam="{}";
 		}
 		prodParamJson= JsonUtils.parse(orderDetail.getProdParam());
+		logger.info("prodParamJson :"+prodParamJson.toString());
 		prodParamJson.put("userId", orderDetail.getUserId());	
 		prodParamJson.put("serviceId", orderDetail.getUserServIpaasId());
 		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
