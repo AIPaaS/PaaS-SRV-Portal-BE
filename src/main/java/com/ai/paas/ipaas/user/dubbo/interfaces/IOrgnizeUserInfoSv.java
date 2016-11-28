@@ -24,6 +24,10 @@ public interface IOrgnizeUserInfoSv {
 	@POST
 	public void saveOrgnizeUserInfo(OrgnizeUserInfoVo orgnizeUser) throws PaasException;
 	
+	@Path("/getOrgUsrInfoCntByOrgId")
+	@POST
+	public int getOrgUsrInfoCntByOrgId(Integer orgId) throws PaasException;
+	
 	/*@Path("/getOrgCodeByUserId")
 	@POST
 	@Select("SELECT b.org_code AS orgCode " +

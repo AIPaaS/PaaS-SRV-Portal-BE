@@ -51,6 +51,20 @@ public class OrgnizeUserInfoSvImpl implements IOrgnizeUserInfoSv{
 		mapper.insert(orguserInfoKey);		
 	}
 	
+	@Override
+	public int getOrgUsrInfoCntByOrgId(Integer orgId) throws PaasException {
+		int OUcnt = 0;
+		OrgnizeUserInfoMapper mapper = template.getMapper(OrgnizeUserInfoMapper.class);
+		OrgnizeUserInfoCriteria condition = new OrgnizeUserInfoCriteria();
+		condition.createCriteria().andOrgIdEqualTo(orgId);
+		List<OrgnizeUserInfoKey> beans = mapper.selectByExample(condition);
+		//一个用户只能属于一个组织	
+		if(beans != null){ 
+			OUcnt =  beans.size();
+		}
+		return OUcnt;
+	}
+	
 	/*@Override
 	public String getOrgCodeByUserId(String userId) {
 		String orgCode = ServiceUtil.getMapper(
