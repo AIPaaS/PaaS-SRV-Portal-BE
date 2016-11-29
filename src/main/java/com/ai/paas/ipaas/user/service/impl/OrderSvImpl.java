@@ -486,8 +486,9 @@ public class OrderSvImpl implements IOrderSv {
 		
 		JSONObject json = new JSONObject();
 		json=JsonUtils.parse(result);
-		String resultCode = json.getString("resultCode");		
-		if(PaaSMgmtConstant.REST_SERVICE_RESULT_FAIL.equals(resultCode)){
+		String resultCode = json.getString("resultCode");
+		//RDS成功返回的code为"1"，其他的服务成功返回"000000"
+		if(!PaaSMgmtConstant.REST_SERVICE_RESULT_SUCCESS.equals(resultCode) || !"1".equals(resultCode)){
 			throw new PaasException(json.getString("resultMsg"));
 	    }
 		UserProdInst userProdInst = new UserProdInst();
