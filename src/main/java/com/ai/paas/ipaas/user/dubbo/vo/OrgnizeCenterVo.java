@@ -1,6 +1,10 @@
 package com.ai.paas.ipaas.user.dubbo.vo;
 
-public class OrgnizeCenterVo {
+import java.io.Serializable;
+
+public class OrgnizeCenterVo implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
     private Integer orgId;
 
     private String orgCode;
