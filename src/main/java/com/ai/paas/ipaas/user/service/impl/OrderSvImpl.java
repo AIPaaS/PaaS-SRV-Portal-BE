@@ -35,6 +35,7 @@ import com.ai.paas.ipaas.user.dto.UserProdInst;
 import com.ai.paas.ipaas.user.dto.UserProdInstCriteria;
 import com.ai.paas.ipaas.user.dto.WfTickets;
 import com.ai.paas.ipaas.user.dto.WfTicketsCriteria;
+import com.ai.paas.ipaas.user.dubbo.interfaces.IOrgnizeUserInfoSv;
 import com.ai.paas.ipaas.user.dubbo.vo.CheckOrdersRequest;
 import com.ai.paas.ipaas.user.dubbo.vo.EmailDetail;
 import com.ai.paas.ipaas.user.dubbo.vo.OrderDetailRequest;
@@ -85,6 +86,9 @@ public class OrderSvImpl implements IOrderSv {
 	private IProdProductSv iProdProductSv;
 	
 	@Autowired
+	private IOrgnizeUserInfoSv iOrgnizeUserInfoSv;
+	
+	@Autowired
 	private ISysParamSv iSysParamSv;
 
 	@Override
@@ -94,6 +98,7 @@ public class OrderSvImpl implements IOrderSv {
 		OrderDetail orderDetail = new OrderDetail();
 		orderDetail.setOperateType(request.getOperateType());
 		orderDetail.setUserId(request.getUserId());
+		orderDetail.setOrgCode(request.getOrgCode());
 		orderDetail.setProdType(prodProduct.getProdType());
 		orderDetail.setProdId(prodProduct.getProdId().toString());
 		orderDetail.setProdByname(prodProduct.getProdEnSimp());
@@ -481,8 +486,9 @@ public class OrderSvImpl implements IOrderSv {
 		
 		JSONObject json = new JSONObject();
 		json=JsonUtils.parse(result);
-		String resultCode = json.getString("resultCode");		
-		if(PaaSMgmtConstant.REST_SERVICE_RESULT_FAIL.equals(resultCode)){
+		String resultCode = json.getString("resultCode");
+		//RDS成功返回的code为"1"，其他的服务成功返回"000000"
+		if(!PaaSMgmtConstant.REST_SERVICE_RESULT_SUCCESS.equals(resultCode) && !"1".equals(resultCode)){
 			throw new PaasException(json.getString("resultMsg"));
 	    }
 		UserProdInst userProdInst = new UserProdInst();
@@ -542,11 +548,13 @@ public class OrderSvImpl implements IOrderSv {
 		JSONObject rds_prodParamJson = new JSONObject();
 		JSONObject prodParamJson = new JSONObject();
 		String prodParam = orderDetail.getProdParam();
+		logger.info("prodParam :"+prodParam);
 		if(StringUtil.isBlank(prodParam)){
 			prodParam="{}";
 		}
 		prodParamJson= JsonUtils.parse(orderDetail.getProdParam());
-		prodParamJson.put("userId", orderDetail.getUserId());
+		logger.info("prodParamJson :"+prodParamJson.toString());
+		prodParamJson.put("userId", orderDetail.getUserId());	
 		prodParamJson.put("serviceId", orderDetail.getUserServIpaasId());
 		if(!Constants.ProdProduct.ProdId.RDS.equals(orderDetail.getProdId())){
 			prodParamJson.put("applyType", "create");

@@ -8,6 +8,8 @@ public class OrderDetail {
     private String operateType;
 
     private String userId;
+    
+    private String orgCode;
 
     private String prodType;
 
@@ -342,4 +344,13 @@ public class OrderDetail {
     public void setProdParam(String prodParam) {
         this.prodParam = prodParam == null ? null : prodParam.trim();
     }
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+
 }

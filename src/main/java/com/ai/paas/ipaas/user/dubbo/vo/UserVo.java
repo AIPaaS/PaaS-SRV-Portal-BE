@@ -38,8 +38,6 @@ public class UserVo implements Serializable {
 	private String newPwd;//新密码，用于修改密码
 	private String oldEmail;//新邮箱，用于修改密码
 
-
-
 	public String getPid() {
 		return pid;
 	}
@@ -167,7 +165,5 @@ public class UserVo implements Serializable {
 	public void setOldEmail(String oldEmail) {
 		this.oldEmail = oldEmail;
 	}
-
-
 
 }

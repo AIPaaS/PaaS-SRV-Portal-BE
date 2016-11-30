@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.paas.ipaas.PaaSMgmtConstant;
 import com.ai.paas.ipaas.PaasException;
@@ -18,6 +19,7 @@ import com.ai.paas.ipaas.user.service.IRdsConsoleSv;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.alibaba.dubbo.config.annotation.Service;
 @Service
+@Transactional
 public class RdsConsoleDubboSvImpl implements IRdsConsoleDubboSv {
 	
 	private final Log logger = LogFactory.getLog(getClass());

@@ -3,8 +3,7 @@
  <Appenders>
    <Console name="Console" target="SYSTEM_OUT">
      <PatternLayout pattern="%-d{yyyy-MM-dd HH:mm:ss.SSS} %c %n[%p] %n%m%n%l" />
-   </Console>
-   
+   </Console> 
    <RollingFile name="RollingFile"
      fileName="logs/service-portal-backend.log" filePattern="logs/service-portal-backend-%d{yyyy-MM-dd}-%i.log">
       <PatternLayout>

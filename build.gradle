@@ -28,7 +28,7 @@ sourceSets {
 
 ext {
 	moduleName="ipaas-user";
-	moduleVersion="0.3-SNAPSHOT"
+	moduleVersion="0.31-SNAPSHOT"
 	publishUserName = "devadm"
 	publishUserPassword = "Devadm@1212"
 	publishURL="http://10.1.228.199:18081/nexus/content/repositories/snapshots/"
@@ -59,7 +59,6 @@ dependencies{
 	
 	compile 'com.ai:ipaas-zookeeper-utility:0.2.1-SNAPSHOT'
 }
-
 
 jar {
     baseName moduleName
